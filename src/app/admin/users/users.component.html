@@ -1,0 +1,79 @@
+ <div class="content">
+      <div class="page-header">
+        <h1>User Management</h1>
+        <button class="btn btn-primary" (click)="showCreateModal = true">Add New User</button>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <div class="table-container">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Role</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let user of users">
+                  <td>{{user.id}}</td>
+                  <td>{{user.name}}</td>
+                  <td>{{user.email}}</td>
+                  <td>{{user.phone}}</td>
+                  <td>
+                    <span class="status-badge status-{{user.role}}">{{user.role | titlecase}}</span>
+                  </td>
+                  <td>
+                    <button class="btn btn-secondary btn-sm" (click)="editUser(user)">Edit</button>
+                    <button class="btn btn-danger btn-sm" (click)="deleteUser(user.id)">Delete</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Create/Edit Modal -->
+      <div *ngIf="showCreateModal || showEditModal" class="modal-backdrop" (click)="closeModal()">
+        <div class="modal" (click)="$event.stopPropagation()">
+          <div class="modal-header">
+            <h3>{{showEditModal ? 'Edit User' : 'Add New User'}}</h3>
+            <button class="modal-close" (click)="closeModal()">&times;</button>
+          </div>
+          <div class="modal-body">
+            <form (ngSubmit)="saveUser()">
+              <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" [(ngModel)]="currentUser.name" name="name" required>
+              </div>
+              <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" [(ngModel)]="currentUser.email" name="email" required>
+              </div>
+              <div class="form-group">
+                <label for="phone">Phone</label>
+                <input type="text" id="phone" [(ngModel)]="currentUser.phone" name="phone" required>
+              </div>
+              <div class="form-group">
+                <label for="role">Role</label>
+                <select id="role" [(ngModel)]="currentUser.role" name="role" required>
+                  <option value="customer">Customer</option>
+                  <option value="restaurant_owner">Restaurant Owner</option>
+                  <option value="rider">Rider</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+              <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">{{showEditModal ? 'Update' : 'Create'}}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>

@@ -1,0 +1,93 @@
+<div class="content">
+      <div class="page-header">
+        <h1>Order Management</h1>
+        <div class="page-stats">
+          <span class="stat">Total Orders: {{orders.length}}</span>
+          <span class="stat">Pending: {{pendingOrders}}</span>
+          <span class="stat">In Transit: {{inTransitOrders}}</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <div class="table-container">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>User ID</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Payment</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let order of orders">
+                  <td>#{{order.id}}</td>
+                  <td>{{order.user_id}}</td>
+                  <td>${{order.total_amount | number:'1.2-2'}}</td>
+                  <td>
+                    <select class="status-select" [value]="order.status"
+                            (change)="updateOrderStatus(order.id, $event)">
+                      <option value="pending">Pending</option>
+                      <option value="confirmed">Confirmed</option>
+                      <option value="preparing">Preparing</option>
+                      <option value="ready">Ready</option>
+                      <option value="in_transit">In Transit</option>
+                      <option value="delivered">Delivered</option>
+                      <option value="cancelled">Cancelled</option>
+                    </select>
+                  </td>
+                  <td>
+                    <span class="status-badge" [class]="'status-' + order.payment_status">
+                      {{order.payment_status | titlecase}}
+                    </span>
+                  </td>
+                  <td>{{order.created_at | date:'short'}}</td>
+                  <td>
+                    <button *ngIf="order.status === 'ready'"
+                            class="btn btn-primary btn-sm"
+                            (click)="showRiderAssignment(order)">
+                      Assign Rider
+                    </button>
+                    <button class="btn btn-secondary btn-sm">View Details</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rider Assignment Modal -->
+      <div *ngIf="showAssignRiderModal" class="modal-backdrop" (click)="closeAssignRiderModal()">
+        <div class="modal" (click)="$event.stopPropagation()">
+          <div class="modal-header">
+            <h3>Assign Rider to Order #{{selectedOrder?.id}}</h3>
+            <button class="modal-close" (click)="closeAssignRiderModal()">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="available-riders">
+              <div *ngFor="let rider of availableRiders" class="rider-card"
+                   (click)="assignRider(rider)">
+                <div class="rider-info">
+                  <div class="rider-avatar">🏍️</div>
+                  <div class="rider-details">
+                    <h4>Rider #{{rider.id}}</h4>
+                    <p>{{rider.vehicle_type | titlecase}}</p>
+                    <p>Earnings: ${{rider.earnings | number:'1.2-2'}}</p>
+                  </div>
+                </div>
+                <button class="btn btn-primary">Assign</button>
+              </div>
+
+              <div *ngIf="availableRiders.length === 0" class="no-riders">
+                <p>No riders available at the moment</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

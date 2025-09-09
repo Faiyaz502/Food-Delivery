@@ -1,0 +1,240 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "name": "John Doe ",
+      "email": "john@example.com",
+      "phone": "+1-555-0123",
+      "role": "customer"
+    },
+    {
+      "id": "2",
+      "name": "Jane Smith",
+      "email": "jane@example.com",
+      "phone": "+1-555-0124",
+      "role": "restaurant_owner"
+    },
+    {
+      "id": "3",
+      "name": "Mike Wilson",
+      "email": "mike@example.com",
+      "phone": "+1-555-0125",
+      "role": "rider"
+    },
+    {
+      "id": "4",
+      "name": "Sarah Johnson",
+      "email": "sarah@example.com",
+      "phone": "+1-555-0126",
+      "role": "customer"
+    },
+    {
+      "id": "5ec3",
+      "name": "fahim",
+      "email": "www.fahim123@gmail.com",
+      "phone": "56496465165",
+      "role": "customer"
+    },
+    {
+      "id": "9921",
+      "name": "fahim",
+      "email": "www.fahim123@gmail.com",
+      "phone": "56496465165",
+      "role": "restaurant_owner"
+    }
+  ],
+  "restaurants": [
+    {
+      "id": "1",
+      "name": "Pizza Palace",
+      "address": "123 Main St, Downtown",
+      "rating": 4.5,
+      "owner_id": 2,
+      "image_url": "https://plus.unsplash.com/premium_photo-1661883237884-263e8de8869b?q=80&w=889&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+    },
+    {
+      "id": "2",
+      "name": "Burger Joint",
+      "address": "456 Oak Ave, Midtown",
+      "rating": 4.2,
+      "owner_id": 2,
+      "image_url": "https://plus.unsplash.com/premium_photo-1661953124283-76d0a8436b87?q=80&w=888&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+    },
+    {
+      "id": "3",
+      "name": "Sushi Zen",
+      "address": "789 Pine St, Uptown",
+      "rating": 4.8,
+      "owner_id": 2,
+      "image_url": "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=774&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+    }
+  ],
+  "menuItems": [
+    {
+      "id": "1",
+      "restaurant_id": 1,
+      "name": "Margherita Pizza",
+      "price": 12.99,
+      "description": "Fresh tomatoes, mozzarella, and basil",
+      "image_url": "https://images.pexels.com/photos/315755/pexels-photo-315755.jpeg"
+    },
+    {
+      "id": "2",
+      "restaurant_id": 1,
+      "name": "Pepperoni Pizza",
+      "price": 15.99,
+      "description": "Classic pepperoni with mozzarella",
+      "image_url": "https://images.pexels.com/photos/708587/pexels-photo-708587.jpeg"
+    },
+    {
+      "id": "3",
+      "restaurant_id": 2,
+      "name": "Classic Burger",
+      "price": 9.99,
+      "description": "Beef patty with lettuce, tomato, and cheese",
+      "image_url": "https://images.pexels.com/photos/1639557/pexels-photo-1639557.jpeg"
+    },
+    {
+      "id": "4",
+      "restaurant_id": 3,
+      "name": "Salmon Roll",
+      "price": 18.99,
+      "description": "Fresh salmon with avocado and cucumber",
+      "image_url": "https://images.pexels.com/photos/357756/pexels-photo-357756.jpeg"
+    },
+    {
+      "id": "e855",
+      "restaurant_id": "1",
+      "name": "Burger",
+      "price": 20,
+      "description": "Beef Patty , Tomatoes ,Bun",
+      "image_url": "https://plus.unsplash.com/premium_photo-1675252369719-dd52bc69c3df?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+    },
+    {
+      "id": "df5a",
+      "restaurant_id": "1",
+      "name": "Cake",
+      "price": 17,
+      "description": "Strawberry,Cream",
+      "image_url": "https://images.unsplash.com/photo-1565958011703-44f9829ba187?q=80&w=465&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+    }
+  ],
+  "orders": [
+    {
+      "id": "1",
+      "user_id": 1,
+      "total_amount": 28.98,
+      "status": "delivered",
+      "payment_status": "paid",
+      "created_at": "2024-01-15T10:30:00Z"
+    },
+    {
+      "id": "2",
+      "user_id": 4,
+      "total_amount": 15.99,
+      "status": "in_transit",
+      "payment_status": "paid",
+      "created_at": "2024-01-15T11:45:00Z"
+    },
+    {
+      "id": "3",
+      "user_id": 1,
+      "total_amount": 35.97,
+      "status": "in_transit",
+      "payment_status": "paid",
+      "created_at": "2024-01-15T12:15:00Z"
+    }
+  ],
+  "payments": [
+    {
+      "id": "1",
+      "order_id": 1,
+      "method": "credit_card",
+      "amount": 28.98,
+      "status": "completed"
+    },
+    {
+      "id": "2",
+      "order_id": 2,
+      "method": "paypal",
+      "amount": 15.99,
+      "status": "completed"
+    },
+    {
+      "id": "3",
+      "order_id": 3,
+      "method": "credit_card",
+      "amount": 35.97,
+      "status": "completed"
+    }
+  ],
+  "riders": [
+    {
+      "id": "1",
+      "user_id": 3,
+      "vehicle_type": "motorcycle",
+      "availability": false,
+      "earnings": 1250.75,
+      "image_url": "https://images.unsplash.com/photo-1522556189639-b150ed9c4330?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+    },
+    {
+      "id": "2",
+      "user_id": 5,
+      "vehicle_type": "bicycle",
+      "availability": true,
+      "earnings": 890.5,
+      "image_url": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+    },
+    {
+      "id": "3",
+      "user_id": 6,
+      "vehicle_type": "car",
+      "availability": true,
+      "earnings": 1560.25,
+      "image_url": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+    }
+  ],
+  "cateringPackages": [
+    {
+      "id": "1",
+      "provider_id": 1,
+      "name": "Office Lunch Package",
+      "description": "Perfect for office meetings and corporate events",
+      "base_price": 199.99,
+      "max_people": 15,
+      "image_url": "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg",
+      "status": "active"
+    },
+    {
+      "id": "2",
+      "provider_id": null,
+      "name": "Family Feast 2",
+      "description": "Delicious meal for family gatherings",
+      "base_price": 149.99,
+      "max_people": 8,
+      "image_url": "https://images.pexels.com/photos/1640774/pexels-photo-1640774.jpeg",
+      "status": "active"
+    },
+    {
+      "id": "56f6",
+      "provider_id": 1,
+      "name": "Birthday Party ",
+      "description": "Perfect Solution of Arranging a Birthday Party ",
+      "base_price": 545,
+      "max_people": 50,
+      "image_url": "https://images.unsplash.com/photo-1714978444614-7a197c2309ee?q=80&w=1032&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "status": "active"
+    }
+  ],
+  "cateringOrders": [
+    {
+      "id": "1",
+      "user_id": 1,
+      "package_id": 1,
+      "quantity": 1,
+      "scheduled_date": "2024-01-20T12:00:00Z",
+      "status": "confirmed",
+      "delivery_address": "123 Corporate Blvd, Business District"
+    }
+  ]
+}

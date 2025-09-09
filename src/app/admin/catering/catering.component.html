@@ -1,0 +1,122 @@
+ <div class="content">
+      <div class="page-header">
+        <h1>Catering Management</h1>
+        <button class="btn btn-primary" (click)="showCreateModal = true">Add New Package</button>
+      </div>
+
+      <!-- Packages Section -->
+      <div class="card">
+        <div class="card-header">
+          <h3>Catering Packages</h3>
+        </div>
+        <div class="card-body">
+          <div class="packages-grid">
+            <div *ngFor="let package of packages" class="package-card">
+              <img [src]="package.image_url" [alt]="package.name" class="package-image">
+              <div class="package-content">
+                <div class="package-header">
+                  <h4>{{package.name}}</h4>
+                  <span class="status-badge" [class]="'status-' + package.status">{{package.status}}</span>
+                </div>
+                <p>{{package.description}}</p>
+                <div class="package-details">
+                  <span class="price">${{package.base_price | number:'1.2-2'}}</span>
+                  <span class="max-people">Max {{package.max_people}} people</span>
+                </div>
+                <div class="package-actions">
+                  <button class="btn btn-secondary btn-sm" (click)="editPackage(package)">Edit</button>
+                  <button class="btn btn-danger btn-sm" (click)="deletePackage(package.id)">Delete</button>
+                  <button class="btn btn-primary btn-sm"
+                          (click)="togglePackageStatus(package)">
+                    {{package.status === 'active' ? 'Deactivate' : 'Activate'}}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Orders Section -->
+      <div class="card" style="margin-top: 32px;">
+        <div class="card-header">
+          <h3>Catering Orders</h3>
+        </div>
+        <div class="card-body">
+          <div class="table-container">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>User ID</th>
+                  <th>Package</th>
+                  <th>Quantity</th>
+                  <th>Scheduled Date</th>
+                  <th>Status</th>
+                  <th>Address</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let order of cateringOrders">
+                  <td>#{{order.id}}</td>
+                  <td>{{order.user_id}}</td>
+                  <td>{{getPackageName(order.package_id)}}</td>
+                  <td>{{order.quantity}}</td>
+                  <td>{{order.scheduled_date | date:'short'}}</td>
+                  <td>
+                    <span class="status-badge status-{{order.status}}">{{order.status | titlecase}}</span>
+                  </td>
+                  <td>{{order.delivery_address}}</td>
+                  <td>
+                    <button class="btn btn-secondary btn-sm">View Details</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Create/Edit Package Modal -->
+      <div *ngIf="showCreateModal || showEditModal" class="modal-backdrop" (click)="closeModal()">
+        <div class="modal" (click)="$event.stopPropagation()">
+          <div class="modal-header">
+            <h3>{{showEditModal ? 'Edit Package' : 'Add New Package'}}</h3>
+            <button class="modal-close" (click)="closeModal()">&times;</button>
+          </div>
+          <div class="modal-body">
+            <form (ngSubmit)="savePackage()">
+              <div class="form-group">
+                <label for="name">Package Name</label>
+                <input type="text" id="name" [(ngModel)]="currentPackage.name" name="name" required>
+              </div>
+              <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" [(ngModel)]="currentPackage.description" name="description" required></textarea>
+              </div>
+              <div class="form-group">
+                <label for="base_price">Base Price</label>
+                <input type="number" id="base_price" [(ngModel)]="currentPackage.base_price" name="base_price" step="0.01" required>
+              </div>
+              <div class="form-group">
+                <label for="max_people">Max People</label>
+                <input type="number" id="max_people" [(ngModel)]="currentPackage.max_people" name="max_people" required>
+              </div>
+              <div class="form-group">
+                <label for="image_url">Image URL</label>
+                <input type="url" id="image_url" [(ngModel)]="currentPackage.image_url" name="image_url" required>
+              </div>
+              <div class="form-group">
+                <label for="provider_id">Provider ID</label>
+                <input type="number" id="provider_id" [(ngModel)]="currentPackage.provider_id" name="provider_id" required>
+              </div>
+              <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">{{showEditModal ? 'Update' : 'Create'}}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>

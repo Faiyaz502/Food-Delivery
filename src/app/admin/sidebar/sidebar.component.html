@@ -1,0 +1,54 @@
+ <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2> Admin Dashboard</h2>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-title">MAIN</div>
+          <a routerLink="dashboard" class="nav-item"
+             (click)="setActive('dashboard')">
+            <span class="nav-icon">📊</span>
+            Dashboard
+          </a>
+          <a routerLink="" class="nav-item" [class.active]="activeSection === 'analytics'"
+             (click)="setActive('analytics')">
+            <span class="nav-icon">📈</span>
+            Analytics
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-title">MANAGEMENT</div>
+          <a routerLink="users" class="nav-item" [class.active]="activeSection === 'users'"
+             (click)="setActive('users')">
+            <span class="nav-icon">👥</span>
+            Users
+          </a>
+          <a routerLink="restaurant" class="nav-item" [class.active]="activeSection === 'restaurants'"
+             (click)="setActive('restaurants')">
+            <span class="nav-icon">🏪</span>
+            Restaurants
+          </a>
+          <a routerLink="orders" class="nav-item" [class.active]="activeSection === 'orders'"
+             (click)="setActive('orders')">
+            <span class="nav-icon">📦</span>
+            Orders
+          </a>
+          <a routerLink="riders" class="nav-item" [class.active]="activeSection === 'riders'"
+             (click)="setActive('riders')">
+            <span class="nav-icon">🏍️</span>
+            Riders
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-title">SERVICES</div>
+          <a routerLink="catering" class="nav-item" [class.active]="activeSection === 'catering'"
+             (click)="setActive('catering')">
+            <span class="nav-icon">🍽️</span>
+            Catering
+          </a>
+        </div>
+      </nav>
+    </aside>

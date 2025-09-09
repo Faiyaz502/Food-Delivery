@@ -1,0 +1,149 @@
+<div class="p-6 bg-gray-50 min-h-screen">
+  <!-- Page Header with Stats -->
+  <div class="mb-8">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+      <h1 class="text-3xl font-bold text-gray-900">Rider Management</h1>
+      <div class="flex flex-wrap gap-4 text-sm">
+        <span class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg font-medium">Total Riders: {{riders.length}}</span>
+        <span class="px-3 py-1.5 bg-green-100 text-green-800 rounded-lg font-medium">Available: {{availableRiders}}</span>
+        <span class="px-3 py-1.5 bg-orange-100 text-orange-800 rounded-lg font-medium">Busy: {{busyRiders}}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Riders Grid -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+    <div
+      *ngFor="let rider of riders"
+      class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-all duration-300"
+    >
+      <!-- Rider Photo -->
+      <div class="h-36 bg-gray-100">
+        <img
+          [src]="rider.image_url"
+          [alt]="getUserName(rider.user_id)"
+          class="w-full h-full object-cover"
+          onerror="this.src='https://via.placeholder.com/400x400/9CA3AF/FFFFFF?text=Rider'"
+        />
+      </div>
+
+      <!-- Rider Info -->
+      <div class="p-5">
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
+              {{ (getUserName(rider.user_id) | slice:0:1) || 'R' }}
+            </div>
+            <div>
+              <h3 class="text-lg font-semibold text-gray-900">{{getUserName(rider.user_id)}}</h3>
+              <p class="text-sm text-gray-500">Rider #{{rider.id}}</p>
+            </div>
+          </div>
+
+          <button
+            [ngClass]="{
+              'bg-green-600 hover:bg-green-700': rider.availability,
+              'bg-gray-600 hover:bg-gray-700': !rider.availability
+            }"
+            class="px-3 py-1.5 text-white text-xs font-medium rounded-lg transition-colors"
+            (click)="toggleAvailability(rider)"
+          >
+            {{rider.availability ? 'Available' : 'Offline'}}
+          </button>
+        </div>
+
+        <!-- Rider Stats -->
+        <div class="space-y-3 mb-5">
+          <div class="flex justify-between">
+            <span class="text-sm text-gray-500">Vehicle</span>
+            <span class="text-sm font-medium text-gray-900">{{rider.vehicle_type | titlecase}}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-sm text-gray-500">Earnings</span>
+            <span class="text-sm font-medium text-green-600">${{rider.earnings | number:'1.2-2'}}</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-gray-500">Status</span>
+            <span
+              [ngClass]="{
+                'bg-green-100 text-green-800': rider.availability,
+                'bg-gray-100 text-gray-800': !rider.availability
+              }"
+              class="px-2.5 py-0.5 rounded-full text-xs font-medium"
+            >
+              {{rider.availability ? 'Available' : 'Offline'}}
+            </span>
+          </div>
+        </div>
+
+        <!-- Rider Actions -->
+        <div class="flex flex-wrap gap-2">
+          <button class="flex-1 min-w-[100px] px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-lg transition-colors">
+            View Profile
+          </button>
+          <button class="flex-1 min-w-[100px] px-3 py-2 bg-gray-600 hover:bg-gray-700 text-white text-xs font-medium rounded-lg transition-colors">
+            View History
+          </button>
+          <button
+            *ngIf="rider.availability"
+            class="flex-1 min-w-[100px] px-3 py-2 bg-green-600 hover:bg-green-700 text-white text-xs font-medium rounded-lg transition-colors"
+          >
+            Assign Order
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!riders || riders.length === 0" class="text-center py-16 bg-white rounded-xl shadow-sm border border-gray-200 mb-8">
+    <div class="text-gray-400 mb-2">📭 No riders found</div>
+    <p class="text-gray-500">Add riders to see them here.</p>
+  </div>
+
+  <!-- Analytics Section -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+    <div class="px-6 py-5 border-b border-gray-200">
+      <h3 class="text-xl font-semibold text-gray-900">Rider Analytics</h3>
+    </div>
+    <div class="p-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Total Earnings -->
+        <div class="bg-gray-50 rounded-lg p-5 text-center hover:bg-gray-100 transition-colors">
+          <div class="text-4xl mb-2">💰</div>
+          <h4 class="font-medium text-gray-700 mb-1">Total Earnings</h4>
+          <p class="text-2xl font-bold text-gray-900">${{totalEarnings | number:'1.2-2'}}</p>
+        </div>
+
+        <!-- Avg Earnings -->
+        <div class="bg-gray-50 rounded-lg p-5 text-center hover:bg-gray-100 transition-colors">
+          <div class="text-4xl mb-2">📊</div>
+          <h4 class="font-medium text-gray-700 mb-1">Avg Earnings</h4>
+          <p class="text-2xl font-bold text-gray-900">${{averageEarnings | number:'1.2-2'}}</p>
+        </div>
+
+        <!-- Active Riders -->
+        <div class="bg-gray-50 rounded-lg p-5 text-center hover:bg-gray-100 transition-colors">
+          <div class="text-4xl mb-2">🏍️</div>
+          <h4 class="font-medium text-gray-700 mb-1">Active Riders</h4>
+          <p class="text-2xl font-bold text-gray-900">{{availableRiders}}/{{riders.length}}</p>
+        </div>
+
+        <!-- By Vehicle -->
+        <div class="bg-gray-50 rounded-lg p-5 hover:bg-gray-100 transition-colors">
+          <div class="text-4xl mb-2">🚴</div>
+          <h4 class="font-medium text-gray-700 mb-1 text-center">By Vehicle</h4>
+          <div class="mt-3 space-y-1 text-sm">
+            <div
+              *ngFor="let vehicle of vehicleTypes"
+              class="flex justify-between py-1 px-2 bg-white rounded border"
+            >
+              <span class="font-medium">{{vehicle.type | titlecase}}</span>
+              <span class="text-blue-600 font-bold">{{vehicle.count}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

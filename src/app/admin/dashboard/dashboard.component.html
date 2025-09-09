@@ -1,0 +1,109 @@
+
+<div class="min-h-screen bg-gray-50 p-6">
+  <!-- Header -->
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
+    <p class="mt-2 text-gray-600">
+      Welcome back! Here's what's happening with your food delivery business today.
+    </p>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <!-- Total Revenue -->
+    <div class="bg-white shadow rounded-xl p-6 flex items-center hover:shadow-md transition-shadow">
+      <div class="text-green-600 bg-green-50 p-3 rounded-full text-xl">💰</div>
+      <div class="ml-4">
+        <h3 class="text-sm font-medium text-gray-500">Total Revenue</h3>
+        <p class="text-2xl font-semibold text-gray-900">${{totalRevenue | number:'1.2-2'}}</p>
+        <span class="text-green-600 text-sm font-medium flex items-center mt-1">
+          +12.5%
+        </span>
+      </div>
+    </div>
+
+    <!-- Total Orders -->
+    <div class="bg-white shadow rounded-xl p-6 flex items-center hover:shadow-md transition-shadow">
+      <div class="text-blue-600 bg-blue-50 p-3 rounded-full text-xl">📦</div>
+      <div class="ml-4">
+        <h3 class="text-sm font-medium text-gray-500">Total Orders</h3>
+        <p class="text-2xl font-semibold text-gray-900">{{orders.length}}</p>
+        <span class="text-green-600 text-sm font-medium mt-1">+8.3%</span>
+      </div>
+    </div>
+
+    <!-- Available Riders -->
+    <div class="bg-white shadow rounded-xl p-6 flex items-center hover:shadow-md transition-shadow">
+      <div class="text-orange-600 bg-orange-50 p-3 rounded-full text-xl">🏍️</div>
+      <div class="ml-4">
+        <h3 class="text-sm font-medium text-gray-500">Available Riders</h3>
+        <p class="text-2xl font-semibold text-gray-900">{{availableRiders}}</p>
+        <span class="text-gray-500 text-sm mt-1">{{availableRiders}}/{{totalRiders}} online</span>
+      </div>
+    </div>
+
+    <!-- Avg Rating -->
+    <div class="bg-white shadow rounded-xl p-6 flex items-center hover:shadow-md transition-shadow">
+      <div class="text-purple-600 bg-purple-50 p-3 rounded-full text-xl">⭐</div>
+      <div class="ml-4">
+        <h3 class="text-sm font-medium text-gray-500">Avg Rating</h3>
+        <p class="text-2xl font-semibold text-gray-900">4.8</p>
+        <span class="text-green-600 text-sm mt-1">+0.2</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dashboard Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Recent Payments -->
+    <div class="bg-white shadow rounded-xl">
+      <div class="px-6 py-4 border-b border-gray-100">
+        <h3 class="text-lg font-semibold text-gray-900">Recent Payment Transactions</h3>
+      </div>
+      <div class="p-6">
+        <div class="space-y-4">
+          <div *ngFor="let payment of payments" class="flex justify-between items-center p-4 border-b border-gray-100 last:border-b-0">
+            <div>
+              <span class="block font-medium text-gray-900">Order #{{payment.order_id}}</span>
+              <span class="block text-sm text-gray-500">{{payment.method | titlecase}}</span>
+            </div>
+            <div class="text-right">
+              <span class="block font-semibold text-gray-900">${{payment.amount | number:'1.2-2'}}</span>
+              <span [ngClass]="{
+                'bg-green-100 text-green-800': payment.status === 'completed',
+                'bg-yellow-100 text-yellow-800': payment.status === 'pending',
+                'bg-red-100 text-red-800': payment.status === 'failed'
+              }" class="inline-block text-xs px-2 py-1 rounded-full font-medium mt-1">
+                {{payment.status}}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Available Riders -->
+    <div class="bg-white shadow rounded-xl">
+      <div class="px-6 py-4 border-b border-gray-100">
+        <h3 class="text-lg font-semibold text-gray-900">Available Riders</h3>
+      </div>
+      <div class="p-6 space-y-4">
+        <div *ngFor="let rider of availableRidersList" class="flex justify-between items-center p-4 border-b border-gray-100 last:border-b-0">
+          <div class="flex items-center">
+            <div class="bg-orange-50 text-orange-600 p-2 rounded-lg text-xl mr-3">🏍️</div>
+            <div>
+              <span class="font-medium text-gray-900">Rider #{{rider.id}}</span>
+              <span class="text-sm text-gray-500">{{rider.vehicle_type | titlecase}}</span>
+            </div>
+          </div>
+          <div class="flex flex-col items-end">
+            <span class="font-semibold text-gray-900">${{rider.earnings | number:'1.2-2'}}</span>
+            <button class="mt-2 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-lg transition-colors">
+              Assign Order
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

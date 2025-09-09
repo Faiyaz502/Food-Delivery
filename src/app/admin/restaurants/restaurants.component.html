@@ -1,0 +1,354 @@
+<div class="p-6 bg-gray-50 min-h-screen">
+  <!-- Page Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
+    <h1 class="text-3xl font-bold text-gray-900">Restaurant Management</h1>
+    <button
+      (click)="showCreateModal = true"
+      class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+    >
+      Add New Restaurant
+    </button>
+  </div>
+
+  <!-- Restaurant Cards Grid -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div
+      *ngFor="let restaurant of restaurants; let i = index"
+      class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow group"
+    >
+      <!-- Random Restaurant Photo -->
+  <img
+  [src]="restaurant.image_url"
+  [alt]="restaurant.name"
+  class="w-full h-24 object-cover rounded-lg border border-gray-200 shadow-sm hover:scale-105 transition-transform duration-300"
+  onerror="this.src='https://via.placeholder.com/100?text=No+Image'"
+/>
+
+      <div class="p-5">
+        <div class="flex items-start justify-between mb-3">
+          <h3 class="text-lg font-semibold text-gray-900 line-clamp-1">{{restaurant.name}}</h3>
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+            ⭐ {{restaurant.rating}}
+          </span>
+        </div>
+
+        <p class="text-gray-600 text-sm mb-4 line-clamp-2">{{restaurant.address}}</p>
+
+        <div class="flex gap-2 pt-3 border-t border-gray-100">
+          <button
+            (click)="viewMenuItems(restaurant)"
+            class="flex-1 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-md transition-colors text-center"
+          >
+            Menu
+          </button>
+          <button
+            (click)="editRestaurant(restaurant)"
+            class="px-3 py-1.5 bg-gray-600 hover:bg-gray-700 text-white text-xs font-medium rounded-md transition-colors"
+          >
+            Edit
+          </button>
+          <button
+            (click)="deleteRestaurant(restaurant.id)"
+            class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-md transition-colors"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State (Optional) -->
+  <div *ngIf="!restaurants || restaurants.length === 0" class="text-center py-12">
+    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+    </svg>
+    <h3 class="mt-2 text-sm font-medium text-gray-900">No restaurants</h3>
+    <p class="mt-1 text-sm text-gray-500">Get started by creating a new restaurant.</p>
+    <div class="mt-6">
+      <button
+        (click)="showCreateModal = true"
+        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md"
+      >
+        Add Your First Restaurant
+      </button>
+    </div>
+  </div>
+
+  <!-- ===== MODALS ===== -->
+
+  <!-- Menu Items Modal -->
+  <div
+    *ngIf="showMenuModal"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+    (click)="closeMenuModal()"
+  >
+    <div
+      class="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-hidden"
+      (click)="$event.stopPropagation()"
+    >
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between px-6 py-5 border-b border-gray-200">
+        <h3 class="text-xl font-semibold text-gray-900">Menu Items - {{selectedRestaurant?.name}}</h3>
+        <div class="flex items-center gap-3">
+          <button
+            (click)="showAddMenuItem = true"
+            class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-md transition-colors"
+          >
+            Add Item
+          </button>
+          <button
+            (click)="closeMenuModal()"
+            class="text-gray-400 hover:text-gray-600 text-2xl font-light focus:outline-none"
+          >
+            &times;
+          </button>
+        </div>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-6 overflow-y-auto max-h-[70vh]">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div
+            *ngFor="let item of menuItems"
+            class="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow group"
+          >
+            <img
+              [src]="item.image_url || 'https://source.unsplash.com/random/400x300?food,dish&sig=' + item.id"
+              [alt]="item.name"
+              class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+              onerror="this.src='https://via.placeholder.com/400x300?text=Food+Image'"
+            />
+            <div class="p-5">
+              <h4 class="text-lg font-semibold text-gray-900 mb-2">{{item.name}}</h4>
+              <p class="text-gray-600 text-sm mb-4 line-clamp-2">{{item.description}}</p>
+              <div class="flex items-center justify-between">
+                <span class="text-xl font-bold text-blue-600">${{item.price | number:'1.2-2'}}</span>
+                <div class="flex gap-2">
+                  <button
+                    (click)="editMenuItem(item)"
+                    class="px-3 py-1 bg-gray-600 hover:bg-gray-700 text-white text-xs font-medium rounded-md transition-colors"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    (click)="deleteMenuItem(item.id)"
+                    class="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-md transition-colors"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Restaurant Create/Edit Modal -->
+  <div
+    *ngIf="showCreateModal || showEditModal"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+    (click)="closeModal()"
+  >
+    <div
+      class="bg-white rounded-xl shadow-xl w-full max-w-md"
+      (click)="$event.stopPropagation()"
+    >
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between px-6 py-5 border-b border-gray-200">
+        <h3 class="text-xl font-semibold text-gray-900">
+          {{showEditModal ? 'Edit Restaurant' : 'Add New Restaurant'}}
+        </h3>
+        <button
+          (click)="closeModal()"
+          class="text-gray-400 hover:text-gray-600 text-2xl font-light focus:outline-none"
+        >
+          &times;
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-6">
+        <form (ngSubmit)="saveRestaurant()" class="space-y-5">
+          <div>
+            <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Restaurant Name</label>
+            <input
+              type="text"
+              id="name"
+              [(ngModel)]="currentRestaurant.name"
+              name="name"
+              required
+              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+
+          <div>
+            <label for="address" class="block text-sm font-medium text-gray-700 mb-1">Address</label>
+            <input
+              type="text"
+              id="address"
+              [(ngModel)]="currentRestaurant.address"
+              name="address"
+              required
+              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+          <div>
+            <label for="image_url" class="block text-sm font-medium text-gray-700 mb-1">Thumbnail URL</label>
+            <input
+              type="text"
+              id="image_url"
+              [(ngModel)]="currentRestaurant.image_url"
+              name="image_url"
+              required
+              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+
+          <div>
+            <label for="rating" class="block text-sm font-medium text-gray-700 mb-1">Rating</label>
+            <input
+              type="number"
+              id="rating"
+              [(ngModel)]="currentRestaurant.rating"
+              name="rating"
+              min="0"
+              max="5"
+              step="0.1"
+              required
+              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+
+          <div>
+            <label for="owner_id" class="block text-sm font-medium text-gray-700 mb-1">Owner ID</label>
+            <input
+              type="number"
+              id="owner_id"
+              [(ngModel)]="currentRestaurant.owner_id"
+              name="owner_id"
+              required
+              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+
+          <!-- Modal Actions -->
+          <div class="flex gap-3 pt-4">
+            <button
+              type="button"
+              (click)="closeModal()"
+              class="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-lg transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+            >
+              {{showEditModal ? 'Update' : 'Create'}}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Menu Item Create/Edit Modal -->
+  <div
+    *ngIf="showAddMenuItem || showEditMenuItem"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+    (click)="closeMenuItemModal()"
+  >
+    <div
+      class="bg-white rounded-xl shadow-xl w-full max-w-md"
+      (click)="$event.stopPropagation()"
+    >
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between px-6 py-5 border-b border-gray-200">
+        <h3 class="text-xl font-semibold text-gray-900">
+          {{showEditMenuItem ? 'Edit Menu Item' : 'Add Menu Item'}}
+        </h3>
+        <button
+          (click)="closeMenuItemModal()"
+          class="text-gray-400 hover:text-gray-600 text-2xl font-light focus:outline-none"
+        >
+          &times;
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-6">
+        <form (ngSubmit)="saveMenuItem()" class="space-y-5">
+          <div>
+            <label for="itemName" class="block text-sm font-medium text-gray-700 mb-1">Item Name</label>
+            <input
+              type="text"
+              id="itemName"
+              [(ngModel)]="currentMenuItem.name"
+              name="itemName"
+              required
+              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+
+          <div>
+            <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <textarea
+              id="description"
+              [(ngModel)]="currentMenuItem.description"
+              name="description"
+              required
+              rows="3"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+            ></textarea>
+          </div>
+
+          <div>
+            <label for="price" class="block text-sm font-medium text-gray-700 mb-1">Price</label>
+            <input
+              type="number"
+              id="price"
+              [(ngModel)]="currentMenuItem.price"
+              name="price"
+              step="0.01"
+              required
+              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+
+          <div>
+            <label for="image_url" class="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
+            <input
+              type="url"
+              id="image_url"
+              [(ngModel)]="currentMenuItem.image_url"
+              name="image_url"
+              placeholder="https://example.com/image.jpg"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+            <p class="text-xs text-gray-500 mt-1">Leave blank for random food image</p>
+          </div>
+
+          <!-- Modal Actions -->
+          <div class="flex gap-3 pt-4">
+            <button
+              type="button"
+              (click)="closeMenuItemModal()"
+              class="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-lg transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+            >
+              {{showEditMenuItem ? 'Update' : 'Create'}}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
