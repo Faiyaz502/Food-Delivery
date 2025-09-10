@@ -1,17 +1,16 @@
-
-import { Component, Input, OnInit, ViewChild, ElementRef, OnChanges } from '@angular/core';
+import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
 
 Chart.register(...registerables);
 
 @Component({
-  selector: 'app-test',
-  templateUrl: './test.component.html',
-  styleUrls: ['./test.component.scss']
+  selector: 'app-admin-chart',
+  templateUrl: './admin-chart.component.html',
+  styleUrls: ['./admin-chart.component.scss']
 })
-export class TestComponent {
+export class AdminChartComponent {
 
-  @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
+   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
 
   @Input() type: ChartConfiguration['type'] = 'bar';
   @Input() labels: string[] = [];
@@ -55,6 +54,5 @@ export class TestComponent {
       } as any
     });
   }
-
 
 }
