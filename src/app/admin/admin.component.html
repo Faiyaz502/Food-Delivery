@@ -1,13 +1,9 @@
- <div class="flex min-vh-100 bg-white">
-      <app-sidebar></app-sidebar>
+<div class="flex ">
+  <app-sidebar></app-sidebar>
 
-      <main class="flex-1 ml-[280px] min-h-screen">
-        <div >
-          <router-outlet></router-outlet>
-        </div>
-      </main>
- </div>
-
-
-
-
+  <div class="ml-0 md:ml-64 transition-all duration-300">
+    <main class="p-6 ">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

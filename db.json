@@ -41,6 +41,20 @@
       "email": "www.fahim123@gmail.com",
       "phone": "56496465165",
       "role": "restaurant_owner"
+    },
+    {
+      "id": "cc16",
+      "name": "Akib Faiyaz",
+      "email": "www.fahim.faizas@gmail.com",
+      "phone": "01977291166",
+      "role": "customer"
+    },
+    {
+      "id": "4f0d",
+      "name": "Akib Faiyaz Fahim",
+      "email": "www.fahim.faizas@gmail.com",
+      "phone": "01977291166",
+      "role": "restaurant_owner"
     }
   ],
   "restaurants": [
@@ -124,9 +138,10 @@
       "id": "1",
       "user_id": 1,
       "total_amount": 28.98,
-      "status": "delivered",
+      "status": "in_transit",
       "payment_status": "paid",
-      "created_at": "2024-01-15T10:30:00Z"
+      "created_at": "2024-01-15T10:30:00Z",
+      "rider_id": "2"
     },
     {
       "id": "2",

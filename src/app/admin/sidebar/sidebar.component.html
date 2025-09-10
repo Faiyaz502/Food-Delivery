@@ -1,54 +1,94 @@
- <aside class="sidebar">
-      <div class="sidebar-header">
-        <h2> Admin Dashboard</h2>
-      </div>
+<!-- Toggle button for mobile -->
+<div class="p-4 md:hidden">
+  <button
+    class="text-white bg-red-500 hover:bg-red-800 font-medium rounded-lg px-2 py-2"
+    (click)="toggleSidebar()"
+  >
+    <i class="fa-solid fa-ellipsis-vertical"></i>
+  </button>
+</div>
 
-      <nav class="sidebar-nav">
-        <div class="nav-section">
-          <div class="nav-title">MAIN</div>
-          <a routerLink="dashboard" class="nav-item"
-             (click)="setActive('dashboard')">
-            <span class="nav-icon">📊</span>
-            Dashboard
-          </a>
-          <a routerLink="" class="nav-item" [class.active]="activeSection === 'analytics'"
-             (click)="setActive('analytics')">
-            <span class="nav-icon">📈</span>
-            Analytics
-          </a>
-        </div>
+<!-- Sidebar -->
+<div
+  class="fixed top-0 left-0 z-50 w-64 h-screen p-4 overflow-y-auto bg-white dark:bg-gray-800 transition-transform duration-300"
+  [class.-translate-x-full]="!sidebarOpen && isMobile"
+>
+  <h5 class="text-base font-semibold text-gray-500 uppercase dark:text-gray-400 mb-4">Menu</h5>
 
-        <div class="nav-section">
-          <div class="nav-title">MANAGEMENT</div>
-          <a routerLink="users" class="nav-item" [class.active]="activeSection === 'users'"
-             (click)="setActive('users')">
-            <span class="nav-icon">👥</span>
-            Users
-          </a>
-          <a routerLink="restaurant" class="nav-item" [class.active]="activeSection === 'restaurants'"
-             (click)="setActive('restaurants')">
-            <span class="nav-icon">🏪</span>
-            Restaurants
-          </a>
-          <a routerLink="orders" class="nav-item" [class.active]="activeSection === 'orders'"
-             (click)="setActive('orders')">
-            <span class="nav-icon">📦</span>
-            Orders
-          </a>
-          <a routerLink="riders" class="nav-item" [class.active]="activeSection === 'riders'"
-             (click)="setActive('riders')">
-            <span class="nav-icon">🏍️</span>
-            Riders
-          </a>
-        </div>
+  <!-- Close button for mobile -->
+  <button
+    type="button"
+    class="absolute top-2 right-2 p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-600"
+    *ngIf="isMobile"
+    (click)="closeSidebar()"
+  >
+    ✖
+  </button>
 
-        <div class="nav-section">
-          <div class="nav-title">SERVICES</div>
-          <a routerLink="catering" class="nav-item" [class.active]="activeSection === 'catering'"
-             (click)="setActive('catering')">
-            <span class="nav-icon">🍽️</span>
-            Catering
-          </a>
-        </div>
-      </nav>
-    </aside>
+  <!-- Navigation links -->
+  <ul class="space-y-2 font-medium">
+    <li>
+      <a routerLink="dashboard"
+         class="flex items-center p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+         (click)="closeSidebar()"
+      >
+        📊 Dashboard
+      </a>
+    </li>
+    <li>
+      <a routerLink="analytics"
+         class="flex items-center p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+         (click)="closeSidebar()"
+      >
+        📈 Analytics
+      </a>
+    </li>
+    <li>
+      <a routerLink="users"
+         class="flex items-center p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+         (click)="closeSidebar()"
+      >
+        👥 Users
+      </a>
+    </li>
+    <li>
+      <a routerLink="restaurant"
+         class="flex items-center p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+         (click)="closeSidebar()"
+      >
+        🏪 Restaurants
+      </a>
+    </li>
+    <li>
+      <a routerLink="orders"
+         class="flex items-center p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+         (click)="closeSidebar()"
+      >
+        📦 Orders
+      </a>
+    </li>
+    <li>
+      <a routerLink="riders"
+         class="flex items-center p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+         (click)="closeSidebar()"
+      >
+        🏍️ Riders
+      </a>
+    </li>
+    <li>
+      <a routerLink="catering"
+         class="flex items-center p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+         (click)="closeSidebar()"
+      >
+        🍽️ Catering
+      </a>
+    </li>
+  </ul>
+</div>
+
+<!-- Overlay for mobile -->
+<div
+  class="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden transition-opacity"
+  *ngIf="sidebarOpen && isMobile"
+  (click)="closeSidebar()"
+></div>

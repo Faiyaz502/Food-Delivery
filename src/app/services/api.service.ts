@@ -86,9 +86,18 @@ export class ApiService {
     return this.http.get<Order[]>(`${this.baseUrl}/orders`);
   }
 
+
+ createOrder(order: Omit<Order, 'id'>): Observable<Order> { 
+  return this.http.post<Order>(`${this.baseUrl}/orders`, order);
+}
+
   updateOrderStatus(id: number, status: string): Observable<Order> {
     return this.http.patch<Order>(`${this.baseUrl}/orders/${id}`, { status });
   }
+  
+  updateOrder(id: number, order: Partial<Order>): Observable<Order> {
+  return this.http.patch<Order>(`${this.baseUrl}/orders/${id}`, order);
+}
 
   // Payments
   getPayments(): Observable<Payment[]> {
