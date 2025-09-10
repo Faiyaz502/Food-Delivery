@@ -1,6 +1,8 @@
 export interface OrderItem {
-  menu_item_id: number;
-  name: string;
-  price: number;
+  id: number;
+  order_id: number;
+  product_id: number;
   quantity: number;
+  price: number;
+  product_name?: string;
 }

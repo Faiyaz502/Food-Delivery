@@ -1,213 +1,339 @@
- .content {
-      padding: 32px;
-    }
+// Custom scrollbar styling
+.max-h-96::-webkit-scrollbar {
+  width: 8px;
+}
 
-    .page-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 32px;
-    }
+.max-h-96::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
 
-    .page-header h1 {
-      font-size: 28px;
-      font-weight: 700;
-      color: #1e293b;
-    }
+.max-h-96::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, rgba(79, 172, 254, 0.5), rgba(147, 51, 234, 0.5));
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
 
-    .page-stats {
-      display: flex;
-      gap: 24px;
-    }
+.max-h-96::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to bottom, rgba(79, 172, 254, 0.7), rgba(147, 51, 234, 0.7));
+}
 
-    .stat {
-      background: #f8fafc;
-      padding: 8px 16px;
-      border-radius: 8px;
-      font-weight: 500;
-      color: #64748b;
-    }
+// Smooth animations for hover effects
+.group:hover .group-hover\:scale-105 {
+  transform: scale(1.05);
+}
 
-    .table-container {
-      overflow-x: auto;
-    }
+.group:hover .group-hover\:scale-110 {
+  transform: scale(1.10);
+}
 
-    .table {
-      width: 100%;
-      border-collapse: collapse;
-    }
+// Custom focus styles for better accessibility
+input:focus,
+select:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.3);
+}
 
-    .table th,
-    .table td {
-      padding: 12px;
-      text-align: left;
-      border-bottom: 1px solid #e5e7eb;
-    }
+// Loading spinner animation (if you want to add loading states)
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
 
-    .table th {
-      background-color: #f8fafc;
-      font-weight: 600;
-      color: #374151;
-    }
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
 
-    .table tbody tr:hover {
-      background-color: #f8fafc;
-    }
+// Pulse animation for status indicators
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
 
-    .status-select {
-      padding: 4px 8px;
-      border: 1px solid #d1d5db;
-      border-radius: 4px;
-      font-size: 12px;
-      background: white;
-    }
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
 
-    .status-badge {
-      padding: 4px 8px;
-      border-radius: 12px;
-      font-size: 10px;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
+// Gradient text animation
+@keyframes gradient-x {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
 
-    .status-paid {
-      background: #dcfce7;
-      color: #166534;
-    }
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-x 3s ease infinite;
+}
 
-    .status-pending {
-      background: #fef3c7;
-      color: #92400e;
-    }
+// Floating animation for cards
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
 
-    .status-failed {
-      background: #fecaca;
-      color: #991b1b;
-    }
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
 
-    .btn-sm {
-      padding: 6px 12px;
-      font-size: 12px;
-      margin-right: 8px;
-    }
+// Shimmer effect for loading states
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
 
-    .modal-backdrop {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-    }
+.shimmer {
+  position: relative;
+  overflow: hidden;
 
-    .modal {
-      background: white;
-      border-radius: 12px;
-      width: 600px;
-      max-width: 90vw;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+    transform: translateX(-100%);
+    animation: shimmer 2s infinite;
+  }
+}
 
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 24px;
-      border-bottom: 1px solid #e5e7eb;
-    }
+// Status indicator dots
+.status-dot {
+  position: relative;
 
-    .modal-header h3 {
-      font-size: 20px;
-      font-weight: 600;
-      color: #1e293b;
-      margin: 0;
-    }
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -10px;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
 
-    .modal-close {
-      background: none;
-      border: none;
-      font-size: 24px;
-      cursor: pointer;
-      color: #6b7280;
-    }
+  &.status-pending::before {
+    background: #f59e0b;
+  }
 
-    .modal-body {
-      padding: 24px;
-    }
+  &.status-confirmed::before {
+    background: #3b82f6;
+  }
 
-    .available-riders {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
+  &.status-preparing::before {
+    background: #f97316;
+  }
 
-    .rider-card {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px;
-      border: 1px solid #e5e7eb;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
+  &.status-ready::before {
+    background: #8b5cf6;
+  }
 
-    .rider-card:hover {
-      background: #f8fafc;
-      border-color: #3b82f6;
-    }
+  &.status-in_transit::before {
+    background: #10b981;
+  }
 
-    .rider-info {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
+  &.status-delivered::before {
+    background: #059669;
+  }
 
-    .rider-avatar {
-      font-size: 32px;
-      background: #3b82f6;
-      color: white;
-      padding: 12px;
-      border-radius: 50%;
-    }
+  &.status-cancelled::before {
+    background: #ef4444;
+  }
+}
 
-    .rider-details h4 {
-      font-size: 16px;
-      font-weight: 600;
-      color: #1e293b;
-      margin: 0 0 4px 0;
-    }
+// Responsive table improvements
+@media (max-width: 768px) {
+  .table-container {
+    font-size: 14px;
+  }
 
-    .rider-details p {
-      font-size: 12px;
-      color: #64748b;
-      margin: 0;
-    }
+  .px-6 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
 
-    .no-riders {
-      text-align: center;
-      padding: 40px;
-      color: #64748b;
-    }
+  .py-6 {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+}
 
-    @media (max-width: 768px) {
-      .content {
-        padding: 16px;
-      }
+// Modal backdrop blur effect enhancement
+.modal-backdrop {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
 
-      .page-header {
-        flex-direction: column;
-        gap: 16px;
-        align-items: stretch;
-      }
+// Enhanced button hover effects
+.btn-enhanced {
+  position: relative;
+  overflow: hidden;
 
-      .page-stats {
-        flex-wrap: wrap;
-        gap: 12px;
-      }
-    }
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+    transition: left 0.5s;
+  }
+
+  &:hover::before {
+    left: 100%;
+  }
+}
+
+// Glass morphism enhancements
+.glass-effect {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+}
+
+// Priority indicators
+.priority-high {
+  &::after {
+    content: '🔥';
+    margin-left: 0.5rem;
+  }
+}
+
+.priority-medium {
+  &::after {
+    content: '⚠️';
+    margin-left: 0.5rem;
+  }
+}
+
+// Custom select styling
+select {
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  padding-right: 40px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+// Notification styles (if you implement a toast service)
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  padding: 12px 24px;
+  border-radius: 12px;
+  color: white;
+  font-weight: 500;
+  max-width: 400px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  &.success {
+    background: rgba(16, 185, 129, 0.9);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+  }
+
+  &.error {
+    background: rgba(239, 68, 68, 0.9);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+  }
+
+  &.info {
+    background: rgba(59, 130, 246, 0.9);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+  }
+}
+
+// Table row hover effects
+tr:hover td {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+// Enhanced gradient backgrounds
+.bg-gradient-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.bg-gradient-success {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.bg-gradient-warning {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.bg-gradient-danger {
+  background: linear-gradient(135deg, #4facfe 0%, #f093fb 100%);
+}
+
+// Loading skeleton styles
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+// Dark theme skeleton for glass morphism
+.skeleton-glass {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.1) 25%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.1) 75%
+  );
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  border-radius: 8px;
+}

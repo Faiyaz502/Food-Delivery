@@ -1,81 +1,16 @@
-.sidebar {
-      width: 280px;
-      height: 100vh;
-      background: linear-gradient(180deg, #1e293b 0%, #334155 100%);
-      color: white;
-      position: fixed;
-      left: 0;
-      top: 0;
-      overflow-y: auto;
-      box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
-      z-index: 1000;
-    }
+/* Active link styling */
+.active {
+  background: linear-gradient(to right, rgba(2, 132, 199, 0.5), rgba(2, 103, 199, 0.5));
+  border-left: 2px solid #22d3ee;
+  color: white !important;
+}
 
-    .sidebar-header {
-      padding: 24px;
-      border-bottom: 1px solid #475569;
-    }
+/* Smooth icon rotation */
+.group:hover .transition-transform {
+  transform: rotate(12deg);
+}
 
-    .sidebar-header h2 {
-      font-size: 24px;
-      font-weight: 700;
-      margin: 0;
-    }
-
-    .sidebar-nav {
-      padding: 24px 0;
-    }
-
-    .nav-section {
-      margin-bottom: 32px;
-    }
-
-    .nav-title {
-      font-size: 12px;
-      font-weight: 600;
-      color: #94a3b8;
-      margin-bottom: 12px;
-      padding: 0 24px;
-      letter-spacing: 0.5px;
-    }
-
-    .nav-item {
-      display: flex;
-      align-items: center;
-      padding: 12px 24px;
-      color: #e2e8f0;
-      text-decoration: none;
-      font-weight: 500;
-      transition: all 0.2s ease;
-      border-left: 3px solid transparent;
-    }
-
-    .nav-item:hover {
-      background-color: #475569;
-      color: white;
-    }
-
-    .nav-item.active {
-      background-color: #3b82f6;
-      border-left-color: #60a5fa;
-      color: white;
-    }
-
-    .nav-icon {
-      font-size: 18px;
-      margin-right: 12px;
-    }
-
-    @media (max-width: 768px) {
-      .sidebar {
-        transform: translateX(-100%);
-        transition: transform 0.3s ease;
-      }
-
-      .sidebar.open {
-        transform: translateX(0);
-      }
-    }
-
-//
-
+/* Subtle glow on hover */
+.group:hover {
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.15);
+}

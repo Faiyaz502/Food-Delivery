@@ -9,6 +9,20 @@ import { filter } from 'rxjs/operators';
 })
 export class SidebarComponent {
 
+   navItems = [
+    { path: 'dashboard', label: 'Dashboard', icon: '<i class="fas fa-chart-line"></i>' },
+    { path: 'analytics', label: 'Analytics', icon: '<i class="fas fa-chart-pie"></i>' },
+    { path: 'users', label: 'Users', icon: '<i class="fas fa-users"></i>' },
+    { path: 'restaurant', label: 'Restaurants', icon: '<i class="fas fa-store"></i>' },
+    { path: 'orders', label: 'Orders', icon: '<i class="fas fa-box"></i>' },
+  ];
+
+  secondaryNavItems = [
+    { path: 'riders', label: 'Riders', icon: '<i class="fas fa-motorcycle"></i>' },
+    { path: 'catering', label: 'Catering', icon: '<i class="fas fa-utensils"></i>' },
+    { path: 'settings', label: 'Settings', icon: '<i class="fas fa-cog"></i>' },
+  ];
+
   @Output() sectionChange = new EventEmitter<string>();
 
 

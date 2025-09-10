@@ -11,6 +11,8 @@ import { UsersComponent } from './users/users.component';
 import { RidersComponent } from './riders/riders.component';
 import { CateringComponent } from './catering/catering.component';
 import { FormsModule } from '@angular/forms';
+import { TestComponent } from './test/test.component';
+
 
 
 @NgModule({
@@ -22,12 +24,14 @@ import { FormsModule } from '@angular/forms';
     SidebarComponent,
     UsersComponent,
     RidersComponent,
-    CateringComponent
+    CateringComponent,
+    TestComponent
   ],
   imports: [
     CommonModule,
     AdminRoutingModule,
-    FormsModule
+    FormsModule,
+
   ]
 })
 export class AdminModule {

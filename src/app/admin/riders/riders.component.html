@@ -21,7 +21,7 @@
       <div class="h-36 bg-gray-100">
         <img
           [src]="rider.image_url"
-          [alt]="getUserName(rider.user_id)"
+          [alt]="getUserName(rider.id)"
           class="w-full h-full object-cover"
           onerror="this.src='https://via.placeholder.com/400x400/9CA3AF/FFFFFF?text=Rider'"
         />
@@ -32,10 +32,10 @@
         <div class="flex items-start justify-between mb-4">
           <div class="flex items-center gap-3">
             <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
-              {{ (getUserName(rider.user_id) | slice:0:1) || 'R' }}
+              {{ (getUserName(rider.id) | slice:0:1) || 'R' }}
             </div>
             <div>
-              <h3 class="text-lg font-semibold text-gray-900">{{getUserName(rider.user_id)}}</h3>
+              <h3 class="text-lg font-semibold text-gray-900">{{getUserName(rider.id)}}</h3>
               <p class="text-sm text-gray-500">Rider #{{rider.id}}</p>
             </div>
           </div>

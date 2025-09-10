@@ -2,59 +2,67 @@
   "users": [
     {
       "id": "1",
-      "name": "John Doe ",
+      "name": "John Doe",
       "email": "john@example.com",
       "phone": "+1-555-0123",
-      "role": "customer"
+      "role": "customer",
+      "created_at": "2024-01-01T09:00:00Z"
     },
     {
       "id": "2",
       "name": "Jane Smith",
       "email": "jane@example.com",
       "phone": "+1-555-0124",
-      "role": "restaurant_owner"
+      "role": "restaurant_owner",
+      "created_at": "2024-01-05T10:15:00Z"
     },
     {
       "id": "3",
       "name": "Mike Wilson",
       "email": "mike@example.com",
       "phone": "+1-555-0125",
-      "role": "rider"
+      "role": "rider",
+      "created_at": "2024-01-08T14:30:00Z"
     },
     {
       "id": "4",
       "name": "Sarah Johnson",
       "email": "sarah@example.com",
       "phone": "+1-555-0126",
-      "role": "customer"
+      "role": "customer",
+      "created_at": "2024-01-12T11:20:00Z"
     },
     {
-      "id": "5ec3",
-      "name": "fahim",
-      "email": "www.fahim123@gmail.com",
-      "phone": "56496465165",
-      "role": "customer"
+      "id": "5",
+      "name": "Fahim Rahman",
+      "email": "fahim@example.com",
+      "phone": "+880-172-1234567",
+      "role": "customer",
+      "created_at": "2024-02-01T09:45:00Z"
     },
     {
-      "id": "9921",
-      "name": "fahim",
-      "email": "www.fahim123@gmail.com",
-      "phone": "56496465165",
-      "role": "restaurant_owner"
-    },
-    {
-      "id": "cc16",
+      "id": "6",
       "name": "Akib Faiyaz",
-      "email": "www.fahim.faizas@gmail.com",
-      "phone": "01977291166",
-      "role": "customer"
+      "email": "akib@example.com",
+      "phone": "+880-172-7654321",
+      "role": "restaurant_owner",
+      "created_at": "2024-02-10T11:10:00Z"
     },
     {
-      "id": "4f0d",
-      "name": "Akib Faiyaz Fahim",
-      "email": "www.fahim.faizas@gmail.com",
-      "phone": "01977291166",
-      "role": "restaurant_owner"
+      "id": "7",
+      "name": "Tom Hanks",
+      "email": "tom@example.com",
+      "phone": "+1-555-0127",
+      "role": "customer",
+      "created_at": "2024-03-01T08:00:00Z"
+    },
+    {
+      "id": "8",
+      "name": "Emma Watson",
+      "email": "emma@example.com",
+      "phone": "+1-555-0128",
+      "role": "customer",
+      "created_at": "2024-03-05T10:25:00Z"
     }
   ],
   "restaurants": [
@@ -155,7 +163,7 @@
       "id": "3",
       "user_id": 1,
       "total_amount": 35.97,
-      "status": "in_transit",
+      "status": "ready",
       "payment_status": "paid",
       "created_at": "2024-01-15T12:15:00Z"
     }

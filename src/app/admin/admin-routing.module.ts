@@ -7,6 +7,7 @@ import { UsersComponent } from './users/users.component';
 import { RidersComponent } from './riders/riders.component';
 import { CateringComponent } from './catering/catering.component';
 import { RestaurantsComponent } from './restaurants/restaurants.component';
+import { TestComponent } from './test/test.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent },
