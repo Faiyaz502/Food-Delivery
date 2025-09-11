@@ -15,6 +15,8 @@ export class SidebarComponent {
     { path: 'users', label: 'Users', icon: '<i class="fas fa-users"></i>' },
     { path: 'restaurant', label: 'Restaurants', icon: '<i class="fas fa-store"></i>' },
     { path: 'orders', label: 'Orders', icon: '<i class="fas fa-box"></i>' },
+    { path: 'reviews', label: 'Reviews', icon: '<i class="fa-solid fa-star"></i>' },
+     
   ];
 
   secondaryNavItems = [

@@ -1,14 +1,156 @@
 <div class="p-6 bg-gray-50 min-h-screen">
   <!-- Page Header -->
-  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
-    <h1 class="text-3xl font-bold text-gray-900">Restaurant Management</h1>
-    <button
-      (click)="showCreateModal = true"
-      class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-    >
-      Add New Restaurant
-    </button>
+  <div class="bg-white shadow-sm border-b border-gray-300 py-4 my-4 rounded ">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-12">
+      <div class="flex items-center space-x-3">
+        <div class="flex-shrink-0">
+          <i class="fas fa-utensils text-xl text-indigo-600"></i>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold text-gray-900">Restaurant Dashboard</h1>
+          <p class="text-xs text-gray-500">Manage your restaurant network</p>
+        </div>
+      </div>
+
+      <!-- Header Actions -->
+      <div class="flex items-center space-x-3">
+        <div class="relative">
+          <input
+            type="text"
+            placeholder="Search..."
+            class="w-56 pl-8 pr-3 py-1.5 border border-gray-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+          >
+          <i class="fas fa-search absolute left-2.5 top-2 text-gray-400 text-sm"></i>
+        </div>
+
+        <div class="relative">
+          <select class="appearance-none bg-white border border-gray-300 rounded-lg px-3 py-1.5 pr-6 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <option>All</option>
+            <option>High Rated</option>
+            <option>Medium Rated</option>
+            <option>Low Rated</option>
+          </select>
+        </div>
+
+        <button (click)="showCreateModal = true" class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-sky-700 hover:to-sky-500 text-white font-semibold py-2.5 p-4 rounded-full transition-transform duration-300 transform hover:scale-105  shadow-md text-sm flex items-center space-x-1.5">
+          <i class="fas fa-plus"></i><span>Add Restaurant</span>
+        </button>
+      </div>
+    </div>
   </div>
+</div>
+
+
+
+
+
+ <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div
+        class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-4 text-white shadow-md transform transition-all duration-200 hover:scale-105"
+      >
+        <p class="text-blue-100 text-xs font-medium">Total Restaurants</p>
+        <p class="text-2xl font-bold">24</p>
+        <p class="text-blue-100 text-[10px] mt-1 flex items-center">
+          <i class="fas fa-arrow-up mr-1 text-[10px]"></i>12% from last month
+        </p>
+        <div
+          class="bg-white bg-opacity-20 rounded-full p-2 mt-3 w-8 h-8 flex items-center justify-center"
+        >
+          <i class="fas fa-store text-xl"></i>
+        </div>
+      </div>
+
+      <div
+        class="bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl p-4 text-white shadow-md transform transition-all duration-200 hover:scale-105"
+      >
+        <p class="text-green-100 text-xs font-medium">Average Rating</p>
+        <p class="text-2xl font-bold">4.6</p>
+        <p class="text-green-100 text-[10px] mt-1 flex items-center">
+          <i class="fas fa-star mr-1 text-[10px]"></i>Excellent performance
+        </p>
+        <div
+          class="bg-white bg-opacity-20 rounded-full p-2 mt-3 w-8 h-8 flex items-center justify-center"
+        >
+          <i class="fas fa-star text-xl"></i>
+        </div>
+      </div>
+
+      <div
+        class="bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl p-4 text-white shadow-md transform transition-all duration-200 hover:scale-105"
+      >
+        <p class="text-purple-100 text-xs font-medium">Total Menu Items</p>
+        <p class="text-2xl font-bold">128</p>
+        <p class="text-purple-100 text-[10px] mt-1 flex items-center">
+          <i class="fas fa-utensils mr-1 text-[10px]"></i>Diverse offerings
+        </p>
+        <div
+          class="bg-white bg-opacity-20 rounded-full p-2 mt-3 w-8 h-8 flex items-center justify-center"
+        >
+          <i class="fas fa-hamburger text-xl"></i>
+        </div>
+      </div>
+
+      <div
+        class="bg-gradient-to-br from-orange-500 to-red-600 rounded-xl p-4 text-white shadow-md transform transition-all duration-200 hover:scale-105"
+      >
+        <p class="text-orange-100 text-xs font-medium">Active Locations</p>
+        <p class="text-2xl font-bold">8</p>
+        <p class="text-orange-100 text-[10px] mt-1 flex items-center">
+          <i class="fas fa-map-marker-alt mr-1 text-[10px]"></i>Serving
+          nationwide
+        </p>
+        <div
+          class="bg-white bg-opacity-20 rounded-full p-2 mt-3 w-8 h-8 flex items-center justify-center"
+        >
+          <i class="fas fa-map-marked-alt text-xl"></i>
+        </div>
+      </div>
+    </div>
+
+      <div class="mb-8">
+      <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+        <div class="p-6 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">
+            Restaurant Locations
+          </h3>
+          <p class="text-gray-600 mt-1">
+            Interactive map showing all restaurant locations
+          </p>
+        </div>
+        <div
+          class="h-96 bg-gray-100 flex items-center justify-center text-gray-400"
+        >
+          Map Placeholder
+        </div>
+      </div>
+    </div>
+
+
+     <div class="flex items-center justify-between mb-6">
+      <div class="flex items-center space-x-4">
+        <span class="text-gray-700 font-medium">View:</span>
+        <div class="bg-white rounded-lg p-1 shadow-sm border border-gray-200">
+          <button
+            class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium"
+          >
+            Grid
+          </button>
+          <button
+            class="text-gray-600 hover:text-gray-800 px-4 py-2 rounded-md text-sm font-medium"
+          >
+            List
+          </button>
+          <button
+            class="text-gray-600 hover:text-gray-800 px-4 py-2 rounded-md text-sm font-medium"
+          >
+            Map
+          </button>
+        </div>
+      </div>
+
+      <div class="text-sm text-gray-500">Showing 8 of 24 restaurants</div>
+    </div>
 
   <!-- Restaurant Cards Grid -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -349,6 +491,3 @@
           </div>
         </form>
       </div>
-    </div>
-  </div>
-</div>

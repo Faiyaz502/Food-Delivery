@@ -72,6 +72,7 @@
       "address": "123 Main St, Downtown",
       "rating": 4.5,
       "owner_id": 2,
+      "status": "active",
       "image_url": "https://plus.unsplash.com/premium_photo-1661883237884-263e8de8869b?q=80&w=889&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
     },
     {
@@ -80,6 +81,7 @@
       "address": "456 Oak Ave, Midtown",
       "rating": 4.2,
       "owner_id": 2,
+      "status": "active",
       "image_url": "https://plus.unsplash.com/premium_photo-1661953124283-76d0a8436b87?q=80&w=888&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
     },
     {
@@ -88,7 +90,16 @@
       "address": "789 Pine St, Uptown",
       "rating": 4.8,
       "owner_id": 2,
+      "status": "active",
       "image_url": "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=774&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+    },
+    {
+      "id": "c266",
+      "name": "The Forks Market",
+      "address": "Winnipeg, MB, Canada",
+      "rating": 5,
+      "owner_id": 0,
+      "image_url": "https://images.unsplash.com/photo-1583183711790-4c62f0a040a8?q=80&w=435&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
     }
   ],
   "menuItems": [
@@ -344,7 +355,7 @@
       "id": "24",
       "user_id": 3,
       "total_amount": 36,
-      "status": "ready",
+      "status": "in_transit",
       "payment_status": "paid",
       "created_at": "2024-12-20T16:45:00Z",
       "rider_id": "4"
@@ -378,7 +389,7 @@
       "id": "1",
       "user_id": 3,
       "vehicle_type": "motorcycle",
-      "availability": false,
+      "availability": true,
       "earnings": 1250.75,
       "image_url": "https://images.unsplash.com/photo-1522556189639-b150ed9c4330?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
     },
@@ -386,7 +397,7 @@
       "id": "2",
       "user_id": 5,
       "vehicle_type": "bicycle",
-      "availability": false,
+      "availability": true,
       "earnings": 890.5,
       "image_url": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
     },

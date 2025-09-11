@@ -8,12 +8,12 @@ import { RidersComponent } from './riders/riders.component';
 import { CateringComponent } from './catering/catering.component';
 import { RestaurantsComponent } from './restaurants/restaurants.component';
 import { TestComponent } from './test/test.component';
-import { AnalyticsComponent } from '../analytics/analytics.component';
+
 import { AdminAnalyticsComponent } from './admin-analytics/admin-analytics.component';
-import { AnalyticsModule } from '../analytics/analytics.module';
+
 
 const routes: Routes = [
-  { path: '', component: DashboardComponent },
+  { path: '', component: TestComponent },
   { path: 'dashboard', component: DashboardComponent },
   { path: 'adminAnalytics', component: AdminAnalyticsComponent },
   { path: 'orders', component: OrdersComponent },
