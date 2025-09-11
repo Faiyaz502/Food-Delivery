@@ -12,6 +12,11 @@ import { RidersComponent } from './riders/riders.component';
 import { CateringComponent } from './catering/catering.component';
 import { FormsModule } from '@angular/forms';
 import { TestComponent } from './test/test.component';
+import { AnalyticsModule } from '../analytics/analytics.module';
+import { AdminAnalyticsComponent } from './admin-analytics/admin-analytics.component';
+import { AnalyticsComponent } from '../analytics/analytics.component';
+
+
 
 
 
@@ -25,12 +30,17 @@ import { TestComponent } from './test/test.component';
     UsersComponent,
     RidersComponent,
     CateringComponent,
-    TestComponent
+    TestComponent,
+    AdminAnalyticsComponent
+    
+ 
+       
   ],
   imports: [
     CommonModule,
     AdminRoutingModule,
     FormsModule,
+    AnalyticsModule   
 
   ]
 })

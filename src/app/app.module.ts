@@ -18,7 +18,8 @@ import { HttpClientModule } from '@angular/common/http';
     HttpClientModule,
    
     NgIf,
-    NgFor
+    NgFor,
+    
 
   ],
   providers: [],

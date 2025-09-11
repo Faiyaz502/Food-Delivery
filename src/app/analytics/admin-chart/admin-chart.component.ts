@@ -5,8 +5,10 @@ Chart.register(...registerables);
 
 @Component({
   selector: 'app-admin-chart',
+  
   templateUrl: './admin-chart.component.html',
-  styleUrls: ['./admin-chart.component.scss']
+  styleUrls: ['./admin-chart.component.scss'] ,
+  
 })
 export class AdminChartComponent {
 

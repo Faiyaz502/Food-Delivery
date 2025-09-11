@@ -5,7 +5,7 @@ import { AnalyticsComponent } from './analytics/analytics.component';
 
 const routes: Routes = [
 
-   { path: '', redirectTo: '/analytics', pathMatch: 'full' },
+   { path: '', redirectTo: '/admin', pathMatch: 'full' },
   { path: 'admin',component:AdminComponent,loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule) },
 
    { path: 'analytics',component:AnalyticsComponent ,loadChildren: () => import('./analytics/analytics.module').then(m => m.AnalyticsModule) }

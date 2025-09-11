@@ -14,6 +14,10 @@ import { AdminChartComponent } from './admin-chart/admin-chart.component';
   imports: [
     CommonModule,
     AnalyticsRoutingModule
+  ],
+  exports: [
+    AdminChartComponent,   // ✅ make it available outside
+    // AnalyticsComponent   // (optional) export if needed
   ]
 })
 export class AnalyticsModule { }
