@@ -1,3 +1,4 @@
+import { CountUpModule } from 'ngx-countup';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -34,15 +35,16 @@ import { HorizantalnavComponent } from './horizantalnav/horizantalnav.component'
     TestComponent,
     AdminAnalyticsComponent,
     HorizantalnavComponent
-    
- 
-       
+
+
+
   ],
   imports: [
     CommonModule,
     AdminRoutingModule,
     FormsModule,
-    AnalyticsModule   
+    AnalyticsModule  ,
+    CountUpModule 
 
   ]
 })

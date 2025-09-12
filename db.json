@@ -159,7 +159,7 @@
       "total_amount": 28.98,
       "status": "delivered",
       "payment_status": "paid",
-      "created_at": "2024-01-15T10:30:00Z",
+      "created_at": "2025-01-15T10:30:00Z",
       "rider_id": "2"
     },
     {
@@ -168,7 +168,7 @@
       "total_amount": 15.99,
       "status": "delivered",
       "payment_status": "paid",
-      "created_at": "2024-01-20T11:45:00Z",
+      "created_at": "2025-01-20T11:45:00Z",
       "rider_id": "1"
     },
     {
@@ -177,7 +177,7 @@
       "total_amount": 35.97,
       "status": "delivered",
       "payment_status": "paid",
-      "created_at": "2024-02-05T12:15:00Z",
+      "created_at": "2025-01-05T12:15:00Z",
       "rider_id": "3"
     },
     {
@@ -186,7 +186,7 @@
       "total_amount": 22.5,
       "status": "delivered",
       "payment_status": "paid",
-      "created_at": "2024-02-18T14:20:00Z",
+      "created_at": "2025-01-18T14:20:00Z",
       "rider_id": "2"
     },
     {
@@ -195,7 +195,7 @@
       "total_amount": 18.75,
       "status": "cancelled",
       "payment_status": "pending",
-      "created_at": "2024-02-10T09:30:00Z"
+      "created_at": "2025-01-10T09:30:00Z"
     },
     {
       "id": "6",
@@ -203,7 +203,7 @@
       "total_amount": 40,
       "status": "ready",
       "payment_status": "paid",
-      "created_at": "2024-03-22T16:45:00Z",
+      "created_at": "2025-01-22T16:45:00Z",
       "rider_id": "4"
     },
     {
@@ -212,7 +212,7 @@
       "total_amount": 50.25,
       "status": "in_transit",
       "payment_status": "paid",
-      "created_at": "2024-04-05T10:00:00Z",
+      "created_at": "2025-01-23T10:00:00Z",
       "rider_id": "1"
     },
     {
@@ -221,7 +221,7 @@
       "total_amount": 32.99,
       "status": "delivered",
       "payment_status": "paid",
-      "created_at": "2024-04-18T11:30:00Z",
+      "created_at": "2025-01-18T11:30:00Z",
       "rider_id": "3"
     },
     {
@@ -230,7 +230,7 @@
       "total_amount": 27.5,
       "status": "ready",
       "payment_status": "paid",
-      "created_at": "2024-04-03T13:00:00Z"
+      "created_at": "2025-01-23T13:00:00Z"
     },
     {
       "id": "10",
@@ -405,7 +405,7 @@
       "id": "3",
       "user_id": 6,
       "vehicle_type": "car",
-      "availability": true,
+      "availability": false,
       "earnings": 1560.25,
       "image_url": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
     }
@@ -451,6 +451,180 @@
       "scheduled_date": "2024-01-20T12:00:00Z",
       "status": "confirmed",
       "delivery_address": "123 Corporate Blvd, Business District"
+    }
+  ],
+  "reviews": [
+    {
+      "id": "1",
+      "user_id": 4,
+      "restaurant_id": 1,
+      "rating": 5,
+      "comment": "Amazing pizza! Fast delivery and great taste.",
+      "created_at": "2025-01-20T14:30:00Z"
+    },
+    {
+      "id": "2",
+      "user_id": 5,
+      "restaurant_id": 2,
+      "rating": 4,
+      "comment": "Good burger, but could be better seasoned.",
+      "created_at": "2025-01-19T12:15:00Z"
+    },
+    {
+      "id": "3",
+      "user_id": 7,
+      "restaurant_id": 3,
+      "rating": 5,
+      "comment": "Best sushi in town! Fresh and delicious.",
+      "created_at": "2025-01-18T19:45:00Z"
+    },
+    {
+      "id": "4",
+      "user_id": 8,
+      "restaurant_id": 1,
+      "rating": 4,
+      "comment": "Great service and tasty food. Will order again!",
+      "created_at": "2025-01-17T16:20:00Z"
+    },
+    {
+      "id": "5",
+      "user_id": 4,
+      "restaurant_id": 2,
+      "rating": 3,
+      "comment": "Average food, delivery was slow.",
+      "created_at": "2025-01-16T13:10:00Z"
+    }
+  ],
+  "pendingRequests": [
+    {
+      "id": "1",
+      "type": "restaurant",
+      "name": "Taco Fiesta",
+      "email": "owner@tacofiesta.com",
+      "phone": "+1-555-0200",
+      "address": "789 Spice Street, Food District",
+      "description": "Authentic Mexican cuisine with fresh ingredients",
+      "status": "approved",
+      "created_at": "2025-01-22T10:30:00Z",
+      "documents": [
+        "business_license.pdf",
+        "food_permit.pdf"
+      ]
+    },
+    {
+      "id": "2",
+      "type": "rider",
+      "name": "Alex Rodriguez",
+      "email": "alex.rider@email.com",
+      "phone": "+1-555-0201",
+      "vehicle_type": "motorcycle",
+      "license_number": "MC123456",
+      "status": "pending",
+      "created_at": "2025-01-21T14:15:00Z",
+      "documents": [
+        "driver_license.pdf",
+        "vehicle_registration.pdf"
+      ]
+    },
+    {
+      "id": "3",
+      "type": "catering",
+      "name": "Elite Events Catering",
+      "email": "contact@eliteevents.com",
+      "phone": "+1-555-0202",
+      "speciality": "Corporate Events & Weddings",
+      "capacity": 500,
+      "status": "pending",
+      "created_at": "2025-01-20T09:45:00Z",
+      "documents": [
+        "catering_license.pdf",
+        "insurance.pdf"
+      ]
+    },
+    {
+      "id": "4",
+      "type": "restaurant",
+      "name": "Healthy Bowls",
+      "email": "info@healthybowls.com",
+      "phone": "+1-555-0203",
+      "address": "456 Green Avenue, Health District",
+      "description": "Fresh, organic, and healthy meal options",
+      "status": "pending",
+      "created_at": "2025-01-19T11:20:00Z",
+      "documents": [
+        "business_license.pdf",
+        "organic_certification.pdf"
+      ]
+    }
+  ],
+  "teamMembers": [
+    {
+      "id": "1",
+      "name": "John Admin",
+      "role": "Super Admin",
+      "email": "john@fooddelivery.com",
+      "status": "active",
+      "last_active": "2025-01-23T10:30:00Z",
+      "avatar": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=400&auto=format&fit=crop"
+    },
+    {
+      "id": "2",
+      "name": "Sarah Manager",
+      "role": "Operations Manager",
+      "email": "sarah@fooddelivery.com",
+      "status": "active",
+      "last_active": "2025-01-23T09:15:00Z",
+      "avatar": "https://images.unsplash.com/photo-1494790108755-2616b612b786?q=80&w=400&auto=format&fit=crop"
+    },
+    {
+      "id": "3",
+      "name": "Mike Support",
+      "role": "Customer Support",
+      "email": "mike@fooddelivery.com",
+      "status": "active",
+      "last_active": "2025-01-23T08:45:00Z",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400&auto=format&fit=crop"
+    },
+    {
+      "id": "4",
+      "name": "Lisa Analytics",
+      "role": "Data Analyst",
+      "email": "lisa@fooddelivery.com",
+      "status": "away",
+      "last_active": "2025-01-22T17:30:00Z",
+      "avatar": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=400&auto=format&fit=crop"
+    }
+  ],
+  "customerLocations": [
+    {
+      "id": "1",
+      "city": "Downtown",
+      "customers": 45,
+      "orders": 120
+    },
+    {
+      "id": "2",
+      "city": "Midtown",
+      "customers": 38,
+      "orders": 95
+    },
+    {
+      "id": "3",
+      "city": "Uptown",
+      "customers": 32,
+      "orders": 78
+    },
+    {
+      "id": "4",
+      "city": "Suburbs",
+      "customers": 28,
+      "orders": 65
+    },
+    {
+      "id": "5",
+      "city": "Business District",
+      "customers": 25,
+      "orders": 55
     }
   ],
   "sales": [

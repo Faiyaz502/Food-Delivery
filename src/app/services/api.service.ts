@@ -8,6 +8,11 @@ import { Payment } from '../Models/payment.model';
 import { Restaurant } from '../Models/restaurant.model';
 import { Rider } from '../Models/rider.model';
 import { User } from '../Models/user.model';
+import { PendingRequest } from '../Models/pending-request.model';
+import { TeamMember } from '../Models/team-member.model';
+import { CustomerLocation } from '../Models/customer-location.model';
+import { Review } from '../Models/review.model';
+import { Sales } from '../Models/sales.model';
 
 
 @Injectable({
@@ -87,14 +92,14 @@ export class ApiService {
   }
 
 
- createOrder(order: Omit<Order, 'id'>): Observable<Order> { 
+ createOrder(order: Omit<Order, 'id'>): Observable<Order> {
   return this.http.post<Order>(`${this.baseUrl}/orders`, order);
 }
 
   updateOrderStatus(id: number, status: string): Observable<Order> {
     return this.http.patch<Order>(`${this.baseUrl}/orders/${id}`, { status });
   }
-  
+
   updateOrder(id: number, order: Partial<Order>): Observable<Order> {
   return this.http.patch<Order>(`${this.baseUrl}/orders/${id}`, order);
 }
@@ -135,6 +140,40 @@ export class ApiService {
     return this.http.get<CateringOrder[]>(`${this.baseUrl}/cateringOrders`);
   }
 
-  
+
+  // Sales
+  getSales(): Observable<Sales[]> {
+    return this.http.get<Sales[]>(`${this.baseUrl}/sales`);
+  }
+
+  // Reviews
+  getReviews(): Observable<Review[]> {
+    return this.http.get<Review[]>(`${this.baseUrl}/reviews`);
+  }
+
+  // Pending Requests
+  getPendingRequests(): Observable<PendingRequest[]> {
+    return this.http.get<PendingRequest[]>(`${this.baseUrl}/pendingRequests`);
+  }
+
+  approveRequest(id: string): Observable<PendingRequest> {
+    return this.http.patch<PendingRequest>(`${this.baseUrl}/pendingRequests/${id}`, { status: 'approved' });
+  }
+
+  rejectRequest(id: string): Observable<PendingRequest> {
+    return this.http.patch<PendingRequest>(`${this.baseUrl}/pendingRequests/${id}`, { status: 'rejected' });
+  }
+
+  // Team Members
+  getTeamMembers(): Observable<TeamMember[]> {
+    return this.http.get<TeamMember[]>(`${this.baseUrl}/teamMembers`);
+  }
+
+  // Customer Locations
+  getCustomerLocations(): Observable<CustomerLocation[]> {
+    return this.http.get<CustomerLocation[]>(`${this.baseUrl}/customerLocations`);
+  }
+
+
 
 }
