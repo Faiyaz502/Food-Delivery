@@ -15,6 +15,7 @@ import { TestComponent } from './test/test.component';
 import { AnalyticsModule } from '../analytics/analytics.module';
 import { AdminAnalyticsComponent } from './admin-analytics/admin-analytics.component';
 import { AnalyticsComponent } from '../analytics/analytics.component';
+import { HorizantalnavComponent } from './horizantalnav/horizantalnav.component';
 
 
 
@@ -31,7 +32,8 @@ import { AnalyticsComponent } from '../analytics/analytics.component';
     RidersComponent,
     CateringComponent,
     TestComponent,
-    AdminAnalyticsComponent
+    AdminAnalyticsComponent,
+    HorizantalnavComponent
     
  
        

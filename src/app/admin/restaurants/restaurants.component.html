@@ -1,180 +1,197 @@
 <div class="p-6 bg-gray-50 min-h-screen">
   <!-- Page Header -->
-  <div class="bg-white shadow-sm border-b border-gray-300 py-4 my-4 rounded ">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex items-center justify-between h-12">
-      <div class="flex items-center space-x-3">
-        <div class="flex-shrink-0">
-          <i class="fas fa-utensils text-xl text-indigo-600"></i>
-        </div>
-        <div>
-          <h1 class="text-xl font-bold text-gray-900">Restaurant Dashboard</h1>
-          <p class="text-xs text-gray-500">Manage your restaurant network</p>
-        </div>
+   <h1 class="text-3xl mb-8 font-bold text-gray-900">
+              Restaurant Daashboard
+            </h1><div class="
+
+  ">
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div
+      class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-4 text-white shadow-md transform transition-all duration-200 hover:scale-105"
+    >
+      <p class="text-blue-100 text-xs font-medium">Total Restaurants</p>
+      <p class="text-2xl font-bold">24</p>
+      <p class="text-blue-100 text-[10px] mt-1 flex items-center">
+        <i class="fas fa-arrow-up mr-1 text-[10px]"></i>12% from last month
+      </p>
+      <div
+        class="bg-white bg-opacity-20 rounded-full p-2 mt-3 w-8 h-8 flex items-center justify-center"
+      >
+        <i class="fas fa-store text-xl"></i>
       </div>
+    </div>
 
-      <!-- Header Actions -->
-      <div class="flex items-center space-x-3">
-        <div class="relative">
-          <input
-            type="text"
-            placeholder="Search..."
-            class="w-56 pl-8 pr-3 py-1.5 border border-gray-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-          >
-          <i class="fas fa-search absolute left-2.5 top-2 text-gray-400 text-sm"></i>
-        </div>
+    <div
+      class="bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl p-4 text-white shadow-md transform transition-all duration-200 hover:scale-105"
+    >
+      <p class="text-green-100 text-xs font-medium">Average Rating</p>
+      <p class="text-2xl font-bold">4.6</p>
+      <p class="text-green-100 text-[10px] mt-1 flex items-center">
+        <i class="fas fa-star mr-1 text-[10px]"></i>Excellent performance
+      </p>
+      <div
+        class="bg-white bg-opacity-20 rounded-full p-2 mt-3 w-8 h-8 flex items-center justify-center"
+      >
+        <i class="fas fa-star text-xl"></i>
+      </div>
+    </div>
 
-        <div class="relative">
-          <select class="appearance-none bg-white border border-gray-300 rounded-lg px-3 py-1.5 pr-6 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-            <option>All</option>
-            <option>High Rated</option>
-            <option>Medium Rated</option>
-            <option>Low Rated</option>
-          </select>
-        </div>
+    <div
+      class="bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl p-4 text-white shadow-md transform transition-all duration-200 hover:scale-105"
+    >
+      <p class="text-purple-100 text-xs font-medium">Total Menu Items</p>
+      <p class="text-2xl font-bold">128</p>
+      <p class="text-purple-100 text-[10px] mt-1 flex items-center">
+        <i class="fas fa-utensils mr-1 text-[10px]"></i>Diverse offerings
+      </p>
+      <div
+        class="bg-white bg-opacity-20 rounded-full p-2 mt-3 w-8 h-8 flex items-center justify-center"
+      >
+        <i class="fas fa-hamburger text-xl"></i>
+      </div>
+    </div>
 
-        <button (click)="showCreateModal = true" class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-sky-700 hover:to-sky-500 text-white font-semibold py-2.5 p-4 rounded-full transition-transform duration-300 transform hover:scale-105  shadow-md text-sm flex items-center space-x-1.5">
-          <i class="fas fa-plus"></i><span>Add Restaurant</span>
-        </button>
+    <div
+      class="bg-gradient-to-br from-orange-500 to-red-600 rounded-xl p-4 text-white shadow-md transform transition-all duration-200 hover:scale-105"
+    >
+      <p class="text-orange-100 text-xs font-medium">Active Locations</p>
+      <p class="text-2xl font-bold">8</p>
+      <p class="text-orange-100 text-[10px] mt-1 flex items-center">
+        <i class="fas fa-map-marker-alt mr-1 text-[10px]"></i>Serving nationwide
+      </p>
+      <div
+        class="bg-white bg-opacity-20 rounded-full p-2 mt-3 w-8 h-8 flex items-center justify-center"
+      >
+        <i class="fas fa-map-marked-alt text-xl"></i>
       </div>
     </div>
   </div>
-</div>
 
-
-
-
-
- <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-      <div
-        class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-4 text-white shadow-md transform transition-all duration-200 hover:scale-105"
-      >
-        <p class="text-blue-100 text-xs font-medium">Total Restaurants</p>
-        <p class="text-2xl font-bold">24</p>
-        <p class="text-blue-100 text-[10px] mt-1 flex items-center">
-          <i class="fas fa-arrow-up mr-1 text-[10px]"></i>12% from last month
+  <div class="mb-8">
+    <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+      <div class="p-6 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-900">
+          Restaurant Locations
+        </h3>
+        <p class="text-gray-600 mt-1">
+          Interactive map showing all restaurant locations
         </p>
-        <div
-          class="bg-white bg-opacity-20 rounded-full p-2 mt-3 w-8 h-8 flex items-center justify-center"
-        >
-          <i class="fas fa-store text-xl"></i>
-        </div>
       </div>
-
       <div
-        class="bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl p-4 text-white shadow-md transform transition-all duration-200 hover:scale-105"
+        class="h-96 bg-gray-100 flex items-center justify-center text-gray-400"
       >
-        <p class="text-green-100 text-xs font-medium">Average Rating</p>
-        <p class="text-2xl font-bold">4.6</p>
-        <p class="text-green-100 text-[10px] mt-1 flex items-center">
-          <i class="fas fa-star mr-1 text-[10px]"></i>Excellent performance
-        </p>
-        <div
-          class="bg-white bg-opacity-20 rounded-full p-2 mt-3 w-8 h-8 flex items-center justify-center"
-        >
-          <i class="fas fa-star text-xl"></i>
-        </div>
-      </div>
-
-      <div
-        class="bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl p-4 text-white shadow-md transform transition-all duration-200 hover:scale-105"
-      >
-        <p class="text-purple-100 text-xs font-medium">Total Menu Items</p>
-        <p class="text-2xl font-bold">128</p>
-        <p class="text-purple-100 text-[10px] mt-1 flex items-center">
-          <i class="fas fa-utensils mr-1 text-[10px]"></i>Diverse offerings
-        </p>
-        <div
-          class="bg-white bg-opacity-20 rounded-full p-2 mt-3 w-8 h-8 flex items-center justify-center"
-        >
-          <i class="fas fa-hamburger text-xl"></i>
-        </div>
-      </div>
-
-      <div
-        class="bg-gradient-to-br from-orange-500 to-red-600 rounded-xl p-4 text-white shadow-md transform transition-all duration-200 hover:scale-105"
-      >
-        <p class="text-orange-100 text-xs font-medium">Active Locations</p>
-        <p class="text-2xl font-bold">8</p>
-        <p class="text-orange-100 text-[10px] mt-1 flex items-center">
-          <i class="fas fa-map-marker-alt mr-1 text-[10px]"></i>Serving
-          nationwide
-        </p>
-        <div
-          class="bg-white bg-opacity-20 rounded-full p-2 mt-3 w-8 h-8 flex items-center justify-center"
-        >
-          <i class="fas fa-map-marked-alt text-xl"></i>
-        </div>
+        Map Placeholder
       </div>
     </div>
+  </div>
 
-      <div class="mb-8">
-      <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
-        <div class="p-6 border-b border-gray-200">
-          <h3 class="text-lg font-semibold text-gray-900">
-            Restaurant Locations
-          </h3>
-          <p class="text-gray-600 mt-1">
-            Interactive map showing all restaurant locations
-          </p>
+    <div class="bg-white shadow-sm border-b border-gray-300 py-4 my-2 rounded">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 rounded">
+      <div class="flex items-center justify-between h-12">
+        <div class="flex items-center space-x-3">
+          <div class="flex-shrink-0">
+            <i class="fas fa-utensils text-xl text-indigo-600"></i>
+          </div>
+          <div>
+            <h1 class="text-xl font-bold text-gray-900">
+              Restaurants
+            </h1>
+            <p class="text-xs text-gray-500">Manage your restaurant network</p>
+          </div>
         </div>
-        <div
-          class="h-96 bg-gray-100 flex items-center justify-center text-gray-400"
-        >
-          Map Placeholder
-        </div>
-      </div>
-    </div>
 
+        <!-- Header Actions -->
+        <div class="flex items-center space-x-3">
+          <div class="relative">
+            <input
+              type="text"
+              placeholder="Search..."
+              class="w-56 pl-8 pr-3 py-1.5 border border-gray-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            />
+            <i
+              class="fas fa-search absolute left-2.5 top-2 text-gray-400 text-sm"
+            ></i>
+          </div>
 
-     <div class="flex items-center justify-between mb-6">
-      <div class="flex items-center space-x-4">
-        <span class="text-gray-700 font-medium">View:</span>
-        <div class="bg-white rounded-lg p-1 shadow-sm border border-gray-200">
+          <div class="relative">
+            <select
+              class="appearance-none bg-white border border-gray-300 rounded-lg px-3 py-1.5 pr-6 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              <option>All</option>
+              <option>High Rated</option>
+              <option>Medium Rated</option>
+              <option>Low Rated</option>
+            </select>
+          </div>
+
           <button
-            class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium"
+            (click)="showCreateModal = true"
+            class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-sky-700 hover:to-sky-500 text-white font-semibold py-2.5 p-4 rounded-full transition-transform duration-300 transform hover:scale-105 shadow-md text-sm flex items-center space-x-1.5"
           >
-            Grid
-          </button>
-          <button
-            class="text-gray-600 hover:text-gray-800 px-4 py-2 rounded-md text-sm font-medium"
-          >
-            List
-          </button>
-          <button
-            class="text-gray-600 hover:text-gray-800 px-4 py-2 rounded-md text-sm font-medium"
-          >
-            Map
+            <i class="fas fa-plus"></i><span>Add Restaurant</span>
           </button>
         </div>
       </div>
-
-      <div class="text-sm text-gray-500">Showing 8 of 24 restaurants</div>
     </div>
+  </div>
+
+  <div class="flex items-center justify-between mb-6">
+    <div class="flex items-center space-x-4">
+      <span class="text-gray-700 font-medium">View:</span>
+      <div class="bg-white rounded-lg p-1 shadow-sm border border-gray-200">
+        <button
+          class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium"
+        >
+          Grid
+        </button>
+        <button
+          class="text-gray-600 hover:text-gray-800 px-4 py-2 rounded-md text-sm font-medium"
+        >
+          List
+        </button>
+        <button
+          class="text-gray-600 hover:text-gray-800 px-4 py-2 rounded-md text-sm font-medium"
+        >
+          Map
+        </button>
+      </div>
+    </div>
+
+    <div class="text-sm text-gray-500">Showing 8 of 24 restaurants</div>
+  </div>
 
   <!-- Restaurant Cards Grid -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+  <div
+    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+  >
     <div
       *ngFor="let restaurant of restaurants; let i = index"
       class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow group"
     >
       <!-- Random Restaurant Photo -->
-  <img
-  [src]="restaurant.image_url"
-  [alt]="restaurant.name"
-  class="w-full h-24 object-cover rounded-lg border border-gray-200 shadow-sm hover:scale-105 transition-transform duration-300"
-  onerror="this.src='https://via.placeholder.com/100?text=No+Image'"
-/>
+      <img
+        [src]="restaurant.image_url"
+        [alt]="restaurant.name"
+        class="w-full h-24 object-cover rounded-lg border border-gray-200 shadow-sm hover:scale-105 transition-transform duration-300"
+        onerror="this.src='https://via.placeholder.com/100?text=No+Image'"
+      />
 
       <div class="p-5">
         <div class="flex items-start justify-between mb-3">
-          <h3 class="text-lg font-semibold text-gray-900 line-clamp-1">{{restaurant.name}}</h3>
-          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
-            ⭐ {{restaurant.rating}}
+          <h3 class="text-lg font-semibold text-gray-900 line-clamp-1">
+            {{ restaurant.name }}
+          </h3>
+          <span
+            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800"
+          >
+            ⭐ {{ restaurant.rating }}
           </span>
         </div>
 
-        <p class="text-gray-600 text-sm mb-4 line-clamp-2">{{restaurant.address}}</p>
+        <p class="text-gray-600 text-sm mb-4 line-clamp-2">
+          {{ restaurant.address }}
+        </p>
 
         <div class="flex gap-2 pt-3 border-t border-gray-100">
           <button
@@ -201,12 +218,27 @@
   </div>
 
   <!-- Empty State (Optional) -->
-  <div *ngIf="!restaurants || restaurants.length === 0" class="text-center py-12">
-    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+  <div
+    *ngIf="!restaurants || restaurants.length === 0"
+    class="text-center py-12"
+  >
+    <svg
+      class="mx-auto h-12 w-12 text-gray-400"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+      />
     </svg>
     <h3 class="mt-2 text-sm font-medium text-gray-900">No restaurants</h3>
-    <p class="mt-1 text-sm text-gray-500">Get started by creating a new restaurant.</p>
+    <p class="mt-1 text-sm text-gray-500">
+      Get started by creating a new restaurant.
+    </p>
     <div class="mt-6">
       <button
         (click)="showCreateModal = true"
@@ -230,8 +262,12 @@
       (click)="$event.stopPropagation()"
     >
       <!-- Modal Header -->
-      <div class="flex items-center justify-between px-6 py-5 border-b border-gray-200">
-        <h3 class="text-xl font-semibold text-gray-900">Menu Items - {{selectedRestaurant?.name}}</h3>
+      <div
+        class="flex items-center justify-between px-6 py-5 border-b border-gray-200"
+      >
+        <h3 class="text-xl font-semibold text-gray-900">
+          Menu Items - {{ selectedRestaurant?.name }}
+        </h3>
         <div class="flex items-center gap-3">
           <button
             (click)="showAddMenuItem = true"
@@ -256,16 +292,26 @@
             class="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow group"
           >
             <img
-              [src]="item.image_url || 'https://source.unsplash.com/random/400x300?food,dish&sig=' + item.id"
+              [src]="
+                item.image_url ||
+                'https://source.unsplash.com/random/400x300?food,dish&sig=' +
+                  item.id
+              "
               [alt]="item.name"
               class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
               onerror="this.src='https://via.placeholder.com/400x300?text=Food+Image'"
             />
             <div class="p-5">
-              <h4 class="text-lg font-semibold text-gray-900 mb-2">{{item.name}}</h4>
-              <p class="text-gray-600 text-sm mb-4 line-clamp-2">{{item.description}}</p>
+              <h4 class="text-lg font-semibold text-gray-900 mb-2">
+                {{ item.name }}
+              </h4>
+              <p class="text-gray-600 text-sm mb-4 line-clamp-2">
+                {{ item.description }}
+              </p>
               <div class="flex items-center justify-between">
-                <span class="text-xl font-bold text-blue-600">${{item.price | number:'1.2-2'}}</span>
+                <span class="text-xl font-bold text-blue-600"
+                  >${{ item.price | number : "1.2-2" }}</span
+                >
                 <div class="flex gap-2">
                   <button
                     (click)="editMenuItem(item)"
@@ -299,9 +345,11 @@
       (click)="$event.stopPropagation()"
     >
       <!-- Modal Header -->
-      <div class="flex items-center justify-between px-6 py-5 border-b border-gray-200">
+      <div
+        class="flex items-center justify-between px-6 py-5 border-b border-gray-200"
+      >
         <h3 class="text-xl font-semibold text-gray-900">
-          {{showEditModal ? 'Edit Restaurant' : 'Add New Restaurant'}}
+          {{ showEditModal ? "Edit Restaurant" : "Add New Restaurant" }}
         </h3>
         <button
           (click)="closeModal()"
@@ -315,7 +363,11 @@
       <div class="p-6">
         <form (ngSubmit)="saveRestaurant()" class="space-y-5">
           <div>
-            <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Restaurant Name</label>
+            <label
+              for="name"
+              class="block text-sm font-medium text-gray-700 mb-1"
+              >Restaurant Name</label
+            >
             <input
               type="text"
               id="name"
@@ -327,7 +379,11 @@
           </div>
 
           <div>
-            <label for="address" class="block text-sm font-medium text-gray-700 mb-1">Address</label>
+            <label
+              for="address"
+              class="block text-sm font-medium text-gray-700 mb-1"
+              >Address</label
+            >
             <input
               type="text"
               id="address"
@@ -338,7 +394,11 @@
             />
           </div>
           <div>
-            <label for="image_url" class="block text-sm font-medium text-gray-700 mb-1">Thumbnail URL</label>
+            <label
+              for="image_url"
+              class="block text-sm font-medium text-gray-700 mb-1"
+              >Thumbnail URL</label
+            >
             <input
               type="text"
               id="image_url"
@@ -350,7 +410,11 @@
           </div>
 
           <div>
-            <label for="rating" class="block text-sm font-medium text-gray-700 mb-1">Rating</label>
+            <label
+              for="rating"
+              class="block text-sm font-medium text-gray-700 mb-1"
+              >Rating</label
+            >
             <input
               type="number"
               id="rating"
@@ -365,7 +429,11 @@
           </div>
 
           <div>
-            <label for="owner_id" class="block text-sm font-medium text-gray-700 mb-1">Owner ID</label>
+            <label
+              for="owner_id"
+              class="block text-sm font-medium text-gray-700 mb-1"
+              >Owner ID</label
+            >
             <input
               type="number"
               id="owner_id"
@@ -389,7 +457,7 @@
               type="submit"
               class="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
             >
-              {{showEditModal ? 'Update' : 'Create'}}
+              {{ showEditModal ? "Update" : "Create" }}
             </button>
           </div>
         </form>
@@ -408,9 +476,11 @@
       (click)="$event.stopPropagation()"
     >
       <!-- Modal Header -->
-      <div class="flex items-center justify-between px-6 py-5 border-b border-gray-200">
+      <div
+        class="flex items-center justify-between px-6 py-5 border-b border-gray-200"
+      >
         <h3 class="text-xl font-semibold text-gray-900">
-          {{showEditMenuItem ? 'Edit Menu Item' : 'Add Menu Item'}}
+          {{ showEditMenuItem ? "Edit Menu Item" : "Add Menu Item" }}
         </h3>
         <button
           (click)="closeMenuItemModal()"
@@ -424,7 +494,11 @@
       <div class="p-6">
         <form (ngSubmit)="saveMenuItem()" class="space-y-5">
           <div>
-            <label for="itemName" class="block text-sm font-medium text-gray-700 mb-1">Item Name</label>
+            <label
+              for="itemName"
+              class="block text-sm font-medium text-gray-700 mb-1"
+              >Item Name</label
+            >
             <input
               type="text"
               id="itemName"
@@ -436,7 +510,11 @@
           </div>
 
           <div>
-            <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <label
+              for="description"
+              class="block text-sm font-medium text-gray-700 mb-1"
+              >Description</label
+            >
             <textarea
               id="description"
               [(ngModel)]="currentMenuItem.description"
@@ -448,7 +526,11 @@
           </div>
 
           <div>
-            <label for="price" class="block text-sm font-medium text-gray-700 mb-1">Price</label>
+            <label
+              for="price"
+              class="block text-sm font-medium text-gray-700 mb-1"
+              >Price</label
+            >
             <input
               type="number"
               id="price"
@@ -461,7 +543,11 @@
           </div>
 
           <div>
-            <label for="image_url" class="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
+            <label
+              for="image_url"
+              class="block text-sm font-medium text-gray-700 mb-1"
+              >Image URL</label
+            >
             <input
               type="url"
               id="image_url"
@@ -470,7 +556,9 @@
               placeholder="https://example.com/image.jpg"
               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
-            <p class="text-xs text-gray-500 mt-1">Leave blank for random food image</p>
+            <p class="text-xs text-gray-500 mt-1">
+              Leave blank for random food image
+            </p>
           </div>
 
           <!-- Modal Actions -->
@@ -486,8 +574,11 @@
               type="submit"
               class="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
             >
-              {{showEditMenuItem ? 'Update' : 'Create'}}
+              {{ showEditMenuItem ? "Update" : "Create" }}
             </button>
           </div>
         </form>
       </div>
+    </div>
+  </div>
+</div>

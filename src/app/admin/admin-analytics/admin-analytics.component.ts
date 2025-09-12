@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { Chart, registerables } from 'chart.js';
 import { AnalyticsModule } from "src/app/analytics/analytics.module";
 import { Order } from 'src/app/Models/order.model';
@@ -7,15 +7,18 @@ import { ApiService } from 'src/app/services/api.service';
 
 @Component({
   selector: 'app-admin-analytics',
-  
+
   templateUrl: './admin-analytics.component.html',
   styleUrls: ['./admin-analytics.component.scss'],
-  
-  
- 
-  
+
+
+
+
 })
 export class AdminAnalyticsComponent {
+
+///Total Order
+
  @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
   chart!: Chart;
 

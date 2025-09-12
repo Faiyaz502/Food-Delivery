@@ -13,7 +13,7 @@ import { AdminAnalyticsComponent } from './admin-analytics/admin-analytics.compo
 
 
 const routes: Routes = [
-  { path: '', component: TestComponent },
+  { path: '', component: DashboardComponent },
   { path: 'dashboard', component: DashboardComponent },
   { path: 'adminAnalytics', component: AdminAnalyticsComponent },
   { path: 'orders', component: OrdersComponent },
