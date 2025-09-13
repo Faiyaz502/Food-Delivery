@@ -4,8 +4,8 @@
     <div class="max-w-7xl mx-auto  sm:px-6 lg:px-8">
       <div class="flex justify-between items-center py-6">
         <div>
-          <h1 class="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-          <p class="text-gray-600">Food Delivery & Catering Management</p>
+          <h1 class="text-3xl font-bold  text-gray-900">Admin Dashboard</h1>
+          <p class="text-gray-600 typing-text">Food Delivery & Catering Management</p>
         </div>
         <div class="flex items-center space-x-4">
           <div class="text-right">
@@ -332,26 +332,61 @@
       </div>
 
 
-         <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Transactions</h3>
-        <div class="space-y-4">
-          <div *ngFor="let transaction of recentTransactions" class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-            <div class="flex-1">
-              <p class="font-medium text-gray-900">Order #15465{{ transaction.id }}</p>
-              <p class="text-sm text-gray-500">{{ transaction.created_at | date:'short' }}</p>
-              <span [class]="'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ' + getOrderStatusClass(transaction.status)">
-                {{ transaction.status | titlecase }}
-              </span>
-            </div>
-            <div class="text-right">
-              <p class="font-bold text-gray-900">${{ transaction.total_amount | number:'1.2-2' }}</p>
-              <p class="text-sm" [class]="transaction.payment_status === 'paid' ? 'text-green-600' : 'text-yellow-600'">
-                {{ transaction.payment_status | titlecase }}
-              </p>
-            </div>
-          </div>
-        </div>
+      
+      <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+  <h3 class="text-xl font-semibold text-gray-800 mb-6 flex items-center gap-2">
+    <i class="fa-solid fa-receipt text-indigo-500"></i>
+    Recent Transactions
+  </h3>
+
+  <div class="space-y-4">
+    <div
+      *ngFor="let transaction of recentTransactions"
+      class="flex items-center justify-between p-4 bg-gray-50 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100 hover:bg-gray-100"
+    >
+      <!-- Left Section -->
+      <div class="flex-1">
+        <p class="font-semibold text-gray-900 text-sm">
+          Order #15465{{ transaction.id }}
+        </p>
+        <p class="text-xs text-gray-500 mt-0.5">
+          {{ transaction.created_at | date:'medium' }}
+        </p>
+        <span
+          [class]="'mt-1 inline-flex items-center px-3 py-0.5 rounded-full text-xs font-medium ' + getOrderStatusClass(transaction.status)"
+        >
+          <i
+            class="fa-solid fa-circle text-[6px] mr-1"
+            [ngClass]="{
+              'text-green-500': transaction.payment_status === 'paid',
+              'text-yellow-500': transaction.payment_status === 'pending',
+              'text-red-500': transaction.status === 'cancelled'
+            }"
+          ></i>
+          {{ transaction.status | titlecase }}
+        </span>
       </div>
+
+      <!-- Right Section -->
+      <div class="text-right space-y-1">
+        <p class="font-bold text-gray-900 text-base">
+          ${{ transaction.total_amount | number:'1.2-2' }}
+        </p>
+        <p
+          class="text-xs font-medium"
+          [class]="transaction.payment_status === 'paid' ? 'text-green-600' : 'text-yellow-600'"
+        >
+          <i
+            class="fa-solid"
+            [ngClass]="transaction.payment_status === 'paid' ? 'fa-check-circle' : 'fa-clock'"
+          ></i>
+          {{ transaction.payment_status | titlecase }}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 
       <!-- Trending Menu Items -->

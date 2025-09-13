@@ -14,6 +14,7 @@ import { TeamMember } from 'src/app/Models/team-member.model';
 import { User } from 'src/app/Models/user.model';
 import {  ApiService } from 'src/app/services/api.service';
 
+
 @Component({
   selector: 'app-admin-analytics',
 
@@ -40,84 +41,96 @@ export class AdminAnalyticsComponent {
      this.loadDashboardData();
   }
 
-  private createMonthlyChart(orders: Order[]) {
-    // Initialize 12 months with 0
-    const monthlyCounts = new Array(12).fill(0);
-    orders.forEach(order => {
-      const date = new Date(order.created_at);
-      const month = date.getMonth();
-      monthlyCounts[month]++;
-    });
 
-    const monthLabels = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-    const ctx = this.chartCanvas.nativeElement.getContext('2d');
-    if (!ctx) return;
+private createMonthlyChart(orders: Order[]) {
+  const monthlyCounts = new Array(12).fill(0);
+  orders.forEach(order => {
+    const date = new Date(order.created_at);
+    monthlyCounts[date.getMonth()]++;
+  });
 
-    // Gradient for bars
-    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-    gradient.addColorStop(0, 'rgba(66, 165, 245, 0.8)');
-    gradient.addColorStop(1, 'rgba(66, 165, 245, 0.3)');
+  const monthLabels = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const ctx = this.chartCanvas.nativeElement.getContext('2d');
+  if (!ctx) return;
 
-    this.chart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: monthLabels,
-        datasets: [{
-          label: 'Orders Monthly Report',
-          data: monthlyCounts,
-          backgroundColor: gradient,
-          borderRadius: 10,
-          borderSkipped: false,
-          maxBarThickness: 50
-        }]
+  const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+  gradient.addColorStop(0, 'rgba(99, 102, 241, 0.9)');
+  gradient.addColorStop(1, 'rgba(59, 130, 246, 0.4)');
+
+  this.chart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: monthLabels,
+      datasets: [{
+        label: 'Orders',
+        data: monthlyCounts,
+        backgroundColor: gradient,
+        borderRadius: 12,
+        borderSkipped: false,
+        hoverBackgroundColor: 'rgba(99,102,241,1)',
+        maxBarThickness: 60,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      layout: {
+        padding: { top: 20, bottom: 20 }
       },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            display: true,
-            labels: {
-              font: { size: 14, weight: 'bold' }
-            }
-          },
-          title: {
-            display: true,
-            text: 'Yearly Orders by Month',
-            font: { size: 20, weight: 'bold' },
-            padding: { top: 10, bottom: 30 }
-          },
-          tooltip: {
-            enabled: true,
-            backgroundColor: 'rgba(0,0,0,0.8)',
-            titleFont: { weight: 'bold', size: 14 },
-            bodyFont: { size: 14 },
-            padding: 10,
-            cornerRadius: 6
+      plugins: {
+        title: {
+          display: true,
+          text: '📊 Monthly Orders Overview',
+          color: '#1e293b',
+          font: { size: 22, weight: 'bold' },
+          padding: { top: 10, bottom: 10 }
+        },
+        subtitle: {
+          display: true,
+          text: `Total Orders: ${orders.length} | Avg / Month: ${(orders.length / 12).toFixed(1)}`,
+          color: '#475569',
+          font: { size: 14, style: 'italic' },
+          padding: { bottom: 20 }
+        },
+        tooltip: {
+          backgroundColor: 'rgba(15, 23, 42, 0.9)',
+          titleFont: { weight: 'bold', size: 14 },
+          bodyFont: { size: 13 },
+          cornerRadius: 8,
+          displayColors: false,
+          callbacks: {
+            label: (ctx) => `Orders: ${ctx.raw}`,
+            afterLabel: (ctx) => `Month: ${ctx.label}`
           }
         },
-        scales: {
-          y: {
-            beginAtZero: true,
-            ticks: { stepSize: 1, font: { size: 12 } },
-            grid: { color: 'rgba(400,400,400,0.5)' }
-          },
-          x: {
-            ticks: { font: { size: 12 } },
-            grid: { display: false }
+        
+        legend: { display: false }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          grid: { color: 'rgba(0,0,0,0.05)' },
+          ticks: {
+            font: { size: 12 },
+            callback: (val) => Number(val) % 1 === 0 ? val : ''
           }
         },
-        animation: {
-          duration: 1500,
-          easing: 'easeOutQuart',
-          onComplete: () => {
-            // optional: do something after animation completes
-          }
+        x: {
+          grid: { display: false },
+          ticks: { font: { size: 12 } }
         }
+      },
+      animation: {
+        duration: 1800,
+        easing: 'easeOutBounce'
+      },
+      hover: {
+        mode: 'nearest',
+        intersect: true
       }
-    });
-  }
+    }
+  })};
 
 
   @ViewChild('salesChart') salesChart!: ElementRef;
