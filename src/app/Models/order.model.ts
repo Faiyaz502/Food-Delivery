@@ -14,10 +14,13 @@ export interface Order {
   phone?: string;
   notes?: string;
   estimated_delivery?: string;
+  rider_id?: string;
 }
 
 
 
-// src/app/Models/rider.model.ts
+
+
+
 
 

@@ -1,8 +1,10 @@
 
 export interface Rider {
   id: number;
+  user_id: number;
   name?: string;
   phone?: string;
+  // document have to apply
   vehicle_type: 'motorcycle' | 'bicycle' | 'car' | 'scooter';
   availability: boolean;
   earnings: number;
@@ -15,4 +17,5 @@ export interface Rider {
     longitude: number;
   };
 }
+
 

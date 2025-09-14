@@ -13,9 +13,10 @@ export class SidebarComponent {
     { path: 'dashboard', label: 'Dashboard', icon: '<i class="fas fa-chart-line"></i>' },
     { path: 'adminAnalytics', label: 'Analytics', icon: '<i class="fas fa-chart-pie"></i>' },
     { path: 'users', label: 'Users', icon: '<i class="fas fa-users"></i>' },
+    { path: 'customer', label: 'Customer', icon: '<i class="fas fa-users"></i>' },
     { path: 'restaurant', label: 'Restaurants', icon: '<i class="fas fa-store"></i>' },
     { path: 'orders', label: 'Orders', icon: '<i class="fas fa-box"></i>' },
-    { path: 'reviews', label: 'Reviews', icon: '<i class="fa-solid fa-star"></i>' },
+    { path: 'review', label: 'Reviews', icon: '<i class="fa-solid fa-star"></i>' },
     { path: 'notification', label: 'Notification', icon: '<i class="fa-solid fa-bell"></i>' },
     { path: 'chat', label: 'Chat', icon: '<i class="fa-solid fa-comments"></i>' },
     { path: 'profile', label: 'Profile', icon: '<i class="fa-solid fa-user"></i>' },
@@ -53,7 +54,11 @@ export class SidebarComponent {
 
   private checkWindowSize() {
     this.isMobile = window.innerWidth < 768; // Tailwind md breakpoint
-    if (!this.isMobile) this.sidebarOpen = true; // keep sidebar open on desktop
+    if (!this.isMobile){
+      this.sidebarOpen = true; // keep sidebar open on desktop
+    } else{
+      this.sidebarOpen= false;
+    }
   }
 
 }

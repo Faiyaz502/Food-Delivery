@@ -1,0 +1,272 @@
+<div class="min-h-screen bg-gradient-to-br from-orange-50 to-pink-50 p-6">
+  <div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-800 mb-2">Review Management</h1>
+      <p class="text-gray-600">Monitor and manage customer reviews</p>
+    </div>
+
+    <!-- View Toggle -->
+    <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+      <div class="flex space-x-4">
+        <button
+          (click)="setView('list')"
+          [class]="'px-4 py-2 rounded-lg font-medium transition-all duration-200 ' + (currentView === 'list' ? 'bg-gradient-to-r from-orange-500 to-pink-500 text-white' : 'text-gray-600 hover:bg-gray-100')">
+          All Reviews
+        </button>
+        <button
+          (click)="setView('flagged')"
+          [class]="'px-4 py-2 rounded-lg font-medium transition-all duration-200 ' + (currentView === 'flagged' ? 'bg-gradient-to-r from-orange-500 to-pink-500 text-white' : 'text-gray-600 hover:bg-gray-100')">
+          Flagged Reviews
+        </button>
+        <button
+          (click)="setView('trends')"
+          [class]="'px-4 py-2 rounded-lg font-medium transition-all duration-200 ' + (currentView === 'trends' ? 'bg-gradient-to-r from-orange-500 to-pink-500 text-white' : 'text-gray-600 hover:bg-gray-100')">
+          Review Trends
+        </button>
+      </div>
+    </div>
+
+    <!-- Filters (shown for list and flagged views) -->
+    <div *ngIf="currentView !== 'trends'" class="bg-white rounded-xl shadow-sm p-6 mb-6">
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Rating</label>
+          <select
+            [(ngModel)]="ratingFilter"
+            (change)="applyFilters()"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+            <option value="0">All Ratings</option>
+            <option value="5">5 Stars</option>
+            <option value="4">4 Stars</option>
+            <option value="3">3 Stars</option>
+            <option value="2">2 Stars</option>
+            <option value="1">1 Star</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Date</label>
+          <input
+            type="date"
+            [(ngModel)]="dateFilter"
+            (change)="applyFilters()"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">User</label>
+          <select
+            [(ngModel)]="userFilter"
+            (change)="applyFilters()"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+            <option value="all">All Users</option>
+            <option *ngFor="let user of users" [value]="user.id">{{user.name}}</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Restaurant</label>
+          <select
+            [(ngModel)]="restaurantFilter"
+            (change)="applyFilters()"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+            <option value="all">All Restaurants</option>
+            <option *ngFor="let restaurant of restaurants" [value]="restaurant.id">{{restaurant.name}}</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+          <select
+            [(ngModel)]="statusFilter"
+            (change)="applyFilters()"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+            <option value="all">All Status</option>
+            <option value="approved">Approved</option>
+            <option value="pending">Pending</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Review List -->
+    <div *ngIf="currentView === 'list' || currentView === 'flagged'" class="grid grid-cols-1 gap-6">
+      <div
+        *ngFor="let review of filteredReviews"
+        class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden">
+
+        <div class="p-6">
+          <div class="flex items-start space-x-4">
+            <!-- Restaurant Image -->
+            <div class="flex-shrink-0">
+              <img
+                [src]="review.restaurant_image || 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg'"
+                [alt]="review.restaurant_name"
+                class="w-20 h-20 object-cover rounded-lg">
+            </div>
+
+            <!-- Review Content -->
+            <div class="flex-1">
+              <div class="flex justify-between items-start mb-2">
+                <div>
+                  <h3 class="font-semibold text-gray-800">{{review.restaurant_name}}</h3>
+                  <p class="text-sm text-gray-600">by {{review.user_name}}</p>
+                </div>
+
+                <div class="flex items-center space-x-3">
+                  <!-- Flagged Badge -->
+                  <span *ngIf="review.is_flagged" class="px-2 py-1 bg-red-100 text-red-600 text-xs font-medium rounded-full">
+                    🚩 Flagged
+                  </span>
+
+                  <!-- Status Badge -->
+                  <span [class]="'px-3 py-1 rounded-full text-xs font-medium ' + getStatusColor(review.status || 'pending')">
+                    {{review.status || 'pending'}}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Rating -->
+              <div class="flex items-center mb-3">
+                <div class="flex items-center mr-2">
+                  <span *ngFor="let filled of getStarArray(review.rating)"
+                        [class]="'text-lg ' + (filled ? 'text-yellow-400' : 'text-gray-300')">★</span>
+                </div>
+                <span [class]="'font-semibold ' + getRatingColor(review.rating)">{{review.rating}}.0</span>
+              </div>
+
+              <!-- Comment -->
+              <p class="text-gray-700 mb-3">{{review.comment}}</p>
+
+              <!-- Date and Actions -->
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-gray-500">{{review.created_at | date:'medium'}}</span>
+
+                <div *ngIf="review.status === 'pending'" class="flex space-x-2">
+                  <button
+                    (click)="approveReview(review)"
+                    class="px-4 py-1 bg-green-100 text-green-600 rounded-lg hover:bg-green-200 transition-colors duration-200 text-sm font-medium">
+                    Approve
+                  </button>
+                  <button
+                    (click)="rejectReview(review)"
+                    class="px-4 py-1 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors duration-200 text-sm font-medium">
+                    Reject
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- No Reviews Message -->
+      <div *ngIf="filteredReviews.length === 0" class="bg-white rounded-xl shadow-sm p-12 text-center">
+        <div class="text-gray-400 text-6xl mb-4">📝</div>
+        <h3 class="text-xl font-semibold text-gray-600 mb-2">No Reviews Found</h3>
+        <p class="text-gray-500">Try adjusting your filters to see more reviews.</p>
+      </div>
+    </div>
+
+    <!-- Review Trends -->
+    <div *ngIf="currentView === 'trends'" class="space-y-6">
+      <!-- Summary Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="bg-white rounded-xl shadow-sm p-6">
+          <div class="flex items-center">
+            <div class="w-12 h-12 bg-gradient-to-r from-green-400 to-green-600 rounded-lg flex items-center justify-center text-white text-xl">
+              ⭐
+            </div>
+            <div class="ml-4">
+              <div class="text-2xl font-bold text-gray-800">4.3</div>
+              <div class="text-sm text-gray-600">Avg Rating</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm p-6">
+          <div class="flex items-center">
+            <div class="w-12 h-12 bg-gradient-to-r from-blue-400 to-blue-600 rounded-lg flex items-center justify-center text-white text-xl">
+              📊
+            </div>
+            <div class="ml-4">
+              <div class="text-2xl font-bold text-gray-800">{{reviews.length}}</div>
+              <div class="text-sm text-gray-600">Total Reviews</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm p-6">
+          <div class="flex items-center">
+            <div class="w-12 h-12 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-lg flex items-center justify-center text-white text-xl">
+              ⏳
+            </div>
+            <div class="ml-4">
+              <div class="text-2xl font-bold text-gray-800"></div>
+              <div class="text-sm text-gray-600">Pending</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm p-6">
+          <div class="flex items-center">
+            <div class="w-12 h-12 bg-gradient-to-r from-red-400 to-red-600 rounded-lg flex items-center justify-center text-white text-xl">
+              🚩
+            </div>
+            <div class="ml-4">
+              <div class="text-2xl font-bold text-gray-800">7</div>
+              <div class="text-sm text-gray-600">Flagged</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rating Distribution Chart -->
+      <div class="bg-white rounded-xl shadow-sm p-6">
+        <h3 class="text-lg font-semibold text-gray-800 mb-6">Rating Distribution</h3>
+        <div class="space-y-4">
+          <div *ngFor="let star of [5,4,3,2,1]" class="flex items-center">
+            <div class="w-12 text-sm text-gray-600">{{star}} ⭐</div>
+            <div class="flex-1 mx-4">
+              <div class="bg-gray-200 rounded-full h-3">
+                <div
+                  class="bg-gradient-to-r from-yellow-400 to-orange-500 h-3 rounded-full transition-all duration-500"
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="w-12 text-sm text-gray-600 text-right">
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Monthly Trends -->
+      <div class="bg-white rounded-xl shadow-sm p-6">
+        <h3 class="text-lg font-semibold text-gray-800 mb-6">Monthly Rating Trends</h3>
+        <div class="flex items-end justify-between h-64 space-x-2">
+          <div *ngFor="let data of chartData.ratings; let i = index" class="flex flex-col items-center flex-1">
+            <div
+              class="w-full bg-gradient-to-t from-orange-400 to-pink-500 rounded-t-lg transition-all duration-500 flex items-end justify-center text-white text-xs font-medium pb-2"
+              [style.height]="(data / 5 * 200) + 'px'">
+              {{data}}
+            </div>
+            <div class="text-sm text-gray-600 mt-2">{{chartData.labels[i]}}</div>
+          </div>
+        </div>
+      </div>
+
+        <div class="bg-gray-200 rounded-xl shadow-sm p-6 border border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Review Trend</h3>
+        <canvas #reviewChart class="w-full h-64"></canvas>
+      </div>
+
+
+
+
+    </div>
+  </div>
+</div>

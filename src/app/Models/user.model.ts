@@ -4,4 +4,7 @@ export interface User {
   email: string;
   phone: string;
   role: 'customer' | 'restaurant_owner' | 'rider' | 'admin';
+  created_at: string;
 }
+
+

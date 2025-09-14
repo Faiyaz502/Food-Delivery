@@ -201,7 +201,7 @@
       "id": "6",
       "user_id": 5,
       "total_amount": 40,
-      "status": "ready",
+      "status": "preparing",
       "payment_status": "pending",
       "created_at": "2025-01-22T16:45:00Z",
       "rider_id": "4"
@@ -389,7 +389,7 @@
       "id": "1",
       "user_id": 3,
       "vehicle_type": "motorcycle",
-      "availability": false,
+      "availability": true,
       "earnings": 1250.75,
       "image_url": "https://images.unsplash.com/photo-1522556189639-b150ed9c4330?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
     },
@@ -408,6 +408,22 @@
       "availability": true,
       "earnings": 1560.25,
       "image_url": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+    },
+    {
+      "id": 101,
+      "user_id": 0,
+      "vehicle_type": "motorcycle",
+      "availability": false,
+      "earnings": 0,
+      "image_url": ""
+    },
+    {
+      "id": 101,
+      "user_id": 0,
+      "vehicle_type": "bike",
+      "availability": false,
+      "earnings": 0,
+      "image_url": "https://images.unsplash.com/photo-1565958011703-44f9829ba187?q=80&w=465&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
     }
   ],
   "cateringPackages": [

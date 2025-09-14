@@ -9,3 +9,5 @@ export interface Restaurant {
   image_url : string ;
   status : string;
 }
+
+

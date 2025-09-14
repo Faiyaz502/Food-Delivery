@@ -7,3 +7,4 @@ export interface TeamMember {
   last_active: string;
   avatar: string;
 }
+

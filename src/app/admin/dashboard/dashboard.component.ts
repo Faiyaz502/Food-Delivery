@@ -20,11 +20,7 @@ import { ApiService } from 'src/app/services/api.service';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent  {
- @ViewChild('salesChart') salesChart!: ElementRef;
-  @ViewChild('orderStatusChart') orderStatusChart!: ElementRef;
-  @ViewChild('revenueChart') revenueChart!: ElementRef;
-  @ViewChild('topMenuChart') topMenuChart!: ElementRef;
-  @ViewChild('customerLocationChart') customerLocationChart!: ElementRef;
+
 
   // Dashboard statistics
   totalOrders = 0;
@@ -40,23 +36,7 @@ export class DashboardComponent  {
   activeTeamMembers = 0;
 
   // Date filters
-  selectedYear = new Date().getFullYear();
-  selectedMonth = new Date().getMonth() + 1;
-  availableYears = [2023, 2024, 2025];
-  availableMonths = [
-    { value: 1, name: 'January' },
-    { value: 2, name: 'February' },
-    { value: 3, name: 'March' },
-    { value: 4, name: 'April' },
-    { value: 5, name: 'May' },
-    { value: 6, name: 'June' },
-    { value: 7, name: 'July' },
-    { value: 8, name: 'August' },
-    { value: 9, name: 'September' },
-    { value: 10, name: 'October' },
-    { value: 11, name: 'November' },
-    { value: 12, name: 'December' }
-  ];
+  
 
   // Data arrays
   orders: Order[] = [];

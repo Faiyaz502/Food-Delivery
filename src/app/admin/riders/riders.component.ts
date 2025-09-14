@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { switchMap } from 'rxjs';
 import { Rider } from 'src/app/Models/rider.model';
 import { User } from 'src/app/Models/user.model';
 import { ApiService } from 'src/app/services/api.service';
@@ -17,6 +18,18 @@ export class RidersComponent {
   totalEarnings = 0;
   averageEarnings = 0;
   vehicleTypes: any[] = [];
+  currentRider : any = {
+
+      name : '',
+      vehicle_type: "motorcycle",
+      availability: true,
+      earnings: 1250.75,
+      image_url: "",
+       email: "",
+      phone: "",
+
+
+  };
 
   constructor(private apiService: ApiService) {}
 
@@ -68,5 +81,7 @@ export class RidersComponent {
       this.calculateStats();
     });
   }
+
+  
 
 }

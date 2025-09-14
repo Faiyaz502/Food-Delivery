@@ -17,6 +17,10 @@ import { AnalyticsModule } from '../analytics/analytics.module';
 import { AdminAnalyticsComponent } from './admin-analytics/admin-analytics.component';
 import { AnalyticsComponent } from '../analytics/analytics.component';
 import { HorizantalnavComponent } from './horizantalnav/horizantalnav.component';
+import { CustomerComponent } from './customer/customer.component';
+import { ReviewComponent } from './review/review.component';
+import { ChatComponent } from './chat/chat.component';
+import { ProfileComponent } from './profile/profile.component';
 
 
 
@@ -34,7 +38,11 @@ import { HorizantalnavComponent } from './horizantalnav/horizantalnav.component'
     CateringComponent,
     TestComponent,
     AdminAnalyticsComponent,
-    HorizantalnavComponent
+    HorizantalnavComponent,
+    CustomerComponent,
+    ReviewComponent,
+    ChatComponent,
+    ProfileComponent
 
 
 

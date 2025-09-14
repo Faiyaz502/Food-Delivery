@@ -6,3 +6,5 @@ export interface MenuItem {
   description: string;
   image_url: string;
 }
+
+

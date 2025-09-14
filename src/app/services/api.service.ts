@@ -118,6 +118,11 @@ export class ApiService {
     return this.http.patch<Rider>(`${this.baseUrl}/riders/${id}`, { availability });
   }
 
+  addRider(rider:Rider){
+    return this.http.post<Rider>(`${this.baseUrl}/riders`,rider)
+
+  }
+
   // Catering Packages
   getCateringPackages(): Observable<CateringPackage[]> {
     return this.http.get<CateringPackage[]>(`${this.baseUrl}/cateringPackages`);

@@ -10,6 +10,10 @@ import { RestaurantsComponent } from './restaurants/restaurants.component';
 import { TestComponent } from './test/test.component';
 
 import { AdminAnalyticsComponent } from './admin-analytics/admin-analytics.component';
+import { CustomerComponent } from './customer/customer.component';
+import { ReviewComponent } from './review/review.component';
+import { ChatComponent } from './chat/chat.component';
+import { ProfileComponent } from './profile/profile.component';
 
 
 const routes: Routes = [
@@ -21,6 +25,10 @@ const routes: Routes = [
   { path: 'users', component: UsersComponent },
   { path: 'riders', component: RidersComponent },
   { path: 'catering', component: CateringComponent },
+  { path: 'customer', component: CustomerComponent },
+  { path: 'review', component: ReviewComponent },
+  { path: 'chat', component: ChatComponent },
+  { path: 'profile', component: ProfileComponent },
 ];
 
 @NgModule({
