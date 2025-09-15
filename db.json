@@ -389,7 +389,7 @@
       "id": "1",
       "user_id": 3,
       "vehicle_type": "motorcycle",
-      "availability": true,
+      "availability": false,
       "earnings": 1250.75,
       "image_url": "https://images.unsplash.com/photo-1522556189639-b150ed9c4330?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
     },
@@ -405,12 +405,12 @@
       "id": "3",
       "user_id": 6,
       "vehicle_type": "car",
-      "availability": true,
+      "availability": false,
       "earnings": 1560.25,
       "image_url": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
     },
     {
-      "id": 101,
+      "id": "101",
       "user_id": 0,
       "vehicle_type": "motorcycle",
       "availability": false,
@@ -418,7 +418,7 @@
       "image_url": ""
     },
     {
-      "id": 101,
+      "id": "101",
       "user_id": 0,
       "vehicle_type": "bike",
       "availability": false,

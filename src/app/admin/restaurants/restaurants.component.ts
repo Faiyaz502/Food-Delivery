@@ -2,6 +2,9 @@ import { Component } from '@angular/core';
 import { MenuItem } from 'src/app/Models/menu-item.model';
 import { Restaurant } from 'src/app/Models/restaurant.model';
 import { ApiService } from 'src/app/services/api.service';
+import 'leaflet-control-geocoder';
+
+import * as L from 'leaflet'
 
 @Component({
   selector: 'app-restaurants',
@@ -148,6 +151,51 @@ export class RestaurantsComponent {
       image_url: ''
     };
   }
+
+  //map
+
+  
+ private map!: L.Map;
+
+  // Example restaurant data
+  restLoc = [
+    { lat: 23.8156, lng: 90.4253, name: 'Pizza Place' },
+    { lat: 23.8021, lng: 90.4168, name: 'Burger Spot' },
+    { lat: 23.8222, lng: 90.4091, name: 'Sushi Corner' }
+  ];
+
+  // Custom restaurant icon
+  restaurantIcon = L.icon({
+    iconUrl: 'assets/img/restLocation.png',
+    iconSize: [40, 40],       // icon size
+    iconAnchor: [20, 40],     // point of icon which is on the marker position
+    popupAnchor: [0, -40]     // popup appears above icon
+  });
+
+  ngAfterViewInit(): void {
+    this.initMap();
+  }
+
+  private initMap(): void {
+    // Initialize map
+    this.map = L.map('map', {
+      center: [23.8103, 90.4125], // Example: Dhaka
+      zoom: 13
+    });
+
+    // Add OpenStreetMap tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(this.map);
+
+    // Add markers for each restaurant
+    this.restLoc.forEach(rest => {
+      L.marker([rest.lat, rest.lng], { icon: this.restaurantIcon })
+        .addTo(this.map)
+        .bindPopup(`<b>${rest.name}</b>`);
+    });
+  }
+
 
 
 }
