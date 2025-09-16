@@ -60,12 +60,15 @@ export class RestaurantsComponent {
     this.apiService.getMenuItemsByRestaurant(restaurant.id).subscribe(items => {
       this.menuItems = items;
       this.showMenuModal = true;
+   
+      
     });
   }
 
   editRestaurant(restaurant: Restaurant) {
     this.currentRestaurant = { ...restaurant };
     this.showEditModal = true;
+  
   }
 
   deleteRestaurant(id: number) {
@@ -79,6 +82,7 @@ export class RestaurantsComponent {
   editMenuItem(item: MenuItem) {
     this.currentMenuItem = { ...item };
     this.showEditMenuItem = true;
+    
   }
 
   deleteMenuItem(id: number) {
@@ -126,6 +130,7 @@ export class RestaurantsComponent {
   closeModal() {
     this.showCreateModal = false;
     this.showEditModal = false;
+ 
     this.currentRestaurant = {
       name: '',
       address: '',
@@ -136,6 +141,7 @@ export class RestaurantsComponent {
 
   closeMenuModal() {
     this.showMenuModal = false;
+    
     this.selectedRestaurant = null;
     this.menuItems = [];
   }
@@ -143,6 +149,8 @@ export class RestaurantsComponent {
   closeMenuItemModal() {
     this.showAddMenuItem = false;
     this.showEditMenuItem = false;
+   
+    
     this.currentMenuItem = {
       restaurant_id: 0,
       name: '',
@@ -195,6 +203,8 @@ export class RestaurantsComponent {
         .bindPopup(`<b>${rest.name}</b>`);
     });
   }
+
+ 
 
 
 
