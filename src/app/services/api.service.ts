@@ -46,7 +46,7 @@ export class ApiService {
 
   // Restaurants
   getRestaurants(): Observable<Restaurant[]> {
-    return this.http.get<Restaurant[]>(`${this.baseUrl}/restaurants`);
+    return this.http.get<Restaurant[]>(`http://localhost:8080/api/restaurants`);
   }
 
   getRestaurantById(id: number): Observable<Restaurant> {
@@ -54,15 +54,15 @@ export class ApiService {
   }
 
   createRestaurant(restaurant: Omit<Restaurant, 'id'>): Observable<Restaurant> {
-    return this.http.post<Restaurant>(`${this.baseUrl}/restaurants`, restaurant);
+    return this.http.post<Restaurant>(`http://localhost:8080/api/restaurants`, restaurant);
   }
 
   updateRestaurant(id: number, restaurant: Partial<Restaurant>): Observable<Restaurant> {
-    return this.http.patch<Restaurant>(`${this.baseUrl}/restaurants/${id}`, restaurant);
+    return this.http.put<Restaurant>(`http://localhost:8080/api/restaurants/${id}`, restaurant);
   }
 
   deleteRestaurant(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/restaurants/${id}`);
+    return this.http.delete<void>(`http://localhost:8080/api/restaurants/${id}`);
   }
 
   // Menu Items

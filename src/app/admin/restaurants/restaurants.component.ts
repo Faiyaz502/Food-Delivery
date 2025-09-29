@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { MenuItem } from 'src/app/Models/menu-item.model';
 import { Restaurant } from 'src/app/Models/restaurant.model';
 import { ApiService } from 'src/app/services/api.service';
@@ -12,6 +12,8 @@ import * as L from 'leaflet'
   styleUrls: ['./restaurants.component.scss']
 })
 export class RestaurantsComponent {
+
+  @ViewChild('modalMapRef', { static: false }) modalMapElement!: ElementRef;
   restaurants: Restaurant[] = [];
   menuItems: MenuItem[] = [];
   selectedRestaurant: Restaurant | null = null;
@@ -20,16 +22,38 @@ export class RestaurantsComponent {
   showMenuModal = false;
   showAddMenuItem = false;
   showEditMenuItem = false;
+  private restaurantMarkers: L.Marker[] = [];
+
+  
+private modalMap: L.Map | undefined;
+private modalMarker: L.Marker | null = null;
+
+currentRestaurant: any = {
+  name: '',
+  address: '',
+  description:'',
+  averageRating: 0,
+  phoneNumber:0,
+  email:'',
+  ownerId: 1,
+  latitude: 0,
+  longitude: 0,
+  deliveryFee: 40,
+  minimumOrderAmount: 0,
+  imageUrls: [''] // support multiple images
+};
 
 
 
-  currentRestaurant: any = {
-    name: '',
-    address: '',
-    rating: 0,
-    owner_id: 0 ,
-    image_url : ''
-  };
+
+addImage() {
+  this.currentRestaurant.imageUrls.push('');
+}
+
+removeImage(index: number) {
+  this.currentRestaurant.imageUrls.splice(index, 1);
+}
+
 
   currentMenuItem: any = {
     restaurant_id: 0,
@@ -47,17 +71,31 @@ export class RestaurantsComponent {
 
 
   }
+ngAfterViewChecked() {
+  if ((this.showCreateModal || this.showEditModal) && this.modalMapElement && !this.modalMap) {
+    this.initModalMap();
+  }
+}
+
+openCreateModal() {
+  this.showCreateModal = true;
+
+}
+
+
 
   loadRestaurants() {
     this.apiService.getRestaurants().subscribe(restaurants => {
       this.restaurants = restaurants;
+
+        this.refreshMarkers();
 
     });
   }
 
   viewMenuItems(restaurant: Restaurant) {
     this.selectedRestaurant = restaurant;
-    this.apiService.getMenuItemsByRestaurant(restaurant.id).subscribe(items => {
+    this.apiService.getMenuItemsByRestaurant(restaurant.id || 0).subscribe(items => {
       this.menuItems = items;
       this.showMenuModal = true;
    
@@ -68,6 +106,7 @@ export class RestaurantsComponent {
   editRestaurant(restaurant: Restaurant) {
     this.currentRestaurant = { ...restaurant };
     this.showEditModal = true;
+
   
   }
 
@@ -97,9 +136,15 @@ export class RestaurantsComponent {
 
   saveRestaurant() {
     if (this.showEditModal) {
-      this.apiService.updateRestaurant(this.currentRestaurant.id, this.currentRestaurant).subscribe(() => {
+      this.apiService.updateRestaurant(this.currentRestaurant.id, this.currentRestaurant).subscribe((rest) => {
         this.loadRestaurants();
         this.closeModal();
+
+        if (rest.latitude && rest.longitude) {
+    this.map.setView([rest.latitude, rest.longitude], 15);
+  }
+
+     
       });
     } else {
       this.apiService.createRestaurant(this.currentRestaurant).subscribe(() => {
@@ -118,6 +163,7 @@ export class RestaurantsComponent {
       this.apiService.updateMenuItem(this.currentMenuItem.id, this.currentMenuItem).subscribe(() => {
         this.viewMenuItems(this.selectedRestaurant!);
         this.closeMenuItemModal();
+       
       });
     } else {
       this.apiService.createMenuItem(this.currentMenuItem).subscribe(() => {
@@ -127,17 +173,44 @@ export class RestaurantsComponent {
     }
   }
 
-  closeModal() {
-    this.showCreateModal = false;
-    this.showEditModal = false;
- 
-    this.currentRestaurant = {
-      name: '',
-      address: '',
-      rating: 0,
-      owner_id: 0
-    };
+closeModal() {
+  this.showCreateModal = false;
+  this.showEditModal = false;
+
+  this.currentRestaurant = {
+    name: '',
+    address: '',
+    rating: 0,
+    owner_id: 0,
+    cuisineType: '',
+    latitude: 0,
+    longitude: 0,
+    deliveryFee: 0,
+    minimumOrderAmount: 0,
+    estimatedDeliveryTime: 0,
+    droneDeliveryEnabled: false,
+    maxDroneDeliveryWeight: 3,
+    imageUrls: ['']
+  };
+
+  // Clean up map
+  if (this.modalMarker) {
+    this.modalMap?.removeLayer(this.modalMarker);
+    this.modalMarker = null;
   }
+
+  if (this.modalMap) {
+    this.modalMap.remove(); // Properly destroy Leaflet map
+    this.modalMap = undefined;
+  }
+}
+
+    //Modal Map
+
+    private marker: L.Marker | null = null;
+
+
+ 
 
   closeMenuModal() {
     this.showMenuModal = false;
@@ -165,13 +238,7 @@ export class RestaurantsComponent {
   
  private map!: L.Map;
 
-  // Example restaurant data
-  restLoc = [
-    { lat: 23.8156, lng: 90.4253, name: 'Pizza Place' },
-    { lat: 23.8021, lng: 90.4168, name: 'Burger Spot' },
-    { lat: 23.8222, lng: 90.4091, name: 'Sushi Corner' }
-  ];
-
+ 
   // Custom restaurant icon
   restaurantIcon = L.icon({
     iconUrl: 'assets/img/restLocation.png',
@@ -184,25 +251,98 @@ export class RestaurantsComponent {
     this.initMap();
   }
 
-  private initMap(): void {
-    // Initialize map
-    this.map = L.map('map', {
-      center: [23.8103, 90.4125], // Example: Dhaka
-      zoom: 13
-    });
+ private initMap(): void {
+  // Initialize map
+  this.map = L.map('map', {
+    center: [23.8103, 90.4125], // Dhaka center
+    zoom: 13
+  });
 
-    // Add OpenStreetMap tiles
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(this.map);
+  // Add OpenStreetMap tiles
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(this.map);
+
+  // Wait for restaurants to load
+  this.apiService.getRestaurants().subscribe(restaurants => {
+    this.restaurants = restaurants;
 
     // Add markers for each restaurant
-    this.restLoc.forEach(rest => {
-      L.marker([rest.lat, rest.lng], { icon: this.restaurantIcon })
+    this.restaurants.forEach(rest => {
+      if (rest.latitude && rest.longitude) {
+        L.marker([rest.latitude, rest.longitude], { icon: this.restaurantIcon })
+          .addTo(this.map)
+          .bindPopup(`<b>${rest.name}</b>`);
+      }
+    });
+  });
+}
+
+
+
+  ///LatLang MAP
+
+
+
+initModalMap(): void {
+  const element = this.modalMapElement.nativeElement;
+
+  // Safety check
+  if (!element || this.modalMap) return;
+
+  this.modalMap = L.map(element, {
+    center: [this.currentRestaurant.latitude || 23.8103, this.currentRestaurant.longitude || 90.4125],
+    zoom: this.currentRestaurant.latitude ? 15 : 13
+  });
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(this.modalMap);
+
+  // Handle click to set location
+  this.modalMap.on('click', (e: any) => {
+    const { lat, lng } = e.latlng;
+    this.currentRestaurant.latitude = lat;
+    this.currentRestaurant.longitude = lng;
+
+    if (this.modalMarker) {
+      this.modalMap!.removeLayer(this.modalMarker);
+    }
+    this.modalMarker = L.marker([lat, lng]).addTo(this.modalMap!);
+  });
+
+  // If editing, show existing marker
+  if (this.currentRestaurant.latitude && this.currentRestaurant.longitude) {
+    if (this.modalMarker) {
+      this.modalMap.removeLayer(this.modalMarker);
+    }
+    this.modalMarker = L.marker([this.currentRestaurant.latitude, this.currentRestaurant.longitude]).addTo(this.modalMap);
+    this.modalMap.setView([this.currentRestaurant.latitude, this.currentRestaurant.longitude], 15);
+  }
+
+  // Force size recalc (sometimes needed)
+  setTimeout(() => {
+    this.modalMap?.invalidateSize();
+  }, 0);
+}
+
+//Render map
+
+private refreshMarkers() {
+  // Remove all existing markers
+  this.restaurantMarkers.forEach(marker => this.map.removeLayer(marker));
+  this.restaurantMarkers = [];
+
+  // Add markers from current restaurants array
+  this.restaurants.forEach(rest => {
+    if (rest.latitude && rest.longitude) {
+      const marker = L.marker([rest.latitude, rest.longitude], { icon: this.restaurantIcon })
         .addTo(this.map)
         .bindPopup(`<b>${rest.name}</b>`);
-    });
-  }
+      this.restaurantMarkers.push(marker);
+    }
+  });
+}
 
  
 

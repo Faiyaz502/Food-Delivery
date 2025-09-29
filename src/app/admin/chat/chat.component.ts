@@ -65,7 +65,7 @@ export class ChatComponent {
     this.apiService.getRestaurants().subscribe(restaurants => {
       this.apiService.getUsers().subscribe(users => {
         this.vendors = restaurants.map(restaurant => {
-          const user = users.find(u => u.id === restaurant.owner_id);
+          const user = users.find(u => u.id === restaurant.ownerId);
           return this.mapRestaurantToContact(restaurant, user);
         });
       });
@@ -100,7 +100,7 @@ export class ChatComponent {
 
   mapRestaurantToContact(restaurant: Restaurant, user?: User): ChatContact {
     return {
-      id: restaurant.id,
+      id: restaurant.id!,
       name: restaurant.name,
       avatar: restaurant.image_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(restaurant.name)}&background=random`,
       type: 'vendor',

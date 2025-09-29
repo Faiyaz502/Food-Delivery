@@ -67,39 +67,182 @@
   ],
   "restaurants": [
     {
-      "id": "1",
-      "name": "Pizza Palace",
-      "address": "123 Main St, Downtown",
+      "id": "b109",
+      "name": "Urban Bites",
+      "address": "House 45, Road 27, Dhanmondi",
+      "rating": 4.7,
+      "owner_id": 0,
+      "cuisineType": "International",
+      "latitude": 23.7512,
+      "longitude": 90.3967,
+      "deliveryFee": 60,
+      "minimumOrderAmount": 250,
+      "estimatedDeliveryTime": 25,
+      "droneDeliveryEnabled": true,
+      "maxDroneDeliveryWeight": 2.5,
+      "imageUrls": [
+        "https://i.pinimg.com/originals/6e/ad/f2/6eadf29c90b10fbfd99badc474d61660.jpg"
+      ]
+    },
+    {
+      "id": "c331",
+      "name": "Saffron Spice",
+      "address": "Plot 12, Gulshan Avenue",
+      "rating": 4.9,
+      "owner_id": 0,
+      "cuisineType": "Indian",
+      "latitude": 23.7789,
+      "longitude": 90.4102,
+      "deliveryFee": 80,
+      "minimumOrderAmount": 400,
+      "estimatedDeliveryTime": 35,
+      "droneDeliveryEnabled": false,
+      "maxDroneDeliveryWeight": 3,
+      "imageUrls": [
+        "https://i.pinimg.com/originals/6e/ad/f2/6eadf29c90b10fbfd99badc474d61660.jpg"
+      ]
+    },
+    {
+      "id": "d442",
+      "name": "Green Leaf Cafe",
+      "address": "Banani DNCC Market, Level 2",
       "rating": 4.5,
-      "owner_id": 2,
-      "status": "active",
-      "image_url": "https://plus.unsplash.com/premium_photo-1661883237884-263e8de8869b?q=80&w=889&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+      "owner_id": 0,
+      "cuisineType": "Healthy",
+      "latitude": 23.7765,
+      "longitude": 90.4051,
+      "deliveryFee": 40,
+      "minimumOrderAmount": 180,
+      "estimatedDeliveryTime": 20,
+      "droneDeliveryEnabled": true,
+      "maxDroneDeliveryWeight": 2,
+      "imageUrls": [
+        "https://i.pinimg.com/originals/6e/ad/f2/6eadf29c90b10fbfd99badc474d61660.jpg"
+      ]
     },
     {
-      "id": "2",
-      "name": "Burger Joint",
-      "address": "456 Oak Ave, Midtown",
-      "rating": 4.2,
-      "owner_id": 2,
-      "status": "active",
-      "image_url": "https://plus.unsplash.com/premium_photo-1661953124283-76d0a8436b87?q=80&w=888&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+      "id": "e553",
+      "name": "Dhaka Grill House",
+      "address": "New Elephant Road, Science Lab",
+      "rating": 4.6,
+      "owner_id": 0,
+      "cuisineType": "BBQ",
+      "latitude": 23.7398,
+      "longitude": 90.3933,
+      "deliveryFee": 70,
+      "minimumOrderAmount": 300,
+      "estimatedDeliveryTime": 30,
+      "droneDeliveryEnabled": false,
+      "maxDroneDeliveryWeight": 3,
+      "imageUrls": [
+        "https://i.pinimg.com/originals/6e/ad/f2/6eadf29c90b10fbfd99badc474d61660.jpg"
+      ]
     },
     {
-      "id": "3",
-      "name": "Sushi Zen",
-      "address": "789 Pine St, Uptown",
+      "id": "f664",
+      "name": "Cloud Nine Desserts",
+      "address": "Bashundhara City, Level 4",
       "rating": 4.8,
-      "owner_id": 2,
-      "status": "active",
-      "image_url": "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=774&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+      "owner_id": 0,
+      "cuisineType": "Dessert",
+      "latitude": 23.7648,
+      "longitude": 90.3918,
+      "deliveryFee": 50,
+      "minimumOrderAmount": 150,
+      "estimatedDeliveryTime": 15,
+      "droneDeliveryEnabled": true,
+      "maxDroneDeliveryWeight": 1.5,
+      "imageUrls": [
+        "https://i.pinimg.com/originals/6e/ad/f2/6eadf29c90b10fbfd99badc474d61660.jpg"
+      ]
     },
     {
-      "id": "c266",
-      "name": "The Forks Market",
-      "address": "Winnipeg, MB, Canada",
+      "id": "a246",
+      "name": "Lafiesta",
+      "address": "3021/b",
       "rating": 5,
       "owner_id": 0,
-      "image_url": "https://images.unsplash.com/photo-1583183711790-4c62f0a040a8?q=80&w=435&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+      "cuisineType": "",
+      "latitude": 23.765597126660467,
+      "longitude": 90.4067623615265,
+      "deliveryFee": 50,
+      "minimumOrderAmount": 200,
+      "estimatedDeliveryTime": 10,
+      "droneDeliveryEnabled": false,
+      "maxDroneDeliveryWeight": 3,
+      "imageUrls": [
+        "https://i.pinimg.com/originals/6e/ad/f2/6eadf29c90b10fbfd99badc474d61660.jpg"
+      ]
+    },
+    {
+      "id": "58d7",
+      "name": "Banis Creation",
+      "address": "3021/b",
+      "rating": 4,
+      "owner_id": 0,
+      "cuisineType": "",
+      "latitude": 23.752440468665206,
+      "longitude": 90.42059719562532,
+      "deliveryFee": 40,
+      "minimumOrderAmount": 200,
+      "estimatedDeliveryTime": 20,
+      "droneDeliveryEnabled": false,
+      "maxDroneDeliveryWeight": 3,
+      "imageUrls": [
+        "https://media.istockphoto.com/id/2219639958/photo/empty-tables-awaiting-customers-in-a-modern-restaurant.jpg?s=1024x1024&w=is&k=20&c=uIhVpf2k-SZGhD1t2zIOoktV33UBgKgqRN5VEGkQGyk="
+      ]
+    },
+    {
+      "id": "79d8",
+      "name": "Apon Coffee House",
+      "address": "1513/c Khilgaon",
+      "rating": 4,
+      "owner_id": 0,
+      "latitude": 23.752165507178027,
+      "longitude": 90.42154669761658,
+      "deliveryFee": 30,
+      "minimumOrderAmount": 50,
+      "estimatedDeliveryTime": 50,
+      "droneDeliveryEnabled": false,
+      "maxDroneDeliveryWeight": 3,
+      "imageUrls": [
+        "https://images.unsplash.com/photo-1663176933714-297b0d10b505?q=80&w=871&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+      ]
+    },
+    {
+      "id": "1a9c",
+      "name": "Shopno",
+      "address": "234/C",
+      "rating": 5,
+      "owner_id": 0,
+      "latitude": 23.752455198728473,
+      "longitude": 90.4194438457489,
+      "deliveryFee": 30,
+      "minimumOrderAmount": 500,
+      "estimatedDeliveryTime": 30,
+      "droneDeliveryEnabled": false,
+      "maxDroneDeliveryWeight": 3,
+      "imageUrls": [
+        "https://media.istockphoto.com/id/1305333853/photo/smiling-couple-with-the-cart-choosing-products-in-supermarket.jpg?s=1024x1024&w=is&k=20&c=uQy31DkXuYpON6fvhWbIhgml_5aW8VWT1grIanqzqPY="
+      ]
+    },
+    {
+      "id": "6796",
+      "name": "Shopno",
+      "address": "234/C",
+      "rating": 5,
+      "owner_id": 0,
+      "cuisineType": "",
+      "latitude": 23.750304898731223,
+      "longitude": 90.42082786560059,
+      "deliveryFee": 50,
+      "minimumOrderAmount": 200,
+      "estimatedDeliveryTime": 10,
+      "droneDeliveryEnabled": false,
+      "maxDroneDeliveryWeight": 3,
+      "imageUrls": [
+        "https://media.istockphoto.com/id/1305333853/photo/smiling-couple-with-the-cart-choosing-products-in-supermarket.jpg?s=1024x1024&w=is&k=20&c=uQy31DkXuYpON6fvhWbIhgml_5aW8VWT1grIanqzqPY="
+      ]
     }
   ],
   "menuItems": [
