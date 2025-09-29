@@ -4,7 +4,7 @@ import { Chart, registerables } from 'chart.js';
 import { AnalyticsModule } from "src/app/analytics/analytics.module";
 import { CateringPackage, CateringOrder } from 'src/app/Models/catering-package.model';
 import { CustomerLocation } from 'src/app/Models/customer-location.model';
-import { MenuItem } from 'src/app/Models/menu-item.model';
+import { MenuItem } from 'src/app/Models/MenuItem.model';
 import { Order } from 'src/app/Models/order.model';
 import { PendingRequest } from 'src/app/Models/pending-request.model';
 import { Restaurant } from 'src/app/Models/restaurant.model';
@@ -104,7 +104,7 @@ private createMonthlyChart(orders: Order[]) {
             afterLabel: (ctx) => `Month: ${ctx.label}`
           }
         },
-        
+
         legend: { display: false }
       },
       scales: {

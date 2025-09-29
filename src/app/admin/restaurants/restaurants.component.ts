@@ -1,10 +1,11 @@
+import { MenuItemService } from './../../services/menu-item.service';
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { MenuItem } from 'src/app/Models/menu-item.model';
+import { MenuItem } from 'src/app/Models/MenuItem.model';
 import { Restaurant } from 'src/app/Models/restaurant.model';
 import { ApiService } from 'src/app/services/api.service';
 import 'leaflet-control-geocoder';
 
-import * as L from 'leaflet'
+import * as L from 'leaflet';
 
 @Component({
   selector: 'app-restaurants',
@@ -24,7 +25,7 @@ export class RestaurantsComponent {
   showEditMenuItem = false;
   private restaurantMarkers: L.Marker[] = [];
 
-  
+
 private modalMap: L.Map | undefined;
 private modalMarker: L.Marker | null = null;
 
@@ -55,15 +56,20 @@ removeImage(index: number) {
 }
 
 
-  currentMenuItem: any = {
-    restaurant_id: 0,
-    name: '',
-    price: 0,
-    description: '',
-    image_url: ''
-  };
+ currentMenuItem: MenuItem = {
+  name: '',
+  price: 0,
+  description: '',
+  imageUrl: '',
+  isSpicy: false,
+  spiceLevel: 0,
+  preparationTime: 30,
+  isAvailable: true,
+  restaurantId: 0,
+  catagoryName: ''
+};
 
-  constructor(private apiService: ApiService) {}
+  constructor(private apiService: ApiService , private menuService :MenuItemService) {}
 
   ngOnInit() {
     this.loadRestaurants();
@@ -95,11 +101,13 @@ openCreateModal() {
 
   viewMenuItems(restaurant: Restaurant) {
     this.selectedRestaurant = restaurant;
-    this.apiService.getMenuItemsByRestaurant(restaurant.id || 0).subscribe(items => {
+    this.menuService.getMenuItemsByRestaurant(restaurant.id || 0).subscribe(items => {
+      console.log(items);
+
       this.menuItems = items;
       this.showMenuModal = true;
-   
-      
+
+
     });
   }
 
@@ -107,7 +115,7 @@ openCreateModal() {
     this.currentRestaurant = { ...restaurant };
     this.showEditModal = true;
 
-  
+
   }
 
   deleteRestaurant(id: number) {
@@ -121,12 +129,12 @@ openCreateModal() {
   editMenuItem(item: MenuItem) {
     this.currentMenuItem = { ...item };
     this.showEditMenuItem = true;
-    
+
   }
 
   deleteMenuItem(id: number) {
     if (confirm('Are you sure you want to delete this menu item?')) {
-      this.apiService.deleteMenuItem(id).subscribe(() => {
+      this.menuService.delete(id).subscribe(() => {
         if (this.selectedRestaurant) {
           this.viewMenuItems(this.selectedRestaurant);
         }
@@ -144,7 +152,7 @@ openCreateModal() {
     this.map.setView([rest.latitude, rest.longitude], 15);
   }
 
-     
+
       });
     } else {
       this.apiService.createRestaurant(this.currentRestaurant).subscribe(() => {
@@ -157,16 +165,17 @@ openCreateModal() {
   saveMenuItem() {
     if (!this.selectedRestaurant) return;
 
-    this.currentMenuItem.restaurant_id = this.selectedRestaurant.id;
+    this.currentMenuItem.restaurantId = this.selectedRestaurant?.id ?? 0;
+
 
     if (this.showEditMenuItem) {
-      this.apiService.updateMenuItem(this.currentMenuItem.id, this.currentMenuItem).subscribe(() => {
+      this.menuService.updateMenu(this.currentMenuItem.id!, this.currentMenuItem).subscribe(() => {
         this.viewMenuItems(this.selectedRestaurant!);
         this.closeMenuItemModal();
-       
+
       });
     } else {
-      this.apiService.createMenuItem(this.currentMenuItem).subscribe(() => {
+      this.menuService.createMenuItem(this.currentMenuItem).subscribe(() => {
         this.viewMenuItems(this.selectedRestaurant!);
         this.closeMenuItemModal();
       });
@@ -182,7 +191,6 @@ closeModal() {
     address: '',
     rating: 0,
     owner_id: 0,
-    cuisineType: '',
     latitude: 0,
     longitude: 0,
     deliveryFee: 0,
@@ -210,11 +218,11 @@ closeModal() {
     private marker: L.Marker | null = null;
 
 
- 
+
 
   closeMenuModal() {
     this.showMenuModal = false;
-    
+
     this.selectedRestaurant = null;
     this.menuItems = [];
   }
@@ -222,23 +230,28 @@ closeModal() {
   closeMenuItemModal() {
     this.showAddMenuItem = false;
     this.showEditMenuItem = false;
-   
-    
+
+
     this.currentMenuItem = {
-      restaurant_id: 0,
-      name: '',
-      price: 0,
-      description: '',
-      image_url: ''
+     name: '',
+  price: 0,
+  description: '',
+  imageUrl: '',
+  isSpicy: false,
+  spiceLevel: 0,
+  preparationTime: 30,
+  isAvailable: true,
+  restaurantId: 0,
+  catagoryName: ''
     };
   }
 
   //map
 
-  
+
  private map!: L.Map;
 
- 
+
   // Custom restaurant icon
   restaurantIcon = L.icon({
     iconUrl: 'assets/img/restLocation.png',
@@ -344,7 +357,7 @@ private refreshMarkers() {
   });
 }
 
- 
+
 
 
 

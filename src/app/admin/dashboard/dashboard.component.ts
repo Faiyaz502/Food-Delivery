@@ -2,7 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Chart } from 'chart.js';
 import { CateringOrder, CateringPackage } from 'src/app/Models/catering-package.model';
 import { CustomerLocation } from 'src/app/Models/customer-location.model';
-import { MenuItem } from 'src/app/Models/menu-item.model';
+import { MenuItem } from 'src/app/Models/MenuItem.model';
 import { Order } from 'src/app/Models/order.model';
 import { Payment } from 'src/app/Models/payment.model';
 import { PendingRequest } from 'src/app/Models/pending-request.model';
@@ -36,7 +36,7 @@ export class DashboardComponent  {
   activeTeamMembers = 0;
 
   // Date filters
-  
+
 
   // Data arrays
   orders: Order[] = [];

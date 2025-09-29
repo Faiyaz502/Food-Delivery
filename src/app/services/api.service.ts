@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { CateringPackage, CateringOrder } from '../Models/catering-package.model';
-import { MenuItem } from '../Models/menu-item.model';
+import { MenuItem } from '../Models/MenuItem.model';
 import { Order } from '../Models/order.model';
 import { Payment } from '../Models/payment.model';
 import { Restaurant } from '../Models/restaurant.model';

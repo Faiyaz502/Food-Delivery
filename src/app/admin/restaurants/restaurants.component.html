@@ -155,11 +155,11 @@
 
         <div class="p-5">
           <div class="flex items-start justify-between mb-3">
-            <h3 class="text-lg font-semibold text-gray-900 line-clamp-1">
+            <h3 class="text-sm font-semibold text-gray-900 line-clamp-1">
               {{ restaurant.name }}
             </h3>
             <span
-              class="inline-flex items-center px-3 py-2 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+              class="inline-flex items-center  rounded-full text-xs font-medium bg-amber-100 text-amber-800">
               ⭐ {{ restaurant.averageRating }}
             </span>
           </div>
@@ -207,66 +207,72 @@
     <!-- ===== MODALS ===== -->
 
     <!-- Menu Items Modal -->
-    <div *ngIf="showMenuModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
-      (click)="closeMenuModal()">
-      <div class="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-hidden"
-        (click)="$event.stopPropagation()">
-        <!-- Modal Header -->
-        <div class="flex items-center justify-between px-6 py-5 border-b border-gray-200">
-          <h3 class="text-xl font-semibold text-gray-900">
-            Menu Items - {{ selectedRestaurant?.name }}
-          </h3>
-          <div class="flex items-center gap-3">
-            <button (click)="showAddMenuItem = true"
-              class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-md transition-colors">
-              Add Item
-            </button>
-            <button (click)="closeMenuModal()"
-              class="text-gray-400 hover:text-gray-600 text-2xl font-light focus:outline-none">
-              &times;
-            </button>
-          </div>
-        </div>
+ <div *ngIf="showMenuModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+     (click)="closeMenuModal()">
+  <div class="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-[90vh] overflow-hidden"
+       (click)="$event.stopPropagation()">
+    <!-- Modal Header -->
+    <div class="flex items-center justify-between px-6 py-5 border-b border-gray-200">
+      <h3 class="text-xl font-semibold text-gray-900">
+        Menu Items - {{ selectedRestaurant?.name }}
+      </h3>
+      <div class="flex items-center gap-3">
+        <button (click)="showAddMenuItem = true"
+                class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-md transition-colors">
+          Add Item
+        </button>
+        <button (click)="closeMenuModal()"
+                class="text-gray-400 hover:text-gray-600 text-2xl font-light focus:outline-none">
+          &times;
+        </button>
+      </div>
+    </div>
 
-        <!-- Modal Body -->
-        <div class="p-6 overflow-y-auto max-h-[70vh]">
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div *ngFor="let item of menuItems"
-              class="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow group">
-              <img [src]="
-                item.image_url ||
-                'https://source.unsplash.com/random/400x300?food,dish&sig=' +
-                  item.id
-              " [alt]="item.name"
-                class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                onerror="this.src='https://via.placeholder.com/400x300?text=Food+Image'" />
-              <div class="p-5">
-                <h4 class="text-lg font-semibold text-gray-900 mb-2">
-                  {{ item.name }}
-                </h4>
-                <p class="text-gray-600 text-sm mb-4 line-clamp-2">
-                  {{ item.description }}
-                </p>
-                <div class="flex items-center justify-between">
-                  <span class="text-xl font-bold text-blue-600">${{ item.price | number : "1.2-2" }}</span>
-                  <div class="flex gap-2">
-                    <button (click)="editMenuItem(item)"
-                      class="px-3 py-1 bg-gray-600 hover:bg-gray-700 text-white text-xs font-medium rounded-md transition-colors">
-                      Edit
-                    </button>
-                    <button (click)="deleteMenuItem(item.id)"
-                      class="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-md transition-colors">
-                      Delete
-                    </button>
-                  </div>
-                </div>
+    <!-- Modal Body -->
+    <div class="p-6 overflow-y-auto max-h-[70vh]">
+      <!-- Empty State -->
+      <div *ngIf="menuItems.length === 0" class="text-center py-12">
+        <div class="text-gray-400 mb-4">No menu items yet</div>
+        <button (click)="showAddMenuItem = true"
+                class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md transition-colors">
+          Add Your First Item
+        </button>
+      </div>
+
+      <!-- Menu Items Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" *ngIf="menuItems.length > 0">
+        <div *ngFor="let item of menuItems"
+             class="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow group">
+          <img [src]="item.imageUrl || 'https://source.unsplash.com/random/400x300?food,dish&sig=' + item.id"
+               [alt]="item.name"
+               class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+               (error)="item.imageUrl = 'https://via.placeholder.com/400x300?text=Food+Image'" />
+          <div class="p-5">
+            <h4 class="text-lg font-semibold text-gray-900 mb-2">
+              {{ item.name }}
+            </h4>
+            <p class="text-gray-600 text-sm mb-4 line-clamp-2">
+              {{ item.description || 'No description available' }}
+            </p>
+            <div class="flex items-center justify-between">
+              <span class="text-xl font-bold text-blue-600">${{ item.price | number : "1.2-2" }}</span>
+              <div class="flex gap-2">
+                <button (click)="editMenuItem(item)"
+                        class="px-3 py-1 bg-gray-600 hover:bg-gray-700 text-white text-xs font-medium rounded-md transition-colors">
+                  Edit
+                </button>
+                <button (click)="deleteMenuItem(item.id!)"
+                        class="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-md transition-colors">
+                  Delete
+                </button>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-
+  </div>
+</div>
     <!-- Restaurant Create/Edit Modal -->
     <div *ngIf="showCreateModal || showEditModal"
       class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 overflow-auto"
@@ -338,7 +344,7 @@
 
           <!-- Delivery Options -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          
+
             <div>
               <label for="minimumOrderAmount" class="block text-sm font-medium text-gray-700 mb-1">Minimum Order</label>
               <input type="number" id="minimumOrderAmount" [(ngModel)]="currentRestaurant.minimumOrderAmount"
@@ -389,65 +395,144 @@
 
 
     <!-- Menu Item Create/Edit Modal -->
-    <div *ngIf="showAddMenuItem || showEditMenuItem"
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
-      (click)="closeMenuItemModal()">
-      <div class="bg-white rounded-xl shadow-xl w-full max-w-md" (click)="$event.stopPropagation()">
-        <!-- Modal Header -->
-        <div class="flex items-center justify-between px-6 py-5 border-b border-gray-200">
-          <h3 class="text-xl font-semibold text-gray-900">
-            {{ showEditMenuItem ? "Edit Menu Item" : "Add Menu Item" }}
-          </h3>
-          <button (click)="closeMenuItemModal()"
-            class="text-gray-400 hover:text-gray-600 text-2xl font-light focus:outline-none">
-            &times;
-          </button>
-        </div>
+<div *ngIf="showAddMenuItem || showEditMenuItem"
+  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+  (click)="closeMenuItemModal()">
+  <div class="bg-white rounded-xl shadow-xl w-full max-w-lg max-h-[90vh] flex flex-col"
+    (click)="$event.stopPropagation()">
 
-        <!-- Modal Body -->
-        <div class="p-6">
-          <form (ngSubmit)="saveMenuItem()" class="space-y-5">
-            <div>
-              <label for="itemName" class="block text-sm font-medium text-gray-700 mb-1">Item Name</label>
-              <input type="text" id="itemName" [(ngModel)]="currentMenuItem.name" name="itemName" required
-                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
-            </div>
-
-            <div>
-              <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-              <textarea id="description" [(ngModel)]="currentMenuItem.description" name="description" required rows="3"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"></textarea>
-            </div>
-
-            <div>
-              <label for="price" class="block text-sm font-medium text-gray-700 mb-1">Price</label>
-              <input type="number" id="price" [(ngModel)]="currentMenuItem.price" name="price" step="0.01" required
-                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
-            </div>
-
-            <div>
-              <label for="image_url" class="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
-              <input type="url" id="image_url" [(ngModel)]="currentMenuItem.image_url" name="image_url"
-                placeholder="https://example.com/image.jpg"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
-              <p class="text-xs text-gray-500 mt-1">
-                Leave blank for random food image
-              </p>
-            </div>
-
-            <!-- Modal Actions -->
-            <div class="flex gap-3 pt-4">
-              <button type="button" (click)="closeMenuItemModal()"
-                class="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-lg transition-colors">
-                Cancel
-              </button>
-              <button type="submit"
-                class="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors">
-                {{ showEditMenuItem ? "Update" : "Create" }}
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
+    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 flex-shrink-0">
+      <h3 class="text-xl font-bold text-gray-900">
+        {{ showEditMenuItem ? "Edit Menu Item" : "Add New Menu Item" }} 🥘
+      </h3>
+      <button (click)="closeMenuItemModal()"
+        class="text-gray-400 hover:text-gray-600 text-2xl font-light focus:outline-none transition">
+        &times;
+      </button>
     </div>
+
+    <div class="overflow-y-auto p-6 space-y-6 flex-grow">
+      <form (ngSubmit)="saveMenuItem()" class="space-y-6">
+
+        <div>
+          <label for="itemName" class="block text-sm font-semibold text-gray-800 mb-1">Item Name</label>
+          <input type="text" id="itemName" [(ngModel)]="currentMenuItem.name" name="itemName" required
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-4 focus:ring-amber-500/50 focus:border-amber-500 transition duration-150"
+            placeholder="e.g., Signature Burger" />
+        </div>
+
+        <div>
+          <label for="description" class="block text-sm font-semibold text-gray-800 mb-1">Description</label>
+          <textarea id="description" [(ngModel)]="currentMenuItem.description" name="description" required rows="3"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-4 focus:ring-amber-500/50 focus:border-amber-500 resize-none transition duration-150"
+            placeholder="A brief description of the item..."></textarea>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label for="price" class="block text-sm font-semibold text-gray-800 mb-1">Price ($)</label>
+            <input type="number" id="price" [(ngModel)]="currentMenuItem.price" name="price" step="0.01" required
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-4 focus:ring-amber-500/50 focus:border-amber-500 transition duration-150"
+              placeholder="0.00" />
+          </div>
+          <div>
+            <label for="preparationTime" class="block text-sm font-semibold text-gray-800 mb-1">Prep Time (mins)</label>
+            <input type="number" id="preparationTime" [(ngModel)]="currentMenuItem.preparationTime"
+              name="preparationTime" min="1" required
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-4 focus:ring-amber-500/50 focus:border-amber-500 transition duration-150"
+              placeholder="30" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label for="catagoryName" class="block text-sm font-semibold text-gray-800 mb-1">Category</label>
+            <select id="catagoryName" [(ngModel)]="currentMenuItem.catagoryName" name="catagoryName" required
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-4 focus:ring-amber-500/50 focus:border-amber-500 transition duration-150 bg-white appearance-none">
+              <option value="" disabled selected>Select a Category</option>
+              <option value="Pizza & Pasta">Pizza & Pasta</option>
+              <option value="Biryani & Rice">Biryani & Rice</option>
+              <option value="Fast Food">Fast Food</option>
+
+            </select>
+          </div>
+        
+        </div>
+
+        <div>
+          <label for="image_url" class="block text-sm font-semibold text-gray-800 mb-1">Image URL</label>
+          <input type="url" id="image_url" [(ngModel)]="currentMenuItem.imageUrl" name="image_url"
+            placeholder="https://example.com/image.jpg"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-4 focus:ring-amber-500/50 focus:border-amber-500 transition duration-150" />
+          <p class="text-xs text-gray-500 mt-1">
+            Leave blank for a random food image.
+          </p>
+        </div>
+
+        <div class="border border-gray-200 p-4 rounded-lg space-y-4">
+          <div class="flex items-center justify-between">
+            <label for="isSpicy" class="text-sm font-semibold text-gray-800 cursor-pointer select-none">
+              Is this item spicy?
+            </label>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="isSpicy" [(ngModel)]="currentMenuItem.isSpicy" name="isSpicy"
+                class="sr-only peer">
+              <div
+                class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600">
+              </div>
+            </label>
+          </div>
+
+          <div *ngIf="currentMenuItem.isSpicy">
+            <label class="block text-sm font-semibold text-gray-800 mb-2">Spice Level (1-5)</label>
+            <div class="flex justify-between items-center space-x-2">
+              <input type="number" [(ngModel)]="currentMenuItem.spiceLevel" name="spiceLevel" min="1" max="5" required
+                class="sr-only" />
+
+              <ng-container *ngFor="let level of [1, 2, 3, 4, 5]">
+                <button type="button" (click)="currentMenuItem.spiceLevel = level"
+                  [class.bg-red-600]="currentMenuItem.spiceLevel === level"
+                  [class.text-white]="currentMenuItem.spiceLevel === level"
+                  [class.bg-gray-200]="currentMenuItem.spiceLevel !== level"
+                  [class.text-gray-700]="currentMenuItem.spiceLevel !== level"
+                  class="flex-1 py-2 rounded-lg font-medium transition-all duration-200 hover:bg-red-500 hover:text-white">
+                  {{ level }}
+                </button>
+              </ng-container>
+            </div>
+            <p class="text-xs text-gray-500 mt-1 text-center">
+              1 = Mild, 5 = Extremely Hot
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between border border-gray-200 p-4 rounded-lg">
+          <label for="isAvailable" class="text-sm font-semibold text-gray-800 cursor-pointer select-none">
+            Is this item currently available?
+          </label>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" id="isAvailable" [(ngModel)]="currentMenuItem.isAvailable" name="isAvailable"
+              class="sr-only peer">
+            <div
+              class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600">
+            </div>
+          </label>
+        </div>
+
+      </form>
+    </div>
+
+    <div class="flex gap-4 p-6 border-t border-gray-200 flex-shrink-0">
+      <button type="button" (click)="closeMenuItemModal()"
+        class="flex-1 px-6 py-3 border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-xl transition-all duration-200 shadow-md">
+        Cancel
+      </button>
+      <button type="submit" form="ngForm" (click)="saveMenuItem()"
+        class="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-500/50">
+        {{ showEditMenuItem ? "Update Item" : "Create Item" }}
+      </button>
+    </div>
+
+  </div>
+</div>
   </div>
