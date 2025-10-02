@@ -1,171 +1,75 @@
- .content {
-      padding: 32px;
-    }
+ /* Custom badge classes */
+  .badge {
+    @apply px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
 
-    .page-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 32px;
-    }
+  .stat-card-primary .badge,
+  .stat-card-primary .stat-label,
+  .stat-card-primary .stat-value {
+    @apply text-blue-700;
+  }
 
-    .page-header h1 {
-      font-size: 28px;
-      font-weight: 700;
-      color: #1e293b;
-    }
+  .stat-card-customer .badge,
+  .stat-card-customer .stat-label,
+  .stat-card-customer .stat-value {
+    @apply text-emerald-700;
+  }
 
-    .table-container {
-      overflow-x: auto;
-    }
+  .stat-card-delivery .badge,
+  .stat-card-delivery .stat-label,
+  .stat-card-delivery .stat-value {
+    @apply text-amber-700;
+  }
 
-    .table {
-      width: 100%;
-      border-collapse: collapse;
-    }
+  .stat-card-restaurant .badge,
+  .stat-card-restaurant .stat-label,
+  .stat-card-restaurant .stat-value {
+    @apply text-rose-700;
+  }
 
-    .table th,
-    .table td {
-      padding: 12px;
-      text-align: left;
-      border-bottom: 1px solid #e5e7eb;
-    }
+  .stat-card-admin .badge,
+  .stat-card-admin .stat-label,
+  .stat-card-admin .stat-value {
+    @apply text-indigo-700;
+  }
 
-    .table th {
-      background-color: #f8fafc;
-      font-weight: 600;
-      color: #374151;
-    }
+  .stat-card-success .badge,
+  .stat-card-success .stat-label,
+  .stat-card-success .stat-value {
+    @apply text-green-700;
+  }
 
-    .table tbody tr:hover {
-      background-color: #f8fafc;
-    }
+  /* Role-specific badge colors */
+  .badge[ng-reflect-ng-class*="CUSTOMER"] {
+    @apply bg-emerald-100 text-emerald-800;
+  }
 
-    .status-badge {
-      padding: 4px 8px;
-      border-radius: 12px;
-      font-size: 10px;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
+  .badge[ng-reflect-ng-class*="DELIVERY_PERSON"] {
+    @apply bg-amber-100 text-amber-800;
+  }
 
-    .status-customer {
-      background: #dbeafe;
-      color: #1e40af;
-    }
+  .badge[ng-reflect-ng-class*="RESTAURANT_OWNER"] {
+    @apply bg-rose-100 text-rose-800;
+  }
 
-    .status-restaurant_owner {
-      background: #d1fae5;
-      color: #065f46;
-    }
+  .badge[ng-reflect-ng-class*="ADMIN"] {
+    @apply bg-indigo-100 text-indigo-800;
+  }
 
-    .status-rider {
-      background: #fef3c7;
-      color: #92400e;
-    }
+  /* Status badge colors */
+  .badge[ng-reflect-ng-class*="ACTIVE"] {
+    @apply bg-green-100 text-green-800;
+  }
 
-    .status-admin {
-      background: #fecaca;
-      color: #991b1b;
-    }
+  .badge[ng-reflect-ng-class*="INACTIVE"] {
+    @apply bg-red-100 text-red-800;
+  }
 
-    .btn-sm {
-      padding: 6px 12px;
-      font-size: 12px;
-      margin-right: 8px;
-    }
+  .badge[ng-reflect-ng-class*="SUSPENDED"] {
+    @apply bg-yellow-100 text-yellow-800;
+  }
 
-    .modal-backdrop {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-    }
-
-    .modal {
-      background: white;
-      border-radius: 12px;
-      width: 500px;
-      max-width: 90vw;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 24px;
-      border-bottom: 1px solid #e5e7eb;
-    }
-
-    .modal-header h3 {
-      font-size: 20px;
-      font-weight: 600;
-      color: #1e293b;
-      margin: 0;
-    }
-
-    .modal-close {
-      background: none;
-      border: none;
-      font-size: 24px;
-      cursor: pointer;
-      color: #6b7280;
-    }
-
-    .modal-body {
-      padding: 24px;
-    }
-
-    .form-group {
-      margin-bottom: 20px;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 500;
-      color: #374151;
-    }
-
-    .form-group input,
-    .form-group select {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #d1d5db;
-      border-radius: 6px;
-      font-size: 14px;
-    }
-
-    .form-group input:focus,
-    .form-group select:focus {
-      outline: none;
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-    }
-
-    .modal-actions {
-      display: flex;
-      gap: 12px;
-      justify-content: flex-end;
-      margin-top: 24px;
-    }
-
-    @media (max-width: 768px) {
-      .content {
-        padding: 16px;
-      }
-
-      .page-header {
-        flex-direction: column;
-        gap: 16px;
-        align-items: stretch;
-      }
-    }
+  /* Loading spinner */
+  .spinner {
+    @apply animate-spin;
+  }

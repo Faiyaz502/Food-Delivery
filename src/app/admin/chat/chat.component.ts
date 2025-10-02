@@ -2,7 +2,8 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { ChatContact, ChatMessage } from 'src/app/Models/chat.models';
 import { Restaurant } from 'src/app/Models/restaurant.model';
 import { Rider } from 'src/app/Models/rider.model';
-import { User } from 'src/app/Models/user.model';
+import { User } from 'src/app/Models/Users/user.models';
+
 import { ApiService } from 'src/app/services/api.service';
 
 @Component({
@@ -43,7 +44,7 @@ export class ChatComponent {
     // Load customers
     this.apiService.getUsers().subscribe(users => {
       this.customers = users
-        .filter(user => user.role === 'customer')
+        .filter(user => user.primaryRole === 'CUSTOMER')
         .map(user => this.mapUserToContact(user, 'customer'));
     });
 
@@ -75,8 +76,8 @@ export class ChatComponent {
   mapUserToContact(user: User, type: 'customer'): ChatContact {
     return {
       id: user.id,
-      name: user.name,
-      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random`,
+      name: user.firstName,
+      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(user.firstName)}&background=random`,
       type: type,
       last_message: this.getRandomMessage(),
       last_message_time: this.getRandomTime(),
@@ -88,8 +89,8 @@ export class ChatComponent {
   mapRiderToContact(rider: Rider, user?: User): ChatContact {
     return {
       id: rider.id,
-      name: user?.name || 'Unknown Rider',
-      avatar: rider.image_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'Rider')}&background=random`,
+      name: user?.firstName || 'Unknown Rider',
+      avatar: rider.image_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.firstName || 'Rider')}&background=random`,
       type: 'rider',
       last_message: this.getRandomMessage(),
       last_message_time: this.getRandomTime(),

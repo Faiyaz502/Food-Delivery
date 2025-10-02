@@ -1,79 +1,793 @@
- <div class="content">
-      <div class="page-header">
-        <h1>User Management</h1>
-        <button class="btn btn-primary" (click)="showCreateModal = true">Add New User</button>
-      </div>
-
-      <div class="card">
-        <div class="card-body">
-          <div class="table-container">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Phone</th>
-                  <th>Role</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let user of users">
-                  <td>{{user.id}}</td>
-                  <td>{{user.name}}</td>
-                  <td>{{user.email}}</td>
-                  <td>{{user.phone}}</td>
-                  <td>
-                    <span class="status-badge status-{{user.role}}">{{user.role | titlecase}}</span>
-                  </td>
-                  <td>
-                    <button class="btn btn-secondary btn-sm" (click)="editUser(user)">Edit</button>
-                    <button class="btn btn-danger btn-sm" (click)="deleteUser(user.id)">Delete</button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- Create/Edit Modal -->
-      <div *ngIf="showCreateModal || showEditModal" class="modal-backdrop" (click)="closeModal()">
-        <div class="modal" (click)="$event.stopPropagation()">
-          <div class="modal-header">
-            <h3>{{showEditModal ? 'Edit User' : 'Add New User'}}</h3>
-            <button class="modal-close" (click)="closeModal()">&times;</button>
-          </div>
-          <div class="modal-body">
-            <form (ngSubmit)="saveUser()">
-              <div class="form-group">
-                <label for="name">Name</label>
-                <input type="text" id="name" [(ngModel)]="currentUser.name" name="name" required>
-              </div>
-              <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" [(ngModel)]="currentUser.email" name="email" required>
-              </div>
-              <div class="form-group">
-                <label for="phone">Phone</label>
-                <input type="text" id="phone" [(ngModel)]="currentUser.phone" name="phone" required>
-              </div>
-              <div class="form-group">
-                <label for="role">Role</label>
-                <select id="role" [(ngModel)]="currentUser.role" name="role" required>
-                  <option value="customer">Customer</option>
-                  <option value="restaurant_owner">Restaurant Owner</option>
-                  <option value="rider">Rider</option>
-                  <option value="admin">Admin</option>
-                </select>
-              </div>
-              <div class="modal-actions">
-                <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
-                <button type="submit" class="btn btn-primary">{{showEditModal ? 'Update' : 'Create'}}</button>
-              </div>
-            </form>
-          </div>
+<div class="user-management-container max-w-5xl mx-auto  py-6">
+  <!-- Stats Dashboard -->
+  <div class="stats-dashboard grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-8">
+    <div class="stat-card stat-card-primary bg-blue-50 rounded-xl p-5 shadow-sm border border-blue-100">
+      <div class="flex items-center">
+        <div class="stat-icon text-2xl mr-3">👥</div>
+        <div class="stat-content">
+          <div class="stat-label text-sm font-medium text-blue-700">Total Users</div>
+          <div class="stat-value text-2xl font-bold text-blue-900">{{ stats.totalUsers }}</div>
         </div>
       </div>
     </div>
+
+    <div class="stat-card stat-card-customer bg-emerald-50 rounded-xl p-5 shadow-sm border border-emerald-100">
+      <div class="flex items-center">
+        <div class="stat-icon text-2xl mr-3">🛒</div>
+        <div class="stat-content">
+          <div class="stat-label text-sm font-medium text-emerald-700">Customers</div>
+          <div class="stat-value text-2xl font-bold text-emerald-900">{{ stats.totalCustomers }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-card stat-card-delivery bg-amber-50 rounded-xl p-5 shadow-sm border border-amber-100">
+      <div class="flex items-center">
+        <div class="stat-icon text-2xl mr-3">🚴</div>
+        <div class="stat-content">
+          <div class="stat-label text-sm font-medium text-amber-700">Delivery Persons</div>
+          <div class="stat-value text-2xl font-bold text-amber-900">{{ stats.totalDeliveryPersons }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-card stat-card-restaurant bg-rose-50 rounded-xl p-5 shadow-sm border border-rose-100">
+      <div class="flex items-center">
+        <div class="stat-icon text-2xl mr-3">🍽️</div>
+        <div class="stat-content">
+          <div class="stat-label text-sm font-medium text-rose-700">Restaurant Owners</div>
+          <div class="stat-value text-2xl font-bold text-rose-900">{{ stats.totalRestaurantOwners }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-card stat-card-admin bg-indigo-50 rounded-xl p-5 shadow-sm border border-indigo-100">
+      <div class="flex items-center">
+        <div class="stat-icon text-2xl mr-3">⚙️</div>
+        <div class="stat-content">
+          <div class="stat-label text-sm font-medium text-indigo-700">Admins</div>
+          <div class="stat-value text-2xl font-bold text-indigo-900">{{ stats.totalAdmins }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-card stat-card-success bg-green-50 rounded-xl p-5 shadow-sm border border-green-100">
+      <div class="flex items-center">
+        <div class="stat-icon text-2xl mr-3">✓</div>
+        <div class="stat-content">
+          <div class="stat-label text-sm font-medium text-green-700">Active Users</div>
+          <div class="stat-value text-2xl font-bold text-green-900">{{ stats.activeUsers }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <div class="header flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+    <h1 class="text-2xl font-bold text-gray-800">User Management</h1>
+    <button class="btn btn-primary bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-5 rounded-lg flex items-center transition duration-200 shadow-sm"
+            (click)="openCreateModal()">
+      <span class="icon mr-2">+</span> Create User
+    </button>
+  </div>
+
+  <!-- Alerts -->
+  <div *ngIf="errorMessage" class="alert alert-error bg-red-50 text-red-700 p-4 rounded-lg mb-6 flex justify-between items-center border border-red-200">
+    <span>{{ errorMessage }}</span>
+    <button class="close-btn text-red-500 hover:text-red-700 font-bold" (click)="dismissMessage()">&times;</button>
+  </div>
+
+  <div *ngIf="successMessage" class="alert alert-success bg-green-50 text-green-700 p-4 rounded-lg mb-6 flex justify-between items-center border border-green-200">
+    <span>{{ successMessage }}</span>
+    <button class="close-btn text-green-500 hover:text-green-700 font-bold" (click)="dismissMessage()">&times;</button>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-section bg-white p-5 rounded-xl shadow-sm mb-6 border border-gray-200">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="filter-group">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Search:</label>
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="onSearchChange()"
+          placeholder="Search by name, email, or phone..."
+          class="search-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+        />
+      </div>
+
+      <div class="filter-group">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Role:</label>
+        <select [(ngModel)]="filterRole" (ngModelChange)="onFilterChange()"
+                class="filter-select w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+          <option value="ALL">All Roles</option>
+          <option *ngFor="let role of userRoles" [value]="role">{{ role }}</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Status:</label>
+        <select [(ngModel)]="filterStatus" (ngModelChange)="onFilterChange()"
+                class="filter-select w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+          <option value="ALL">All Statuses</option>
+          <option *ngFor="let status of userStatuses" [value]="status">{{ status }}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="isLoading" class="loading-spinner flex flex-col items-center justify-center py-12">
+    <div class="spinner w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mb-4"></div>
+    <p class="text-gray-600">Loading...</p>
+  </div>
+
+  <!-- User Table -->
+  <div class="table-container bg-white rounded-xl shadow-sm overflow-hidden border border-gray-200" *ngIf="!isLoading">
+    <div class="overflow-x-auto">
+      <table class="users-table min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Verified</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <tr *ngFor="let user of filteredUsers" class="hover:bg-gray-50 transition-colors">
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ user.id }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ user.firstName }} {{ user.lastName }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ user.email }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ user.phoneNumber }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="badge px-2.5 py-0.5 rounded-full text-xs font-medium"
+                    [ngClass]="getRoleClass(user.primaryRole)">
+                {{ user.primaryRole }}
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="badge px-2.5 py-0.5 rounded-full text-xs font-medium"
+                    [ngClass]="getStatusClass(user.status)">
+                {{ user.status }}
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="verification-badge inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold"
+                    [class.bg-green-100.text-green-800]="user.isVerified"
+                    [class.bg-red-100.text-red-800]="!user.isVerified">
+                {{ user.isVerified ? '✓' : '✗' }}
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ user.createdAt | date: 'short' }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+              <div class="actions-cell flex space-x-2">
+                <button class="btn-icon w-8 h-8 flex items-center justify-center rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 transition"
+                        (click)="openUserDetails(user)" title="Edit">
+                  ✏️
+                </button>
+                <button class="btn-icon w-8 h-8 flex items-center justify-center rounded-full bg-purple-100 text-purple-600 hover:bg-purple-200 transition"
+                        (click)="viewProfile(user)" title="View Profile">
+                  👤
+                </button>
+                <button
+                  class="btn-icon w-8 h-8 flex items-center justify-center rounded-full bg-green-100 text-green-600 hover:bg-green-200 transition"
+                  (click)="verifyUser(user.id)"
+                  *ngIf="!user.isVerified"
+                  title="Verify"
+                >
+                  ✓
+                </button>
+                <button class="btn-icon w-8 h-8 flex items-center justify-center rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition"
+                        (click)="deleteUser(user.id)" title="Delete">
+                  🗑️
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div *ngIf="filteredUsers.length === 0" class="no-data py-12 text-center">
+      <p class="text-gray-500 text-lg">No users found</p>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination flex items-center justify-between mt-6" *ngIf="totalPages > 1">
+    <button
+      class="btn-pagination px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+      (click)="previousPage()"
+      [disabled]="currentPage === 0"
+    >
+      Previous
+    </button>
+
+    <span class="page-info text-sm text-gray-700 font-medium">
+      Page {{ currentPage + 1 }} of {{ totalPages }} ({{ totalElements }} total)
+    </span>
+
+    <button
+      class="btn-pagination px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+      (click)="nextPage()"
+      [disabled]="currentPage >= totalPages - 1"
+    >
+      Next
+    </button>
+  </div>
+</div>
+
+<!-- Create User Modal -->
+<div class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" *ngIf="showCreateModal" (click)="closeCreateModal()">
+  <div class="modal-content modal-large bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto" (click)="$event.stopPropagation()">
+    <div class="modal-header flex justify-between items-center p-6 border-b border-gray-200">
+      <h2 class="text-xl font-bold text-gray-800">Create New User</h2>
+      <button class="close-btn text-gray-400 hover:text-gray-600 text-2xl font-bold" (click)="closeCreateModal()">&times;</button>
+    </div>
+
+    <form (ngSubmit)="createUser()" class="modal-body p-6">
+      <div class="form-section mb-8">
+        <h3 class="section-title text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Basic Information</h3>
+        <div class="form-row grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="form-group">
+            <label class="block text-sm font-medium text-gray-700 mb-1">First Name *</label>
+            <input
+              type="text"
+              [(ngModel)]="newUser.firstName"
+              name="firstName"
+              required
+              class="form-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Last Name *</label>
+            <input
+              type="text"
+              [(ngModel)]="newUser.lastName"
+              name="lastName"
+              required
+              class="form-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+            />
+          </div>
+        </div>
+
+        <div class="form-row grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <div class="form-group">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+            <input
+              type="email"
+              [(ngModel)]="newUser.email"
+              name="email"
+              required
+              class="form-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number *</label>
+            <input
+              type="tel"
+              [(ngModel)]="newUser.phoneNumber"
+              name="phoneNumber"
+              required
+              class="form-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+            />
+          </div>
+        </div>
+
+        <div class="form-row grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <div class="form-group">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Password *</label>
+            <input
+              type="password"
+              [(ngModel)]="newUser.password"
+              name="password"
+              required
+              class="form-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Role *</label>
+            <select
+              [(ngModel)]="newUser.primaryRole"
+              name="primaryRole"
+              required
+              class="form-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+            >
+              <option *ngFor="let role of userRoles" [value]="role">{{ role }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Role-Specific Sections -->
+      <div class="form-section role-specific-section mb-8" *ngIf="newUser.primaryRole === UserRole.CUSTOMER">
+        <h3 class="section-title text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Customer Profile (Optional)</h3>
+        <div class="form-row grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="form-group">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
+            <input
+              type="date"
+              [(ngModel)]="customerProfile.dateOfBirth"
+              name="dateOfBirth"
+              class="form-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Profile Image URL</label>
+            <input
+              type="url"
+              [(ngModel)]="customerProfile.profileImageUrl"
+              name="profileImageUrl"
+              placeholder="https://example.com/image.jpg"
+              class="form-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section role-specific-section mb-8" *ngIf="newUser.primaryRole === UserRole.DELIVERY_PERSON">
+        <h3 class="section-title text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Delivery Person Profile</h3>
+        <div class="form-row grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="form-group">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Vehicle Type *</label>
+            <select
+              [(ngModel)]="deliveryPersonProfile.vehicleType"
+              name="vehicleType"
+              class="form-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+            >
+              <option *ngFor="let vehicle of vehicleTypes" [value]="vehicle">{{ vehicle }}</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Driving License Number *</label>
+            <input
+              type="text"
+              [(ngModel)]="deliveryPersonProfile.drivingLicenseNumber"
+              name="drivingLicenseNumber"
+              placeholder="DL123456789"
+              class="form-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+            />
+          </div>
+        </div>
+
+        <div class="form-group mt-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Max Delivery Radius (km)</label>
+          <input
+            type="number"
+            [(ngModel)]="deliveryPersonProfile.maxDeliveryRadius"
+            name="maxDeliveryRadius"
+            min="1"
+            max="50"
+            class="form-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+          />
+        </div>
+      </div>
+
+      <div class="form-section role-specific-section mb-8" *ngIf="newUser.primaryRole === UserRole.RESTAURANT_OWNER">
+        <h3 class="section-title text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Restaurant Owner Profile</h3>
+        <div class="form-group">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Business License Number *</label>
+          <input
+            type="text"
+            [(ngModel)]="restaurantOwnerProfile.businessLicenseNumber"
+            name="businessLicenseNumber"
+            placeholder="BL123456"
+            class="form-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+          />
+        </div>
+
+        <div class="form-row grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <div class="form-group">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Bank Account Number *</label>
+            <input
+              type="text"
+              [(ngModel)]="restaurantOwnerProfile.bankAccountNumber"
+              name="bankAccountNumber"
+              placeholder="1234567890"
+              class="form-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Bank Routing Number *</label>
+            <input
+              type="text"
+              [(ngModel)]="restaurantOwnerProfile.bankRoutingNumber"
+              name="bankRoutingNumber"
+              placeholder="021000021"
+              class="form-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section role-specific-section mb-8" *ngIf="newUser.primaryRole === UserRole.ADMIN">
+        <h3 class="section-title text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Admin Profile</h3>
+        <div class="form-row grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="form-group">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Department *</label>
+            <input
+              type="text"
+              [(ngModel)]="adminProfile.department"
+              name="department"
+              placeholder="Operations, Customer Support, etc."
+              class="form-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Admin Level *</label>
+            <select
+              [(ngModel)]="adminProfile.adminLevel"
+              name="adminLevel"
+              class="form-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+            >
+              <option *ngFor="let level of adminLevels" [value]="level">{{ level }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <div class="form-group">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Access Level (1-10) *</label>
+            <input
+              type="number"
+              [(ngModel)]="adminProfile.accessLevel"
+              name="accessLevel"
+              min="1"
+              max="10"
+              class="form-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Supervisor ID (Optional)</label>
+            <input
+              type="number"
+              [(ngModel)]="adminProfile.supervisorId"
+              name="supervisorId"
+              placeholder="Enter supervisor user ID"
+              class="form-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer flex justify-end space-x-3 pt-6 border-t border-gray-200">
+        <button type="button" class="btn btn-secondary px-5 py-2.5 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium transition"
+                (click)="closeCreateModal()">
+          Cancel
+        </button>
+        <button type="submit" class="btn btn-primary px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition flex items-center"
+                [disabled]="isLoading">
+          <span *ngIf="isLoading" class="mr-2">Creating...</span>
+          <span *ngIf="!isLoading">Create User</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Edit User Modal -->
+<div class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" *ngIf="showUserModal && selectedUser" (click)="closeUserModal()">
+  <div class="modal-content bg-white rounded-xl shadow-xl w-full max-w-md" (click)="$event.stopPropagation()">
+    <div class="modal-header flex justify-between items-center p-6 border-b border-gray-200">
+      <h2 class="text-xl font-bold text-gray-800">Edit User</h2>
+      <button class="close-btn text-gray-400 hover:text-gray-600 text-2xl font-bold" (click)="closeUserModal()">&times;</button>
+    </div>
+
+    <form (ngSubmit)="updateUser()" class="modal-body p-6">
+      <div class="form-group mb-4">
+        <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+        <input
+          type="text"
+          [(ngModel)]="editUser.firstName"
+          name="firstName"
+          class="form-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+        />
+      </div>
+
+      <div class="form-group mb-4">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+        <input
+          type="text"
+          [(ngModel)]="editUser.lastName"
+          name="lastName"
+          class="form-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+        />
+      </div>
+
+      <div class="form-group mb-4">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+        <input
+          type="tel"
+          [(ngModel)]="editUser.phoneNumber"
+          name="phoneNumber"
+          class="form-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+        />
+      </div>
+
+      <div class="form-group mb-6">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Current Status</label>
+        <select
+          [value]="selectedUser.status"
+          (change)="updateUserStatus(selectedUser.id, $any($event.target).value)"
+          class="form-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+        >
+          <option *ngFor="let status of userStatuses" [value]="status">{{ status }}</option>
+        </select>
+      </div>
+
+      <div class="modal-footer flex justify-end space-x-3 pt-4">
+        <button type="button" class="btn btn-secondary px-5 py-2.5 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium transition"
+                (click)="closeUserModal()">
+          Cancel
+        </button>
+        <button type="submit" class="btn btn-primary px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition flex items-center"
+                [disabled]="isLoading">
+          <span *ngIf="isLoading" class="mr-2">Updating...</span>
+          <span *ngIf="!isLoading">Update User</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- View Profile Modal -->
+<div class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" *ngIf="showProfileModal && selectedUser" (click)="closeProfileModal()">
+  <div class="modal-content modal-large bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto" (click)="$event.stopPropagation()">
+    <div class="modal-header flex justify-between items-center p-6 border-b border-gray-200">
+      <h2 class="text-xl font-bold text-gray-800">User Profile - {{ selectedUser.firstName }} {{ selectedUser.lastName }}</h2>
+      <button class="close-btn text-gray-400 hover:text-gray-600 text-2xl font-bold" (click)="closeProfileModal()">&times;</button>
+    </div>
+
+    <div class="modal-body p-6">
+      <div class="profile-tabs flex border-b border-gray-200 mb-6">
+        <button
+          class="tab-btn py-3 px-4 text-sm font-medium rounded-t-lg transition-colors"
+          [class.active]="activeProfileTab === 'details'"
+          [class.text-blue-600.border-b-2.border-blue-600.bg-blue-50]="activeProfileTab === 'details'"
+          [class.text-gray-500]="activeProfileTab !== 'details'"
+          (click)="setProfileTab('details')"
+        >
+          User Details
+        </button>
+        <button
+          class="tab-btn py-3 px-4 text-sm font-medium rounded-t-lg transition-colors"
+          [class.active]="activeProfileTab === 'profile'"
+          [class.text-blue-600.border-b-2.border-blue-600.bg-blue-50]="activeProfileTab === 'profile'"
+          [class.text-gray-500]="activeProfileTab !== 'profile'"
+          (click)="setProfileTab('profile')"
+          *ngIf="selectedUserProfile"
+        >
+          {{ selectedUser.primaryRole }} Profile
+        </button>
+      </div>
+
+      <div class="tab-content" *ngIf="activeProfileTab === 'details'">
+        <div class="profile-info grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="info-row flex">
+            <span class="label font-medium text-gray-700 w-32">ID:</span>
+            <span class="value text-gray-900">{{ selectedUser.id }}</span>
+          </div>
+          <div class="info-row flex">
+            <span class="label font-medium text-gray-700 w-32">Full Name:</span>
+            <span class="value text-gray-900">{{ selectedUser.firstName }} {{ selectedUser.lastName }}</span>
+          </div>
+          <div class="info-row flex">
+            <span class="label font-medium text-gray-700 w-32">Email:</span>
+            <span class="value text-gray-900">{{ selectedUser.email }}</span>
+          </div>
+          <div class="info-row flex">
+            <span class="label font-medium text-gray-700 w-32">Phone:</span>
+            <span class="value text-gray-900">{{ selectedUser.phoneNumber }}</span>
+          </div>
+          <div class="info-row flex">
+            <span class="label font-medium text-gray-700 w-32">Role:</span>
+            <span class="value">
+              <span class="badge px-2.5 py-0.5 rounded-full text-xs font-medium"
+                    [ngClass]="getRoleClass(selectedUser.primaryRole)">
+                {{ selectedUser.primaryRole }}
+              </span>
+            </span>
+          </div>
+          <div class="info-row flex">
+            <span class="label font-medium text-gray-700 w-32">Status:</span>
+            <span class="value">
+              <span class="badge px-2.5 py-0.5 rounded-full text-xs font-medium"
+                    [ngClass]="getStatusClass(selectedUser.status)">
+                {{ selectedUser.status }}
+              </span>
+            </span>
+          </div>
+          <div class="info-row flex">
+            <span class="label font-medium text-gray-700 w-32">Verified:</span>
+            <span class="value text-gray-900">{{ selectedUser.isVerified ? 'Yes' : 'No' }}</span>
+          </div>
+          <div class="info-row flex">
+            <span class="label font-medium text-gray-700 w-32">Created:</span>
+            <span class="value text-gray-900">{{ selectedUser.createdAt | date: 'medium' }}</span>
+          </div>
+          <div class="info-row flex">
+            <span class="label font-medium text-gray-700 w-32">Last Updated:</span>
+            <span class="value text-gray-900">{{ selectedUser.updatedAt | date: 'medium' }}</span>
+          </div>
+          <div class="info-row flex" *ngIf="selectedUser.lastLoginAt">
+            <span class="label font-medium text-gray-700 w-32">Last Login:</span>
+            <span class="value text-gray-900">{{ selectedUser.lastLoginAt | date: 'medium' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content" *ngIf="activeProfileTab === 'profile' && selectedUserProfile">
+        <div class="profile-info" *ngIf="selectedUser.primaryRole === 'CUSTOMER'">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Customer Profile</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="info-row flex">
+              <span class="label font-medium text-gray-700 w-48">Total Orders:</span>
+              <span class="value text-gray-900">{{ selectedUserProfile.totalOrders }}</span>
+            </div>
+            <div class="info-row flex">
+              <span class="label font-medium text-gray-700 w-48">Total Spent:</span>
+              <span class="value text-gray-900">${{ selectedUserProfile.totalSpent?.toFixed(2) }}</span>
+            </div>
+            <div class="info-row flex">
+              <span class="label font-medium text-gray-700 w-48">Average Order Value:</span>
+              <span class="value text-gray-900">${{ selectedUserProfile.averageOrderValue?.toFixed(2) }}</span>
+            </div>
+            <div class="info-row flex">
+              <span class="label font-medium text-gray-700 w-48">Loyalty Points:</span>
+              <span class="value text-gray-900">{{ selectedUserProfile.loyaltyPoints }}</span>
+            </div>
+            <div class="info-row flex">
+              <span class="label font-medium text-gray-700 w-48">Customer Tier:</span>
+              <span class="value">
+                <span class="badge badge-tier px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                  {{ selectedUserProfile.customerTier }}
+                </span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-info" *ngIf="selectedUser.primaryRole === 'DELIVERY_PERSON'">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Delivery Person Profile</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="info-row flex">
+              <span class="label font-medium text-gray-700 w-48">Vehicle Type:</span>
+              <span class="value text-gray-900">{{ selectedUserProfile.vehicleType }}</span>
+            </div>
+            <div class="info-row flex">
+              <span class="label font-medium text-gray-700 w-48">License Number:</span>
+              <span class="value text-gray-900">{{ selectedUserProfile.drivingLicenseNumber }}</span>
+            </div>
+            <div class="info-row flex">
+              <span class="label font-medium text-gray-700 w-48">Status:</span>
+              <span class="value text-gray-900">{{ selectedUserProfile.availabilityStatus }}</span>
+            </div>
+            <div class="info-row flex">
+              <span class="label font-medium text-gray-700 w-48">Total Deliveries:</span>
+              <span class="value text-gray-900">{{ selectedUserProfile.totalDeliveries }}</span>
+            </div>
+            <div class="info-row flex">
+              <span class="label font-medium text-gray-700 w-48">Success Rate:</span>
+              <span class="value text-gray-900">{{ selectedUserProfile.successRate?.toFixed(2) }}%</span>
+            </div>
+            <div class="info-row flex">
+              <span class="label font-medium text-gray-700 w-48">Average Rating:</span>
+              <span class="value text-gray-900">{{ selectedUserProfile.avgRating?.toFixed(2) }} ⭐</span>
+            </div>
+            <div class="info-row flex">
+              <span class="label font-medium text-gray-700 w-48">Total Earnings:</span>
+              <span class="value text-gray-900">${{ selectedUserProfile.totalEarnings?.toFixed(2) }}</span>
+            </div>
+            <div class="info-row flex">
+              <span class="label font-medium text-gray-700 w-48">Verified:</span>
+              <span class="value text-gray-900">{{ selectedUserProfile.isVerified ? 'Yes' : 'No' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-info" *ngIf="selectedUser.primaryRole === 'RESTAURANT_OWNER'">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Restaurant Owner Profile</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="info-row flex">
+              <span class="label font-medium text-gray-700 w-48">Business License:</span>
+              <span class="value text-gray-900">{{ selectedUserProfile.businessLicenseNumber }}</span>
+            </div>
+            <div class="info-row flex">
+              <span class="label font-medium text-gray-700 w-48">Approved:</span>
+              <span class="value text-gray-900">{{ selectedUserProfile.isApproved ? 'Yes' : 'No' }}</span>
+            </div>
+            <div class="info-row flex">
+              <span class="label font-medium text-gray-700 w-48">Total Earnings:</span>
+              <span class="value text-gray-900">${{ selectedUserProfile.totalEarnings?.toFixed(2) }}</span>
+            </div>
+            <div class="info-row flex">
+              <span class="label font-medium text-gray-700 w-48">Pending Payout:</span>
+              <span class="value text-gray-900">${{ selectedUserProfile.pendingPayout?.toFixed(2) }}</span>
+            </div>
+            <div class="info-row flex">
+              <span class="label font-medium text-gray-700 w-48">Commission Rate:</span>
+              <span class="value text-gray-900">{{ (selectedUserProfile.commissionRate * 100).toFixed(2) }}%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-info" *ngIf="selectedUser.primaryRole === 'ADMIN'">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Admin Profile</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="info-row flex">
+              <span class="label font-medium text-gray-700 w-48">Department:</span>
+              <span class="value text-gray-900">{{ selectedUserProfile.department }}</span>
+            </div>
+            <div class="info-row flex">
+              <span class="label font-medium text-gray-700 w-48">Admin Level:</span>
+              <span class="value text-gray-900">{{ selectedUserProfile.adminLevel }}</span>
+            </div>
+            <div class="info-row flex">
+              <span class="label font-medium text-gray-700 w-48">Access Level:</span>
+              <span class="value text-gray-900">{{ selectedUserProfile.accessLevel }}</span>
+            </div>
+            <div class="info-row flex">
+              <span class="label font-medium text-gray-700 w-48">Login Count:</span>
+              <span class="value text-gray-900">{{ selectedUserProfile.loginCount }}</span>
+            </div>
+            <div class="info-row flex">
+              <span class="label font-medium text-gray-700 w-48">Last Login:</span>
+              <span class="value text-gray-900">{{ selectedUserProfile.lastLogin | date: 'medium' }}</span>
+            </div>
+          </div>
+
+          <h4 class="text-md font-semibold text-gray-800 mt-6 mb-3">Permissions</h4>
+          <div class="permissions-grid grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div class="permission-item flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+              <span class="text-gray-700">Approve Restaurants:</span>
+              <span class="text-gray-900">{{ selectedUserProfile.canApproveRestaurants ? '✓' : '✗' }}</span>
+            </div>
+            <div class="permission-item flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+              <span class="text-gray-700">Manage Users:</span>
+              <span class="text-gray-900">{{ selectedUserProfile.canManageUsers ? '✓' : '✗' }}</span>
+            </div>
+            <div class="permission-item flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+              <span class="text-gray-700">Manage Orders:</span>
+              <span class="text-gray-900">{{ selectedUserProfile.canManageOrders ? '✓' : '✗' }}</span>
+            </div>
+            <div class="permission-item flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+              <span class="text-gray-700">Manage Payments:</span>
+              <span class="text-gray-900">{{ selectedUserProfile.canManagePayments ? '✓' : '✗' }}</span>
+            </div>
+            <div class="permission-item flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+              <span class="text-gray-700">Manage Drones:</span>
+              <span class="text-gray-900">{{ selectedUserProfile.canManageDrones ? '✓' : '✗' }}</span>
+            </div>
+            <div class="permission-item flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+              <span class="text-gray-700">View Analytics:</span>
+              <span class="text-gray-900">{{ selectedUserProfile.canViewAnalytics ? '✓' : '✗' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content" *ngIf="activeProfileTab === 'profile' && !selectedUserProfile && !isLoading">
+        <p class="no-data text-gray-500 text-center py-8">No profile data available for this user.</p>
+      </div>
+    </div>
+
+    <div class="modal-footer p-6 border-t border-gray-200">
+      <button class="btn btn-secondary px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition"
+              (click)="closeProfileModal()">Close</button>
+    </div>
+  </div>
+</div>

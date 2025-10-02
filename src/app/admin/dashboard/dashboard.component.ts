@@ -10,7 +10,8 @@ import { Restaurant } from 'src/app/Models/restaurant.model';
 import { Review } from 'src/app/Models/review.model';
 import { Rider } from 'src/app/Models/rider.model';
 import { TeamMember } from 'src/app/Models/team-member.model';
-import { User } from 'src/app/Models/user.model';
+import { User } from 'src/app/Models/Users/user.models';
+
 import { ApiService } from 'src/app/services/api.service';
 
 
@@ -132,7 +133,7 @@ export class DashboardComponent  {
   }
 
   calculateUserStatistics() {
-    this.totalCustomers = this.users.filter(user => user.role === 'customer').length;
+    this.totalCustomers = this.users.filter(user => user.primaryRole === 'CUSTOMER').length;
   }
 
   calculateRiderStatistics() {
@@ -158,8 +159,8 @@ export class DashboardComponent  {
         const user = this.users.find(u => u.id === rider.id);
         return {
           ...rider,
-          name: user?.name || 'Unknown',
-          phone: user?.phone || 'N/A'
+          name: user?.firstName || 'Unknown',
+          phone: user?.phoneNumber || 'N/A'
         };
       });
   }
@@ -182,7 +183,7 @@ export class DashboardComponent  {
         const restaurant = this.restaurants.find(r => r.id === review.restaurant_id);
         return {
           ...review,
-          userName: user?.name || 'Unknown User',
+          userName: user?.firstName || 'Unknown User',
           restaurantName: restaurant?.name || 'Unknown Restaurant'
         };
       });

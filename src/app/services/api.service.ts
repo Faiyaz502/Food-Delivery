@@ -7,12 +7,12 @@ import { Order } from '../Models/order.model';
 import { Payment } from '../Models/payment.model';
 import { Restaurant } from '../Models/restaurant.model';
 import { Rider } from '../Models/rider.model';
-import { User } from '../Models/user.model';
 import { PendingRequest } from '../Models/pending-request.model';
 import { TeamMember } from '../Models/team-member.model';
 import { CustomerLocation } from '../Models/customer-location.model';
 import { Review } from '../Models/review.model';
 import { Sales } from '../Models/sales.model';
+import { User } from '../Models/Users/user.models';
 
 
 @Injectable({

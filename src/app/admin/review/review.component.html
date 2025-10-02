@@ -61,7 +61,7 @@
             (change)="applyFilters()"
             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
             <option value="all">All Users</option>
-            <option *ngFor="let user of users" [value]="user.id">{{user.name}}</option>
+            <option *ngFor="let user of users" [value]="user.id">{{user.firstName}}</option>
           </select>
         </div>
 

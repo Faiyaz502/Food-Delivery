@@ -3,8 +3,8 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { Chart } from 'chart.js';
 import { Restaurant } from 'src/app/Models/restaurant.model';
 import { Review } from 'src/app/Models/review.model';
-import { User } from 'src/app/Models/user.model';
 import { ApiService } from 'src/app/services/api.service';
+import { User } from 'src/app/Models/Users/user.models';
 interface ReviewWithDetails extends Review {
   user_name?: string;
   restaurant_name?: string;
@@ -75,7 +75,7 @@ export class ReviewComponent {
 
     return {
       ...review,
-      user_name: user?.name || 'Unknown User',
+      user_name: user?.firstName || 'Unknown User',
       restaurant_name: restaurant?.name || 'Unknown Restaurant',
       restaurant_image: restaurant?.image_url,
       is_flagged: Math.random() > 0.8, // Random flagged status for demo

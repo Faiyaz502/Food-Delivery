@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { switchMap } from 'rxjs';
 import { Rider } from 'src/app/Models/rider.model';
-import { User } from 'src/app/Models/user.model';
+import { User } from 'src/app/Models/Users/user.models';
+
 import { ApiService } from 'src/app/services/api.service';
 
 @Component({
@@ -71,7 +72,7 @@ export class RidersComponent {
 
   getUserName(userId: number): string {
     const user = this.users.find(u => u.id === userId);
-    return user ? user.name : `User ${userId}`;
+    return user ? user.firstName+" "+user.lastName : `User ${userId}`;
   }
 
   toggleAvailability(rider: Rider) {
@@ -82,6 +83,6 @@ export class RidersComponent {
     });
   }
 
-  
+
 
 }

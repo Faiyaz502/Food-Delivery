@@ -2,7 +2,7 @@ import { Address } from './../../Models/Customer.models';
 import { Component } from '@angular/core';
 import { Customer } from 'src/app/Models/Customer.models';
 import { Order } from 'src/app/Models/order.model';
-import { User } from 'src/app/Models/user.model';
+import { User } from 'src/app/Models/Users/user.models';
 import { ApiService } from 'src/app/services/api.service';
 
 @Component({
@@ -36,7 +36,7 @@ export class CustomerComponent {
     this.apiService.getUsers().subscribe(users => {
       this.apiService.getOrders().subscribe(orders => {
         this.customers = users
-          .filter(user => user.role === 'customer')
+          .filter(user => user.primaryRole === 'CUSTOMER')
           .map(user => this.mapUserToCustomer(user, orders));
         this.filteredCustomers = [...this.customers];
       });
@@ -49,11 +49,11 @@ export class CustomerComponent {
 
     return {
     id: user.id,
-    name: user.name,
+    name: user.firstName,
     email: user.email,
-    phone: user.phone,
-    role: user.role,
-    created_at: user.created_at,
+    phone: user.phoneNumber,
+    role: user.primaryRole,
+    created_at: user.createdAt,
     status: this.getRandomStatus(),
     city: this.getRandomCity(),
     total_orders: userOrders.length,
