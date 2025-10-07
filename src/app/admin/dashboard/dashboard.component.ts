@@ -3,8 +3,8 @@ import { Chart } from 'chart.js';
 import { CateringOrder, CateringPackage } from 'src/app/Models/catering-package.model';
 import { CustomerLocation } from 'src/app/Models/customer-location.model';
 import { MenuItem } from 'src/app/Models/MenuItem.model';
-import { Order } from 'src/app/Models/order.model';
-import { Payment } from 'src/app/Models/payment.model';
+import { Order } from 'src/app/Models/Order/order.models';
+
 import { PendingRequest } from 'src/app/Models/pending-request.model';
 import { Restaurant } from 'src/app/Models/restaurant.model';
 import { Review } from 'src/app/Models/review.model';
@@ -123,13 +123,13 @@ export class DashboardComponent  {
     // Calculate today's orders
     const today = new Date().toISOString().split('T')[0];
     this.totalOrdersToday = this.orders.filter(order =>
-      order.created_at.split('T')[0] === today
+      order.createdAt.split('T')[0] === today
     ).length;
 
     // Calculate total revenue
     this.totalRevenue = this.orders
-      .filter(order => order.payment_status === 'paid')
-      .reduce((sum, order) => sum + order.total_amount, 0);
+      .filter(order => order.paymentStatus === 'COMPLETED')
+      .reduce((sum, order) => sum + order.totalAmount, 0);
   }
 
   calculateUserStatistics() {
@@ -143,7 +143,7 @@ export class DashboardComponent  {
 
   getRecentTransactions() {
     this.recentTransactions = this.orders
-      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
       .slice(0, 5);
   }
 

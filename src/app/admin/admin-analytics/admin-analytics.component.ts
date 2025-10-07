@@ -5,7 +5,8 @@ import { AnalyticsModule } from "src/app/analytics/analytics.module";
 import { CateringPackage, CateringOrder } from 'src/app/Models/catering-package.model';
 import { CustomerLocation } from 'src/app/Models/customer-location.model';
 import { MenuItem } from 'src/app/Models/MenuItem.model';
-import { Order } from 'src/app/Models/order.model';
+import { Order } from 'src/app/Models/Order/order.models';
+
 import { PendingRequest } from 'src/app/Models/pending-request.model';
 import { Restaurant } from 'src/app/Models/restaurant.model';
 import { Review } from 'src/app/Models/review.model';
@@ -46,7 +47,7 @@ export class AdminAnalyticsComponent {
 private createMonthlyChart(orders: Order[]) {
   const monthlyCounts = new Array(12).fill(0);
   orders.forEach(order => {
-    const date = new Date(order.created_at);
+    const date = new Date(order.createdAt);
     monthlyCounts[date.getMonth()]++;
   });
 
@@ -253,13 +254,13 @@ private createMonthlyChart(orders: Order[]) {
       // Calculate today's orders
       const today = new Date().toISOString().split('T')[0];
       this.totalOrdersToday = this.orders.filter(order =>
-        order.created_at.split('T')[0] === today
+        order.createdAt.split('T')[0] === today
       ).length;
 
       // Calculate total revenue
       this.totalRevenue = this.orders
-        .filter(order => order.payment_status === 'paid')
-        .reduce((sum, order) => sum + order.total_amount, 0);
+        .filter(order => order.paymentStatus === 'COMPLETED')
+        .reduce((sum, order) => sum + order.totalAmount, 0);
     }
 
     calculateUserStatistics() {
@@ -273,7 +274,7 @@ private createMonthlyChart(orders: Order[]) {
 
     getRecentTransactions() {
       this.recentTransactions = this.orders
-        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
         .slice(0, 5);
     }
 
@@ -430,9 +431,9 @@ private createMonthlyChart(orders: Order[]) {
 
       const monthlyRevenue = Array(12).fill(0);
       this.orders.forEach(order => {
-        if (order.payment_status === 'paid') {
-          const month = new Date(order.created_at).getMonth();
-          monthlyRevenue[month] += order.total_amount;
+        if (order.paymentStatus === 'COMPLETED') {
+          const month = new Date(order.createdAt).getMonth();
+          monthlyRevenue[month] += order.totalAmount;
         }
       });
 

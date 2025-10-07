@@ -350,7 +350,7 @@
           Order #15465{{ transaction.id }}
         </p>
         <p class="text-xs text-gray-500 mt-0.5">
-          {{ transaction.created_at | date:'medium' }}
+          {{ transaction.createdAt | date:'medium' }}
         </p>
         <span
           [class]="'mt-1 inline-flex items-center px-3 py-0.5 rounded-full text-xs font-medium ' + getOrderStatusClass(transaction.status)"
@@ -358,9 +358,9 @@
           <i
             class="fa-solid fa-circle text-[6px] mr-1"
             [ngClass]="{
-              'text-green-500': transaction.payment_status === 'paid',
-              'text-yellow-500': transaction.payment_status === 'pending',
-              'text-red-500': transaction.status === 'cancelled'
+              'text-green-500': transaction.paymentStatus === 'COMPLETED',
+              'text-yellow-500': transaction.paymentStatus === 'PENDING',
+              'text-red-500': transaction.status === 'CANCELLED'
             }"
           ></i>
           {{ transaction.status | titlecase }}
@@ -370,17 +370,17 @@
       <!-- Right Section -->
       <div class="text-right space-y-1">
         <p class="font-bold text-gray-900 text-base">
-          ${{ transaction.total_amount | number:'1.2-2' }}
+          ${{ transaction.totalAmount | number:'1.2-2' }}
         </p>
         <p
           class="text-xs font-medium"
-          [class]="transaction.payment_status === 'paid' ? 'text-green-600' : 'text-yellow-600'"
+          [class]="transaction.paymentStatus === 'COMPLETED' ? 'text-green-600' : 'text-yellow-600'"
         >
           <i
             class="fa-solid"
-            [ngClass]="transaction.payment_status === 'paid' ? 'fa-check-circle' : 'fa-clock'"
+            [ngClass]="transaction.paymentStatus === 'COMPLETED' ? 'fa-check-circle' : 'fa-clock'"
           ></i>
-          {{ transaction.payment_status | titlecase }}
+          {{ transaction.paymentStatus | titlecase }}
         </p>
       </div>
     </div>

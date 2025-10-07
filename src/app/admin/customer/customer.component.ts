@@ -1,7 +1,8 @@
 import { Address } from './../../Models/Customer.models';
 import { Component } from '@angular/core';
 import { Customer } from 'src/app/Models/Customer.models';
-import { Order } from 'src/app/Models/order.model';
+import { Order } from 'src/app/Models/Order/order.models';
+
 import { User } from 'src/app/Models/Users/user.models';
 import { ApiService } from 'src/app/services/api.service';
 
@@ -44,11 +45,11 @@ export class CustomerComponent {
   }
 
   mapUserToCustomer(user: User, orders: Order[]): Customer {
-    const userOrders = orders.filter(order => order.user_id === user.id);
-    const totalSpend = userOrders.reduce((sum, order) => sum + order.total_amount, 0);
+    const userOrders = orders.filter(order => Number(order.customerId)=== user.id);
+    const totalSpend = userOrders.reduce((sum, order) => sum + order.totalAmount, 0);
 
     return {
-    id: user.id,
+    id: String(user.id),
     name: user.firstName,
     email: user.email,
     phone: user.phoneNumber,
@@ -99,9 +100,9 @@ export class CustomerComponent {
     this.showCustomerDetails = true;
   }
 
-  loadCustomerOrders(customerId: number) {
+  loadCustomerOrders(customerId: string) {
     this.apiService.getOrders().subscribe(orders => {
-      this.customerOrders = orders.filter(order => order.user_id === customerId);
+      this.customerOrders = orders.filter(order => order.customerId === customerId);
     });
   }
 

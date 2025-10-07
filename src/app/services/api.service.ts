@@ -3,8 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { CateringPackage, CateringOrder } from '../Models/catering-package.model';
 import { MenuItem } from '../Models/MenuItem.model';
-import { Order } from '../Models/order.model';
-import { Payment } from '../Models/payment.model';
+
 import { Restaurant } from '../Models/restaurant.model';
 import { Rider } from '../Models/rider.model';
 import { PendingRequest } from '../Models/pending-request.model';
@@ -13,6 +12,7 @@ import { CustomerLocation } from '../Models/customer-location.model';
 import { Review } from '../Models/review.model';
 import { Sales } from '../Models/sales.model';
 import { User } from '../Models/Users/user.models';
+import { Order } from '../Models/Order/order.models';
 
 
 @Injectable({
@@ -104,10 +104,7 @@ export class ApiService {
   return this.http.patch<Order>(`${this.baseUrl}/orders/${id}`, order);
 }
 
-  // Payments
-  getPayments(): Observable<Payment[]> {
-    return this.http.get<Payment[]>(`${this.baseUrl}/payments`);
-  }
+
 
   // Riders
   getRiders(): Observable<Rider[]> {
