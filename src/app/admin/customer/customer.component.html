@@ -235,8 +235,8 @@
                     </div>
                     <div class="text-right">
                       <p class="font-bold text-green-600">${{order.totalAmount.toFixed(2)}}</p>
-                      <span [class]="'px-2 py-1 rounded-full text-xs font-medium ' + (order.status === 'DELIVERED' ? 'text-green-600 bg-green-100' : order.status === 'CANCELLED' ? 'text-red-600 bg-red-100' : 'text-blue-600 bg-blue-100')">
-                        {{order.status}}
+                      <span [class]="'px-2 py-1 rounded-full text-xs font-medium ' + (order.orderStatus === 'DELIVERED' ? 'text-green-600 bg-green-100' : order.orderStatus === 'CANCELLED' ? 'text-red-600 bg-red-100' : 'text-blue-600 bg-blue-100')">
+                        {{order.orderStatus}}
                       </span>
                     </div>
                   </div>

@@ -5,7 +5,8 @@ import { AnalyticsModule } from "src/app/analytics/analytics.module";
 import { CateringPackage, CateringOrder } from 'src/app/Models/catering-package.model';
 import { CustomerLocation } from 'src/app/Models/customer-location.model';
 import { MenuItem } from 'src/app/Models/MenuItem.model';
-import { Order } from 'src/app/Models/Order/order.models';
+import { OrderResponseDTO } from 'src/app/Models/Order/order.models';
+
 
 import { PendingRequest } from 'src/app/Models/pending-request.model';
 import { Restaurant } from 'src/app/Models/restaurant.model';
@@ -14,6 +15,7 @@ import { Rider } from 'src/app/Models/rider.model';
 import { TeamMember } from 'src/app/Models/team-member.model';
 import { User } from 'src/app/Models/Users/user.models';
 import {  ApiService } from 'src/app/services/api.service';
+import { OrderService } from 'src/app/services/Orders/order.service';
 
 
 @Component({
@@ -34,17 +36,17 @@ export class AdminAnalyticsComponent {
  @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
   chart!: Chart;
 
-  constructor(private api: ApiService) {}
+  constructor(private api: ApiService , private orderService : OrderService) {}
 
   ngOnInit() {
     Chart.register(...registerables);
-    this.api.getOrders().subscribe(orders => this.createMonthlyChart(orders));
+    this.orderService.getAllOrders().subscribe(orders => this.createMonthlyChart(orders));
      this.loadDashboardData();
   }
 
 
 
-private createMonthlyChart(orders: Order[]) {
+private createMonthlyChart(orders: OrderResponseDTO[]) {
   const monthlyCounts = new Array(12).fill(0);
   orders.forEach(order => {
     const date = new Date(order.createdAt);
@@ -173,14 +175,14 @@ private createMonthlyChart(orders: Order[]) {
     ];
 
     // Data arrays
-    orders: Order[] = [];
+    orders: OrderResponseDTO[] = [];
     users: User[] = [];
     riders: Rider[] = [];
     menuItems: MenuItem[] = [];
     restaurants: Restaurant[] = [];
     cateringPackages: CateringPackage[] = [];
     cateringOrders: CateringOrder[] = [];
-    recentTransactions: Order[] = [];
+    recentTransactions: OrderResponseDTO[] = [];
     trendingMenuItems: MenuItem[] = [];
     availableRidersList: any[] = [];
     reviews: Review[] = [];
@@ -195,7 +197,7 @@ private createMonthlyChart(orders: Order[]) {
 
     loadDashboardData() {
       // Load all data concurrently
-      this.api.getOrders().subscribe(orders => {
+      this.orderService.getAllOrders().subscribe(orders => {
         this.orders = orders;
         this.calculateOrderStatistics();
         this.getRecentTransactions();
@@ -259,7 +261,7 @@ private createMonthlyChart(orders: Order[]) {
 
       // Calculate total revenue
       this.totalRevenue = this.orders
-        .filter(order => order.paymentStatus === 'COMPLETED')
+        .filter(order => order.paymentStatus === 'PAID')
         .reduce((sum, order) => sum + order.totalAmount, 0);
     }
 
@@ -394,7 +396,7 @@ private createMonthlyChart(orders: Order[]) {
       if (!this.orderStatusChart) return;
 
       const statusCounts = this.orders.reduce((acc: any, order) => {
-        acc[order.status] = (acc[order.status] || 0) + 1;
+        acc[order.orderStatus] = (acc[order.orderStatus] || 0) + 1;
         return acc;
       }, {});
 
@@ -431,7 +433,7 @@ private createMonthlyChart(orders: Order[]) {
 
       const monthlyRevenue = Array(12).fill(0);
       this.orders.forEach(order => {
-        if (order.paymentStatus === 'COMPLETED') {
+        if (order.paymentStatus === 'PAID') {
           const month = new Date(order.createdAt).getMonth();
           monthlyRevenue[month] += order.totalAmount;
         }

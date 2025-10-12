@@ -1,10 +1,12 @@
 import { Address } from './../../Models/Customer.models';
 import { Component } from '@angular/core';
 import { Customer } from 'src/app/Models/Customer.models';
-import { Order } from 'src/app/Models/Order/order.models';
+import { OrderResponseDTO } from 'src/app/Models/Order/order.models';
+
 
 import { User } from 'src/app/Models/Users/user.models';
 import { ApiService } from 'src/app/services/api.service';
+import { OrderService } from 'src/app/services/Orders/order.service';
 
 @Component({
   selector: 'app-customer',
@@ -16,7 +18,7 @@ export class CustomerComponent {
   customers: Customer[] = [];
   filteredCustomers: Customer[] = [];
   selectedCustomer: Customer | null = null;
-  customerOrders: Order[] = [];
+  customerOrders: OrderResponseDTO[] = [];
 
   // Filter properties
   searchTerm: string = '';
@@ -27,7 +29,7 @@ export class CustomerComponent {
   showCustomerDetails: boolean = false;
   showAccountActions: boolean = false;
 
-  constructor(private apiService: ApiService) {}
+  constructor(private apiService: ApiService , private orderService:OrderService) {}
 
   ngOnInit() {
     this.loadCustomers();
@@ -35,7 +37,7 @@ export class CustomerComponent {
 
   loadCustomers() {
     this.apiService.getUsers().subscribe(users => {
-      this.apiService.getOrders().subscribe(orders => {
+      this.orderService.getAllOrders().subscribe(orders => {
         this.customers = users
           .filter(user => user.primaryRole === 'CUSTOMER')
           .map(user => this.mapUserToCustomer(user, orders));
@@ -44,7 +46,7 @@ export class CustomerComponent {
     });
   }
 
-  mapUserToCustomer(user: User, orders: Order[]): Customer {
+  mapUserToCustomer(user: User, orders: OrderResponseDTO[]): Customer {
     const userOrders = orders.filter(order => Number(order.customerId)=== user.id);
     const totalSpend = userOrders.reduce((sum, order) => sum + order.totalAmount, 0);
 
@@ -101,8 +103,8 @@ export class CustomerComponent {
   }
 
   loadCustomerOrders(customerId: string) {
-    this.apiService.getOrders().subscribe(orders => {
-      this.customerOrders = orders.filter(order => order.customerId === customerId);
+    this.orderService.getAllOrders().subscribe(orders => {
+      this.customerOrders = orders.filter(order => order.customerId === Number(customerId));
     });
   }
 

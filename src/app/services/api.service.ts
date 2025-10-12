@@ -12,9 +12,6 @@ import { CustomerLocation } from '../Models/customer-location.model';
 import { Review } from '../Models/review.model';
 import { Sales } from '../Models/sales.model';
 import { User } from '../Models/Users/user.models';
-import { Order } from '../Models/Order/order.models';
-
-
 @Injectable({
   providedIn: 'root'
 })
@@ -86,23 +83,23 @@ export class ApiService {
     return this.http.delete<void>(`${this.baseUrl}/menuItems/${id}`);
   }
 
-  // Orders
-  getOrders(): Observable<Order[]> {
-    return this.http.get<Order[]>(`${this.baseUrl}/orders`);
-  }
+//   // Orders
+//   getOrders(): Observable<Order[]> {
+//     return this.http.get<Order[]>(`${this.baseUrl}/orders`);
+//   }
 
 
- createOrder(order: Omit<Order, 'id'>): Observable<Order> {
-  return this.http.post<Order>(`${this.baseUrl}/orders`, order);
-}
+//  createOrder(order: Omit<Order, 'id'>): Observable<Order> {
+//   return this.http.post<Order>(`${this.baseUrl}/orders`, order);
+// }
 
-  updateOrderStatus(id: number, status: string): Observable<Order> {
-    return this.http.patch<Order>(`${this.baseUrl}/orders/${id}`, { status });
-  }
+//   updateOrderStatus(id: number, status: string): Observable<Order> {
+//     return this.http.patch<Order>(`${this.baseUrl}/orders/${id}`, { status });
+//   }
 
-  updateOrder(id: number, order: Partial<Order>): Observable<Order> {
-  return this.http.patch<Order>(`${this.baseUrl}/orders/${id}`, order);
-}
+//   updateOrder(id: number, order: Partial<Order>): Observable<Order> {
+//   return this.http.patch<Order>(`${this.baseUrl}/orders/${id}`, order);
+// }
 
 
 

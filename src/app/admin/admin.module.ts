@@ -11,7 +11,7 @@ import { SidebarComponent } from './sidebar/sidebar.component';
 import { UsersComponent } from './users/users.component';
 import { RidersComponent } from './riders/riders.component';
 import { CateringComponent } from './catering/catering.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TestComponent } from './test/test.component';
 import { AnalyticsModule } from '../analytics/analytics.module';
 import { AdminAnalyticsComponent } from './admin-analytics/admin-analytics.component';
@@ -51,7 +51,8 @@ import { ProfileComponent } from './profile/profile.component';
     CommonModule,
     AdminRoutingModule,
     FormsModule,
-    AnalyticsModule  ,
+    AnalyticsModule ,
+   ReactiveFormsModule
 
 
   ]

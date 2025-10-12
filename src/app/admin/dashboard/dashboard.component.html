@@ -353,17 +353,17 @@
           {{ transaction.createdAt | date:'medium' }}
         </p>
         <span
-          [class]="'mt-1 inline-flex items-center px-3 py-0.5 rounded-full text-xs font-medium ' + getOrderStatusClass(transaction.status)"
+          [class]="'mt-1 inline-flex items-center px-3 py-0.5 rounded-full text-xs font-medium ' + getOrderStatusClass(transaction.orderStatus)"
         >
           <i
             class="fa-solid fa-circle text-[6px] mr-1"
             [ngClass]="{
-              'text-green-500': transaction.paymentStatus === 'COMPLETED',
+              'text-green-500': transaction.paymentStatus === 'PAID',
               'text-yellow-500': transaction.paymentStatus === 'PENDING',
-              'text-red-500': transaction.status === 'CANCELLED'
+              'text-red-500': transaction.orderStatus === 'CANCELLED'
             }"
           ></i>
-          {{ transaction.status | titlecase }}
+          {{ transaction.orderStatus | titlecase }}
         </span>
       </div>
 
@@ -374,11 +374,11 @@
         </p>
         <p
           class="text-xs font-medium"
-          [class]="transaction.paymentStatus === 'COMPLETED' ? 'text-green-600' : 'text-yellow-600'"
+          [class]="transaction.paymentStatus === 'PAID' ? 'text-green-600' : 'text-yellow-600'"
         >
           <i
             class="fa-solid"
-            [ngClass]="transaction.paymentStatus === 'COMPLETED' ? 'fa-check-circle' : 'fa-clock'"
+            [ngClass]="transaction.paymentStatus === 'PAID' ? 'fa-check-circle' : 'fa-clock'"
           ></i>
           {{ transaction.paymentStatus | titlecase }}
         </p>

@@ -1,109 +1,141 @@
-export enum OrderStatus {
-  PENDING = 'PENDING',
-  CONFIRMED = 'CONFIRMED',
-  PREPARING = 'PREPARING',
-  OUT_FOR_DELIVERY = 'OUT_FOR_DELIVERY',
-  DELIVERED = 'DELIVERED',
-  CANCELLED = 'CANCELLED',
-  REFUNDED = 'REFUNDED'
-}
-
-export enum PaymentStatus {
-  PENDING = 'PENDING',
-  COMPLETED = 'COMPLETED',
-  FAILED = 'FAILED',
-  REFUNDED = 'REFUNDED'
-}
-
 export interface OrderItem {
-  id: string;
-  menuItemId: string;
-  name: string;
+  id?: number;
+  menuItemId: number;
+  menuItemName?: string;
   quantity: number;
-  price: number;
+  unitPrice?: number;
+  totalPrice?: number;
   specialInstructions?: string;
+  customizations?: string;
 }
 
-export interface DeliveryAddress {
-  street: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  coordinates?: {
-    lat: number;
-    lng: number;
-  };
-}
-
-export interface Order {
-  id: string;
-  orderNumber: string;
-  customerId: string;
-  customerName: string;
-  restaurantId: string;
-  restaurantName: string;
-  items: OrderItem[];
-  status: OrderStatus;
-  paymentStatus: PaymentStatus;
-  totalAmount: number;
+export interface CreateOrderDTO {
+  customerId: number;
+  restaurantId: number;
+  deliveryAddress: string;
+  deliveryLatitude?: number;
+  deliveryLongitude?: number;
+  deliveryType: 'STANDARD' | 'EXPRESS' | 'SCHEDULED' | 'PICKUP';
+  specialInstructions?: string;
   deliveryFee: number;
-  tax: number;
-  deliveryAddress: DeliveryAddress;
-  deliveryPersonId?: string;
-  deliveryPersonName?: string;
+  priorityLevel: number;
+  orderItems: OrderItem[];
+}
+
+export interface OrderResponseDTO {
+  id: number;
+  orderNumber: string;
+  customerId: number;
+  customerName: string;
+  customerPhone?: string;
+  customerEmail?: string;
+  restaurantId: number;
+  restaurantName: string;
   orderDate: string;
+  deliveryAddress: string;
+  deliveryLatitude?: number;
+  deliveryLongitude?: number;
+  subtotal: number;
+  deliveryFee: number;
+  taxAmount: number;
+  totalAmount: number;
+  orderStatus: OrderStatus;
+  paymentStatus: PaymentStatus;
+  deliveryType: string;
   estimatedDeliveryTime?: string;
-  actualDeliveryTime?: string;
-  cancelReason?: string;
+  priorityLevel: number;
   specialInstructions?: string;
-  createdAt : string ;
+  orderItems: OrderItem[];
+  createdAt: string;
+  updatedAt?: string;
 }
 
 export interface OrderStatistics {
   totalOrders: number;
-  completedOrders: number;
-  pendingOrders: number;
-  cancelledOrders: number;
-  refundedOrders: number;
   totalRevenue: number;
-  totalDeliveryFees: number;
   averageOrderValue: number;
+  pendingOrders?: number;
+  completedOrders?: number;
+  cancelledOrders?: number;
 }
 
-export interface CustomerOrderStats {
-  customerId: string;
-  customerName: string;
-  totalOrders: number;
-  totalSpent: number;
-  averageOrderValue: number;
-  lastOrderDate: string;
-}
+export type OrderStatus =
+  | 'PLACED'
+  | 'CONFIRMED'
+  | 'PREPARING'
+  | 'READY_FOR_PICKUP'
+  | 'OUT_FOR_DELIVERY'
+  | 'DELIVERED'
+  | 'CANCELLED';
 
-export interface RestaurantOrderStats {
-  restaurantId: string;
-  restaurantName: string;
-  totalOrders: number;
-  totalRevenue: number;
-  averagePreparationTime: number;
-  commissionRate: number;
-  totalCommission: number;
-}
-
-export interface DeliveryStats {
-  deliveryPersonId: string;
-  deliveryPersonName: string;
-  totalDeliveries: number;
-  averageDeliveryTime: number;
-  onTimeDeliveryRate: number;
-  totalEarnings: number;
-}
+export type PaymentStatus =
+  | 'PENDING'
+  | 'PAID'
+  | 'FAILED'
+  | 'REFUNDED';
 
 export interface OrderFilters {
   status?: OrderStatus;
+  paymentStatus?: PaymentStatus;
+  deliveryType?: string;
+  searchQuery?: string;
+  dateRange?: string;
+  priorityLevel?: number;
+  minAmount?: number;
+  maxAmount?: number;
   startDate?: string;
   endDate?: string;
-  restaurantId?: string;
-  customerId?: string;
-  paymentStatus?: PaymentStatus;
-  searchTerm?: string;
+}
+
+// ============================================
+// 2. CART MODELS (models/cart.model.ts)
+// ============================================
+
+export interface CartItem {
+  id: number;
+  menuItemId: number;
+  menuItemName: string;
+  unitPrice: number;
+  quantity: number;
+  totalPrice: number;
+  specialInstructions?: string;
+  restaurantId: number;
+  restaurantName: string;
+}
+
+export interface AddCartItemDTO {
+  menuItemId: number;
+  quantity: number;
+  specialInstructions?: string;
+}
+
+export interface CartResponseDTO {
+  id: number;
+  userId: number;
+  userName: string;
+  userEmail?: string;
+  userPhone?: string;
+  items: CartItem[];
+  subtotal: number;
+  totalItems: number;
+  restaurantName?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CartSummary {
+  totalItems: number;
+  subtotal: number;
+  tax: number;
+  total: number;
+}
+
+export interface CheckoutDTO {
+  deliveryAddress: string;
+  deliveryLatitude?: number;
+  deliveryLongitude?: number;
+  deliveryType: 'STANDARD' | 'EXPRESS' | 'SCHEDULED' | 'PICKUP';
+  specialInstructions?: string;
+  deliveryFee: number;
+  priorityLevel: number;
 }
