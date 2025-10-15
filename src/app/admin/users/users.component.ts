@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 
-import { ApiService } from 'src/app/services/api.service';
+
 import { UserRole, UserStatus, VehicleType, AdminLevel } from 'src/app/Enums/profileEnums';
 import { User,UserCreateDTO, UserUpdateDTO } from 'src/app/Models/Users/user.models';
 import { AdminProfileService } from 'src/app/services/UserServices/admin-profile.service';
@@ -285,27 +285,40 @@ export class UsersComponent {
   }
 
   createUser(): void {
-    this.isLoading = true;
-    this.errorMessage = '';
+  this.isLoading = true;
+  this.errorMessage = '';
 
-    this.userService.createUser(this.newUser).subscribe({
-      next: (user) => {
-        this.createRoleProfile(user);
-      },
-      error: (error) => {
-        this.errorMessage = error.error?.message || 'Failed to create user';
+  this.userService.createUser(this.newUser).subscribe({
+    next: (user) => {
+      if (!user) {
+        this.errorMessage = 'User creation failed: The User Already Exist';
         this.isLoading = false;
-        console.error(error);
+        this.closeUserModal();
+        return;
       }
-    });
-  }
+      this.createRoleProfile(user);
+    },
+    error: (error) => {
+      // Show backend validation errors, e.g., duplicate email/phone
+      if (error.status === 400 && error.error?.message) {
+        this.errorMessage = error.error.message;
+      } else {
+        this.errorMessage = 'Failed to create user';
+      }
+      this.isLoading = false;
+      console.error(error);
+    }
+  });
+}
 
   createRoleProfile(user: User): void {
     switch (user.primaryRole) {
       case UserRole.CUSTOMER:
         if (this.customerProfile.dateOfBirth || this.customerProfile.profileImageUrl) {
           this.userProfileService.createUserProfile(user.id, this.customerProfile).subscribe({
-            next: () => {
+            next: (s) => {
+              console.log(s);
+
               this.successMessage = 'User and profile created successfully!';
               this.completeUserCreation();
             },

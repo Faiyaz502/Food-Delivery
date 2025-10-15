@@ -1,12 +1,11 @@
-import { Address } from './../../Models/Customer.models';
-import { Component } from '@angular/core';
-import { Customer } from 'src/app/Models/Customer.models';
-import { OrderResponseDTO } from 'src/app/Models/Order/order.models';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-
-import { User } from 'src/app/Models/Users/user.models';
-import { ApiService } from 'src/app/services/api.service';
-import { OrderService } from 'src/app/services/Orders/order.service';
+import { UserProfile, UserProfileCreateDTO } from 'src/app/Models/Users/profile.model';
+import { User, PaginatedResponse } from 'src/app/Models/Users/user.models';
+import { CustomerTier, UserRole, UserStatus } from 'src/app/Enums/profileEnums';
+import { UserProfileService } from 'src/app/services/UserServices/user-profile.service';
+import { UserServiceService } from 'src/app/services/UserServices/user.service.service';
 
 @Component({
   selector: 'app-customer',
@@ -14,142 +13,365 @@ import { OrderService } from 'src/app/services/Orders/order.service';
   styleUrls: ['./customer.component.scss']
 })
 export class CustomerComponent {
+  Math = Math;
+ customers: UserProfile[] = [];
+  users: User[] = [];
+  selectedCustomer: UserProfile | null = null;
+  selectedUser: User | null = null;
 
-  customers: Customer[] = [];
-  filteredCustomers: Customer[] = [];
-  selectedCustomer: Customer | null = null;
-  customerOrders: OrderResponseDTO[] = [];
+  // Pagination
+  currentPage = 0;
+  pageSize = 10;
+  totalElements = 0;
+  totalPages = 0;
 
-  // Filter properties
-  searchTerm: string = '';
-  statusFilter: string = 'all';
-  cityFilter: string = 'all';
+  // Filter options
+  filterType: 'all' | 'tier' | 'minOrders' | 'topOrders' | 'topSpending' = 'all';
+  selectedTier: CustomerTier = CustomerTier.BRONZE;
+  minOrders = 5;
+  topLimit = 10;
 
-  // Modal states
-  showCustomerDetails: boolean = false;
-  showAccountActions: boolean = false;
+  // Sorting
+  sortBy = 'totalOrders';
+  sortDir = 'DESC';
 
-  constructor(private apiService: ApiService , private orderService:OrderService) {}
+  // UI State
+  isLoading = false;
+  showModal = false;
+  showEditModal = false;
+  showLoyaltyModal = false;
+  modalType: 'view' | 'edit' | 'loyalty' = 'view';
 
-  ngOnInit() {
+  // Forms
+  profileForm: FormGroup;
+  loyaltyForm: FormGroup;
+
+  // Enums for template
+  CustomerTier = CustomerTier;
+  customerTiers = Object.values(CustomerTier);
+
+  // Stats
+  customerStats: any = null;
+
+  constructor(
+    private userProfileService: UserProfileService,
+    private userService: UserServiceService,
+    private fb: FormBuilder
+  ) {
+    this.profileForm = this.fb.group({
+      dateOfBirth: [''],
+      profileImageUrl: ['', [Validators.pattern('https?://.+')]]
+    });
+
+    this.loyaltyForm = this.fb.group({
+      points: [0, [Validators.required, Validators.min(1)]],
+      action: ['add', Validators.required]
+    });
+  }
+
+  ngOnInit(): void {
     this.loadCustomers();
   }
 
-  loadCustomers() {
-    this.apiService.getUsers().subscribe(users => {
-      this.orderService.getAllOrders().subscribe(orders => {
-        this.customers = users
-          .filter(user => user.primaryRole === 'CUSTOMER')
-          .map(user => this.mapUserToCustomer(user, orders));
-        this.filteredCustomers = [...this.customers];
+  loadCustomers(): void {
+    this.isLoading = true;
+
+    switch (this.filterType) {
+      case 'tier':
+        this.loadByTier();
+        break;
+      case 'minOrders':
+        this.loadByMinOrders();
+        break;
+      case 'topOrders':
+        this.loadTopByOrders();
+        break;
+      case 'topSpending':
+        this.loadTopBySpending();
+        break;
+      default:
+        this.loadAllCustomers();
+    }
+  }
+
+  loadAllCustomers(): void {
+    this.userProfileService.getAllUserProfiles(this.currentPage, this.pageSize, this.sortBy, this.sortDir)
+      .subscribe({
+        next: (response: PaginatedResponse<UserProfile>) => {
+
+          console.log(response);
+
+          this.customers = response.content;
+          this.totalElements = response.totalElements;
+          this.totalPages = response.totalPages;
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error loading customers:', error);
+          this.isLoading = false;
+        }
       });
-    });
   }
 
-  mapUserToCustomer(user: User, orders: OrderResponseDTO[]): Customer {
-    const userOrders = orders.filter(order => Number(order.customerId)=== user.id);
-    const totalSpend = userOrders.reduce((sum, order) => sum + order.totalAmount, 0);
-
-    return {
-    id: String(user.id),
-    name: user.firstName,
-    email: user.email,
-    phone: user.phoneNumber,
-    role: user.primaryRole,
-    created_at: user.createdAt,
-    status: this.getRandomStatus(),
-    city: this.getRandomCity(),
-    total_orders: userOrders.length,
-    total_spend: totalSpend,
-    customer_type: this.getCustomerType(userOrders.length, totalSpend)
-
-
-    };
+  loadByTier(): void {
+    this.userProfileService.getCustomersByTier(this.selectedTier, this.currentPage, this.pageSize)
+      .subscribe({
+        next: (response: PaginatedResponse<UserProfile>) => {
+          this.customers = response.content;
+          this.totalElements = response.totalElements;
+          this.totalPages = response.totalPages;
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error loading customers by tier:', error);
+          this.isLoading = false;
+        }
+      });
   }
 
-  getRandomStatus(): 'active' | 'suspended' | 'blocked' {
-    const statuses: ('active' | 'suspended' | 'blocked')[] = ['active', 'suspended', 'blocked'];
-    return statuses[Math.floor(Math.random() * statuses.length)];
+  loadByMinOrders(): void {
+    this.userProfileService.getCustomersWithMinimumOrders(this.minOrders, this.currentPage, this.pageSize)
+      .subscribe({
+        next: (response: PaginatedResponse<UserProfile>) => {
+          this.customers = response.content;
+          this.totalElements = response.totalElements;
+          this.totalPages = response.totalPages;
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error loading customers by min orders:', error);
+          this.isLoading = false;
+        }
+      });
   }
 
-  getRandomCity(): string {
-    const cities = ['Downtown', 'Midtown', 'Uptown', 'Suburbs', 'Business District'];
-    return cities[Math.floor(Math.random() * cities.length)];
+  loadTopByOrders(): void {
+    this.userProfileService.getTopCustomersByOrders(this.topLimit)
+      .subscribe({
+        next: (customers: UserProfile[]) => {
+          this.customers = customers;
+          this.totalElements = customers.length;
+          this.totalPages = 1;
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error loading top customers by orders:', error);
+          this.isLoading = false;
+        }
+      });
   }
 
-  getCustomerType(orderCount: number, totalSpend: number): 'new' | 'regular' | 'VIP' {
-    if (orderCount === 0) return 'new';
-    if (orderCount >= 10 && totalSpend >= 200) return 'VIP';
-    return 'regular';
+  loadTopBySpending(): void {
+    this.userProfileService.getTopCustomersBySpending(this.topLimit)
+      .subscribe({
+        next: (customers: UserProfile[]) => {
+          this.customers = customers;
+          this.totalElements = customers.length;
+          this.totalPages = 1;
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error loading top customers by spending:', error);
+          this.isLoading = false;
+        }
+      });
   }
 
-  applyFilters() {
-    this.filteredCustomers = this.customers.filter(customer => {
-      const matchesSearch = customer.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-                          customer.email.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-                          customer.phone.includes(this.searchTerm);
-
-      const matchesStatus = this.statusFilter === 'all' || customer.status === this.statusFilter;
-      const matchesCity = this.cityFilter === 'all' || customer.city === this.cityFilter;
-
-      return matchesSearch && matchesStatus && matchesCity;
-    });
+  onFilterChange(): void {
+    this.currentPage = 0;
+    this.loadCustomers();
   }
 
-  viewCustomerDetails(customer: Customer) {
+  onSortChange(): void {
+    this.currentPage = 0;
+    this.loadCustomers();
+  }
+
+  viewCustomer(customer: UserProfile): void {
     this.selectedCustomer = customer;
-    this.loadCustomerOrders(customer.id);
-    this.showCustomerDetails = true;
+    this.modalType = 'view';
+    this.showModal = true;
+    this.loadUserDetails(customer.userId);
+    this.loadCustomerStats(customer.id);
   }
 
-  loadCustomerOrders(customerId: string) {
-    this.orderService.getAllOrders().subscribe(orders => {
-      this.customerOrders = orders.filter(order => order.customerId === Number(customerId));
+  editCustomer(customer: UserProfile): void {
+    this.selectedCustomer = customer;
+    this.modalType = 'edit';
+    this.showEditModal = true;
+    this.profileForm.patchValue({
+      dateOfBirth: customer.dateOfBirth || '',
+      profileImageUrl: customer.profileImageUrl || ''
     });
   }
 
-  closeCustomerDetails() {
-    this.showCustomerDetails = false;
+  manageLoyalty(customer: UserProfile): void {
+    this.selectedCustomer = customer;
+    this.modalType = 'loyalty';
+    this.showLoyaltyModal = true;
+    this.loyaltyForm.reset({ points: 0, action: 'add' });
+  }
+
+  loadUserDetails(userId: number): void {
+    this.userService.getUserById(userId).subscribe({
+      next: (user: User) => {
+        this.selectedUser = user;
+      },
+      error: (error) => {
+        console.error('Error loading user details:', error);
+      }
+    });
+  }
+
+  loadCustomerStats(profileId: number): void {
+    this.userProfileService.getCustomerStats(profileId).subscribe({
+      next: (stats) => {
+        this.customerStats = stats;
+      },
+      error: (error) => {
+        console.error('Error loading customer stats:', error);
+      }
+    });
+  }
+
+  updateProfile(): void {
+    if (this.profileForm.valid && this.selectedCustomer) {
+      const profileData: UserProfileCreateDTO = this.profileForm.value;
+
+      this.userProfileService.updateUserProfile(this.selectedCustomer.id, profileData)
+        .subscribe({
+          next: (updatedProfile) => {
+            const index = this.customers.findIndex(c => c.id === updatedProfile.id);
+            if (index !== -1) {
+              this.customers[index] = updatedProfile;
+            }
+            this.closeEditModal();
+            alert('Profile updated successfully!');
+          },
+          error: (error) => {
+            console.error('Error updating profile:', error);
+            alert('Failed to update profile');
+          }
+        });
+    }
+  }
+
+  updateLoyaltyPoints(): void {
+    if (this.loyaltyForm.valid && this.selectedCustomer) {
+      const { points, action } = this.loyaltyForm.value;
+      const observable = action === 'add'
+        ? this.userProfileService.addLoyaltyPoints(this.selectedCustomer.id, points)
+        : this.userProfileService.deductLoyaltyPoints(this.selectedCustomer.id, points);
+
+      observable.subscribe({
+        next: (updatedProfile) => {
+          const index = this.customers.findIndex(c => c.id === updatedProfile.id);
+          if (index !== -1) {
+            this.customers[index] = updatedProfile;
+          }
+          this.closeLoyaltyModal();
+          alert(`Loyalty points ${action === 'add' ? 'added' : 'deducted'} successfully!`);
+        },
+        error: (error) => {
+          console.error('Error updating loyalty points:', error);
+          alert('Failed to update loyalty points');
+        }
+      });
+    }
+  }
+
+  deleteCustomer(customer: UserProfile): void {
+    if (confirm(`Are you sure you want to delete this customer profile?`)) {
+      this.userProfileService.deleteUserProfile(customer.id).subscribe({
+        next: () => {
+          this.customers = this.customers.filter(c => c.id !== customer.id);
+          alert('Customer profile deleted successfully!');
+        },
+        error: (error) => {
+          console.error('Error deleting customer:', error);
+          alert('Failed to delete customer profile');
+        }
+      });
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages - 1) {
+      this.currentPage++;
+      this.loadCustomers();
+    }
+  }
+
+  previousPage(): void {
+    if (this.currentPage > 0) {
+      this.currentPage--;
+      this.loadCustomers();
+    }
+  }
+
+  goToPage(page: number): void {
+    this.currentPage = page;
+    this.loadCustomers();
+  }
+
+  closeModal(): void {
+    this.showModal = false;
     this.selectedCustomer = null;
-    this.customerOrders = [];
+    this.selectedUser = null;
+    this.customerStats = null;
   }
 
-  toggleAccountActions() {
-    this.showAccountActions = !this.showAccountActions;
+  closeEditModal(): void {
+    this.showEditModal = false;
+    this.selectedCustomer = null;
+    this.profileForm.reset();
   }
 
-  updateCustomerStatus(status: 'active' | 'suspended' | 'blocked') {
-    if (this.selectedCustomer) {
-      this.selectedCustomer.status = status;
-      // In a real app, you would call an API to update the status
-      this.showAccountActions = false;
+  closeLoyaltyModal(): void {
+    this.showLoyaltyModal = false;
+    this.selectedCustomer = null;
+    this.loyaltyForm.reset();
+  }
+
+  getTierColor(tier: CustomerTier): string {
+    switch (tier) {
+      case CustomerTier.PLATINUM:
+        return 'bg-gray-300 text-gray-800';
+      case CustomerTier.GOLD:
+        return 'bg-yellow-400 text-yellow-900';
+      case CustomerTier.SILVER:
+        return 'bg-gray-400 text-gray-900';
+      case CustomerTier.BRONZE:
+        return 'bg-orange-400 text-orange-900';
+      default:
+        return 'bg-gray-200 text-gray-800';
     }
   }
 
-  resetPassword() {
-    if (this.selectedCustomer) {
-      // In a real app, you would call an API to send password reset
-      alert(`Password reset link sent to ${this.selectedCustomer.email}`);
-      this.showAccountActions = false;
-    }
+  formatCurrency(amount: number): string {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD'
+    }).format(amount);
   }
 
-  getStatusColor(status: string): string {
-    switch (status) {
-      case 'active': return 'text-green-600 bg-green-100';
-      case 'suspended': return 'text-yellow-600 bg-yellow-100';
-      case 'blocked': return 'text-red-600 bg-red-100';
-      default: return 'text-gray-600 bg-gray-100';
-    }
+  formatDate(date: string): string {
+    return new Date(date).toLocaleDateString();
   }
 
-  getCustomerTypeColor(type: string): string {
-    switch (type) {
-      case 'VIP': return 'text-purple-600 bg-purple-100';
-      case 'regular': return 'text-blue-600 bg-blue-100';
-      case 'new': return 'text-orange-600 bg-orange-100';
-      default: return 'text-gray-600 bg-gray-100';
+  getPageNumbers(): number[] {
+    const pages: number[] = [];
+    const maxPages = 5;
+    let startPage = Math.max(0, this.currentPage - Math.floor(maxPages / 2));
+    let endPage = Math.min(this.totalPages - 1, startPage + maxPages - 1);
+
+    if (endPage - startPage < maxPages - 1) {
+      startPage = Math.max(0, endPage - maxPages + 1);
     }
 
-}
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }
 }

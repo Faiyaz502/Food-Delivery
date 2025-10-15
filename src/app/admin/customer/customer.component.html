@@ -1,250 +1,446 @@
-<div class="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 p-6">
+<div class="min-h-screen bg-gray-50 p-6">
   <div class="max-w-7xl mx-auto">
     <!-- Header -->
     <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-800 mb-2">Customer Management</h1>
-      <p class="text-gray-600">Manage your customers and their accounts</p>
+      <h1 class="text-3xl font-bold text-gray-900">Customer Management</h1>
+      <p class="text-gray-600 mt-2">Manage and view customer profiles, loyalty points, and statistics</p>
     </div>
 
-    <!-- Filters -->
-    <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <!-- Filters and Controls -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Filter Type -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Search</label>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Filter By</label>
+          <select
+            [(ngModel)]="filterType"
+            (change)="onFilterChange()"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="all">All Customers</option>
+            <option value="tier">By Tier</option>
+            <option value="minOrders">Minimum Orders</option>
+            <option value="topOrders">Top by Orders</option>
+            <option value="topSpending">Top by Spending</option>
+          </select>
+        </div>
+
+        <!-- Conditional Filters -->
+        <div *ngIf="filterType === 'tier'">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Tier</label>
+          <select
+            [(ngModel)]="selectedTier"
+            (change)="onFilterChange()"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option *ngFor="let tier of customerTiers" [value]="tier">{{ tier }}</option>
+          </select>
+        </div>
+
+        <div *ngIf="filterType === 'minOrders'">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Minimum Orders</label>
           <input
-            type="text"
-            [(ngModel)]="searchTerm"
-            (input)="applyFilters()"
-            placeholder="Search by name, email, or phone"
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            type="number"
+            [(ngModel)]="minOrders"
+            (change)="onFilterChange()"
+            min="0"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
 
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+        <div *ngIf="filterType === 'topOrders' || filterType === 'topSpending'">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Limit</label>
+          <input
+            type="number"
+            [(ngModel)]="topLimit"
+            (change)="onFilterChange()"
+            min="1"
+            max="100"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- Sort By (only for all customers) -->
+        <div *ngIf="filterType === 'all'">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Sort By</label>
           <select
-            [(ngModel)]="statusFilter"
-            (change)="applyFilters()"
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-            <option value="all">All Statuses</option>
-            <option value="active">Active</option>
-            <option value="suspended">Suspended</option>
-            <option value="blocked">Blocked</option>
+            [(ngModel)]="sortBy"
+            (change)="onSortChange()"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="totalOrders">Total Orders</option>
+            <option value="totalSpent">Total Spent</option>
+            <option value="loyaltyPoints">Loyalty Points</option>
+            <option value="createdAt">Created Date</option>
           </select>
         </div>
 
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">City</label>
+        <div *ngIf="filterType === 'all'">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Direction</label>
           <select
-            [(ngModel)]="cityFilter"
-            (change)="applyFilters()"
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-            <option value="all">All Cities</option>
-            <option value="Downtown">Downtown</option>
-            <option value="Midtown">Midtown</option>
-            <option value="Uptown">Uptown</option>
-            <option value="Suburbs">Suburbs</option>
-            <option value="Business District">Business District</option>
+            [(ngModel)]="sortDir"
+            (change)="onSortChange()"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="ASC">Ascending</option>
+            <option value="DESC">Descending</option>
           </select>
         </div>
+      </div>
+    </div>
 
-        <div class="flex items-end">
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="flex justify-center items-center py-12">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+    </div>
+
+    <!-- Customer Table -->
+    <div *ngIf="!isLoading" class="bg-white rounded-lg shadow-md overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User ID</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tier</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Orders</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Spent</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Avg Order</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Loyalty Points</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr *ngFor="let customer of customers" class="hover:bg-gray-50">
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ customer.id }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ customer.userId }}</td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span [ngClass]="getTierColor(customer.customerTier)"
+                      class="px-2 py-1 text-xs font-semibold rounded-full">
+                  {{ customer.customerTier }}
+                </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ customer.totalOrders }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ formatCurrency(customer.totalSpent) }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ formatCurrency(customer.averageOrderValue) }}</td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                  {{ customer.loyaltyPoints }} pts
+                </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <button
+                  (click)="viewCustomer(customer)"
+                  class="text-blue-600 hover:text-blue-900 mr-3">
+                  View
+                </button>
+                <button
+                  (click)="editCustomer(customer)"
+                  class="text-indigo-600 hover:text-indigo-900 mr-3">
+                  Edit
+                </button>
+                <button
+                  (click)="manageLoyalty(customer)"
+                  class="text-green-600 hover:text-green-900 mr-3">
+                  Loyalty
+                </button>
+                <button
+                  (click)="deleteCustomer(customer)"
+                  class="text-red-600 hover:text-red-900">
+                  Delete
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="customers.length === 0">
+              <td colspan="8" class="px-6 py-4 text-center text-gray-500">
+                No customers found
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+        <div class="flex-1 flex justify-between sm:hidden">
           <button
-            (click)="applyFilters()"
-            class="w-full px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105">
-            Apply Filters
+            (click)="previousPage()"
+            [disabled]="currentPage === 0"
+            class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+            Previous
+          </button>
+          <button
+            (click)="nextPage()"
+            [disabled]="currentPage >= totalPages - 1"
+            class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+            Next
+          </button>
+        </div>
+        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+          <div>
+            <p class="text-sm text-gray-700">
+              Showing <span class="font-medium">{{ currentPage * pageSize + 1 }}</span>
+              to <span class="font-medium">{{ Math.min((currentPage + 1) * pageSize, totalElements) }}</span>
+              of <span class="font-medium">{{ totalElements }}</span> results
+            </p>
+          </div>
+          <div>
+            <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+              <button
+                (click)="previousPage()"
+                [disabled]="currentPage === 0"
+                class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                Previous
+              </button>
+              <button
+                *ngFor="let page of getPageNumbers()"
+                (click)="goToPage(page)"
+                [ngClass]="{'bg-blue-50 border-blue-500 text-blue-600': page === currentPage, 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50': page !== currentPage}"
+                class="relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                {{ page + 1 }}
+              </button>
+              <button
+                (click)="nextPage()"
+                [disabled]="currentPage >= totalPages - 1"
+                class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                Next
+              </button>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- View Customer Modal -->
+  <div *ngIf="showModal" class="fixed z-10 inset-0 overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+      <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" (click)="closeModal()"></div>
+
+      <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
+        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-medium text-gray-900">Customer Details</h3>
+            <button (click)="closeModal()" class="text-gray-400 hover:text-gray-500">
+              <span class="text-2xl">&times;</span>
+            </button>
+          </div>
+
+          <div *ngIf="selectedCustomer && selectedUser" class="space-y-4">
+            <!-- User Information -->
+            <div class="border-b pb-4">
+              <h4 class="text-md font-semibold text-gray-800 mb-3">User Information</h4>
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <span class="text-sm text-gray-500">Name:</span>
+                  <p class="text-sm font-medium">{{ selectedUser.firstName }} {{ selectedUser.lastName }}</p>
+                </div>
+                <div>
+                  <span class="text-sm text-gray-500">Email:</span>
+                  <p class="text-sm font-medium">{{ selectedUser.email }}</p>
+                </div>
+                <div>
+                  <span class="text-sm text-gray-500">Phone:</span>
+                  <p class="text-sm font-medium">{{ selectedUser.phoneNumber || 'N/A' }}</p>
+                </div>
+                <div>
+                  <span class="text-sm text-gray-500">Status:</span>
+                  <p class="text-sm font-medium">{{ selectedUser.status }}</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Profile Information -->
+            <div class="border-b pb-4">
+              <h4 class="text-md font-semibold text-gray-800 mb-3">Profile Information</h4>
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <span class="text-sm text-gray-500">Date of Birth:</span>
+                  <p class="text-sm font-medium">{{ selectedCustomer.dateOfBirth ? formatDate(selectedCustomer.dateOfBirth) : 'N/A' }}</p>
+                </div>
+                <div>
+                  <span class="text-sm text-gray-500">Customer Tier:</span>
+                  <p><span [ngClass]="getTierColor(selectedCustomer.customerTier)" class="px-2 py-1 text-xs font-semibold rounded-full">{{ selectedCustomer.customerTier }}</span></p>
+                </div>
+                <div>
+                  <span class="text-sm text-gray-500">Profile Created:</span>
+                  <p class="text-sm font-medium">{{ formatDate(selectedCustomer.createdAt) }}</p>
+                </div>
+                <div>
+                  <span class="text-sm text-gray-500">Last Updated:</span>
+                  <p class="text-sm font-medium">{{ formatDate(selectedCustomer.updatedAt) }}</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Order Statistics -->
+            <div>
+              <h4 class="text-md font-semibold text-gray-800 mb-3">Order Statistics</h4>
+              <div class="grid grid-cols-2 gap-3">
+                <div class="bg-blue-50 p-3 rounded">
+                  <span class="text-sm text-blue-600">Total Orders</span>
+                  <p class="text-2xl font-bold text-blue-700">{{ selectedCustomer.totalOrders }}</p>
+                </div>
+                <div class="bg-green-50 p-3 rounded">
+                  <span class="text-sm text-green-600">Total Spent</span>
+                  <p class="text-2xl font-bold text-green-700">{{ formatCurrency(selectedCustomer.totalSpent) }}</p>
+                </div>
+                <div class="bg-purple-50 p-3 rounded">
+                  <span class="text-sm text-purple-600">Average Order Value</span>
+                  <p class="text-2xl font-bold text-purple-700">{{ formatCurrency(selectedCustomer.averageOrderValue) }}</p>
+                </div>
+                <div class="bg-yellow-50 p-3 rounded">
+                  <span class="text-sm text-yellow-600">Loyalty Points</span>
+                  <p class="text-2xl font-bold text-yellow-700">{{ selectedCustomer.loyaltyPoints }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+          <button
+            (click)="closeModal()"
+            type="button"
+            class="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
+            Close
           </button>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Customer Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div
-        *ngFor="let customer of filteredCustomers"
-        class="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 transform hover:scale-105 cursor-pointer"
-        (click)="viewCustomerDetails(customer)">
+  <!-- Edit Profile Modal -->
+  <div *ngIf="showEditModal" class="fixed z-10 inset-0 overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+      <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" (click)="closeEditModal()"></div>
 
-        <div class="p-6">
-          <!-- Customer Avatar & Basic Info -->
-          <div class="flex items-center mb-4">
-            <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
-              {{customer.name.charAt(0).toUpperCase()}}
+      <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+        <form [formGroup]="profileForm" (ngSubmit)="updateProfile()">
+          <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="text-lg font-medium text-gray-900">Edit Customer Profile</h3>
+              <button type="button" (click)="closeEditModal()" class="text-gray-400 hover:text-gray-500">
+                <span class="text-2xl">&times;</span>
+              </button>
             </div>
-            <div class="ml-4 flex-1">
-              <h3 class="font-semibold text-gray-800">{{customer.name}}</h3>
-              <p class="text-sm text-gray-500">{{customer.email}}</p>
+
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
+                <input
+                  type="date"
+                  formControlName="dateOfBirth"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Profile Image URL</label>
+                <input
+                  type="url"
+                  formControlName="profileImageUrl"
+                  placeholder="https://example.com/image.jpg"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <p *ngIf="profileForm.get('profileImageUrl')?.invalid && profileForm.get('profileImageUrl')?.touched"
+                   class="mt-1 text-sm text-red-600">
+                  Please enter a valid URL
+                </p>
+              </div>
+
+              <div *ngIf="selectedCustomer" class="bg-gray-50 p-3 rounded">
+                <p class="text-sm text-gray-600">
+                  <span class="font-medium">Customer ID:</span> {{ selectedCustomer.id }}
+                </p>
+                <p class="text-sm text-gray-600">
+                  <span class="font-medium">User ID:</span> {{ selectedCustomer.userId }}
+                </p>
+              </div>
             </div>
-            <span [class]="'px-2 py-1 rounded-full text-xs font-medium ' + getStatusColor(customer.status || 'active')">
-              {{customer.status || 'active'}}
-            </span>
           </div>
-
-          <!-- Customer Details -->
-          <div class="space-y-2 mb-4">
-            <div class="flex justify-between text-sm">
-              <span class="text-gray-600">Phone:</span>
-              <span class="font-medium">{{customer.phone}}</span>
-            </div>
-            <div class="flex justify-between text-sm">
-              <span class="text-gray-600">City:</span>
-              <span class="font-medium">{{customer.city}}</span>
-            </div>
-            <div class="flex justify-between text-sm">
-              <span class="text-gray-600">Total Orders:</span>
-              <span class="font-medium text-blue-600">{{customer.total_orders}}</span>
-            </div>
-            <div class="flex justify-between text-sm">
-              <span class="text-gray-600">Total Spend:</span>
-              <span class="font-medium text-green-600">${{customer.total_spend?.toFixed(2)}}</span>
-            </div>
+          <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+            <button
+              type="submit"
+              [disabled]="profileForm.invalid"
+              class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+              Update Profile
+            </button>
+            <button
+              type="button"
+              (click)="closeEditModal()"
+              class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+              Cancel
+            </button>
           </div>
-
-          <!-- Customer Type Badge -->
-          <div class="flex justify-between items-center">
-            <span [class]="'px-3 py-1 rounded-full text-xs font-medium ' + getCustomerTypeColor(customer.customer_type || 'new')">
-              {{customer.customer_type || 'new'}} customer
-            </span>
-            <span class="text-xs text-gray-500">
-              Joined {{customer.created_at | date:'MMM yyyy'}}
-            </span>
-          </div>
-        </div>
+        </form>
       </div>
     </div>
+  </div>
 
-    <!-- Customer Details Modal -->
-    <div *ngIf="showCustomerDetails" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div class="bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-screen overflow-y-auto">
-        <!-- Modal Header -->
-        <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-t-xl">
-          <div class="flex justify-between items-center">
-            <div class="flex items-center">
-              <div class="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-white font-bold text-xl">
+  <!-- Loyalty Points Modal -->
+  <div *ngIf="showLoyaltyModal" class="fixed z-10 inset-0 overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+      <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" (click)="closeLoyaltyModal()"></div>
 
-              </div>
-              <div class="ml-4">
-                <h2 class="text-2xl font-bold">{{selectedCustomer?.name}}</h2>
-                <p class="text-blue-100">{{selectedCustomer?.email}}</p>
-              </div>
-            </div>
-            <div class="flex items-center space-x-3">
-              <button
-                (click)="toggleAccountActions()"
-                class="px-4 py-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-lg transition-all duration-200">
-                Account Actions
-              </button>
-              <button
-                (click)="closeCustomerDetails()"
-                class="text-white hover:text-red-200 text-2xl">
-                ×
+      <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+        <form [formGroup]="loyaltyForm" (ngSubmit)="updateLoyaltyPoints()">
+          <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="text-lg font-medium text-gray-900">Manage Loyalty Points</h3>
+              <button type="button" (click)="closeLoyaltyModal()" class="text-gray-400 hover:text-gray-500">
+                <span class="text-2xl">&times;</span>
               </button>
             </div>
-          </div>
-        </div>
 
-        <!-- Account Actions Dropdown -->
-        <div *ngIf="showAccountActions" class="absolute right-6 top-32 bg-white rounded-lg shadow-xl border z-10 w-48">
-          <div class="py-2">
-            <button
-              (click)="updateCustomerStatus('active')"
-              class="w-full text-left px-4 py-2 hover:bg-green-50 text-green-600 hover:text-green-700">
-              Activate Account
-            </button>
-            <button
-              (click)="updateCustomerStatus('suspended')"
-              class="w-full text-left px-4 py-2 hover:bg-yellow-50 text-yellow-600 hover:text-yellow-700">
-              Suspend Account
-            </button>
-            <button
-              (click)="updateCustomerStatus('blocked')"
-              class="w-full text-left px-4 py-2 hover:bg-red-50 text-red-600 hover:text-red-700">
-              Block Account
-            </button>
-            <hr class="my-2">
-            <button
-              (click)="resetPassword()"
-              class="w-full text-left px-4 py-2 hover:bg-blue-50 text-blue-600 hover:text-blue-700">
-              Reset Password
-            </button>
-          </div>
-        </div>
-
-        <div class="p-6">
-          <!-- Customer Info Tabs -->
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Personal Information -->
-            <div class="bg-gray-50 rounded-xl p-6">
-              <h3 class="text-lg font-semibold text-gray-800 mb-4">Personal Information</h3>
-              <div class="space-y-3">
-                <div>
-                  <label class="text-sm font-medium text-gray-600">Name</label>
-                  <p class="text-gray-800 font-medium">{{selectedCustomer?.name}}</p>
-                </div>
-                <div>
-                  <label class="text-sm font-medium text-gray-600">Email</label>
-                  <p class="text-gray-800 font-medium">{{selectedCustomer?.email}}</p>
-                </div>
-                <div>
-                  <label class="text-sm font-medium text-gray-600">Phone</label>
-                  <p class="text-gray-800 font-medium">{{selectedCustomer?.phone}}</p>
-                </div>
-                <div>
-                  <label class="text-sm font-medium text-gray-600">Customer Type</label>
-                  <span [class]="'px-3 py-1 rounded-full text-sm font-medium ' + getCustomerTypeColor(selectedCustomer?.customer_type || 'new')">
-                    {{selectedCustomer?.customer_type || 'new'}} customer
-                  </span>
-                </div>
-                <div>
-                  <label class="text-sm font-medium text-gray-600">Account Status</label>
-                  <span [class]="'px-3 py-1 rounded-full text-sm font-medium ' + getStatusColor(selectedCustomer?.status || 'active')">
-                    {{selectedCustomer?.status || 'active'}}
-                  </span>
-                </div>
+            <div *ngIf="selectedCustomer" class="space-y-4">
+              <div class="bg-green-50 p-4 rounded-lg">
+                <p class="text-sm text-green-600 mb-1">Current Loyalty Points</p>
+                <p class="text-3xl font-bold text-green-700">{{ selectedCustomer.loyaltyPoints }}</p>
               </div>
-            </div>
 
-            <!-- Order Summary -->
-            <div class="bg-gray-50 rounded-xl p-6">
-              <h3 class="text-lg font-semibold text-gray-800 mb-4">Order Summary</h3>
-              <div class="grid grid-cols-2 gap-4">
-                <div class="bg-white rounded-lg p-4 text-center">
-                  <div class="text-2xl font-bold text-blue-600">{{selectedCustomer?.total_orders}}</div>
-                  <div class="text-sm text-gray-600">Total Orders</div>
-                </div>
-                <div class="bg-white rounded-lg p-4 text-center">
-                  <div class="text-2xl font-bold text-green-600">${{selectedCustomer?.total_spend?.toFixed(2)}}</div>
-                  <div class="text-sm text-gray-600">Total Spend</div>
-                </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Action</label>
+                <select
+                  formControlName="action"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <option value="add">Add Points</option>
+                  <option value="deduct">Deduct Points</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Points</label>
+                <input
+                  type="number"
+                  formControlName="points"
+                  min="1"
+                  placeholder="Enter points amount"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <p *ngIf="loyaltyForm.get('points')?.invalid && loyaltyForm.get('points')?.touched"
+                   class="mt-1 text-sm text-red-600">
+                  Please enter a valid points amount (minimum 1)
+                </p>
+              </div>
+
+              <div class="bg-blue-50 p-3 rounded">
+                <p class="text-sm text-blue-600">
+                  <span class="font-medium">New balance will be:</span>
+                  <span class="font-bold">
+                    {{ loyaltyForm.value.action === 'add'
+                       ? (selectedCustomer.loyaltyPoints + (loyaltyForm.value.points || 0))
+                       : (selectedCustomer.loyaltyPoints - (loyaltyForm.value.points || 0)) }}
+                  </span> points
+                </p>
               </div>
             </div>
           </div>
-
-          <!-- Order History -->
-          <div class="mt-8">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4">Order History</h3>
-            <div class="bg-gray-50 rounded-xl overflow-hidden">
-              <div *ngIf="customerOrders.length === 0" class="p-6 text-center text-gray-500">
-                No orders found for this customer.
-              </div>
-              <div *ngIf="customerOrders.length > 0" class="max-h-64 overflow-y-auto">
-                <div *ngFor="let order of customerOrders" class="border-b border-gray-200 p-4 hover:bg-white transition-colors duration-200">
-                  <div class="flex justify-between items-center">
-                    <div>
-                      <p class="font-medium text-gray-800">Order #{{order.id}}</p>
-                      <p class="text-sm text-gray-600">{{order.createdAt | date:'medium'}}</p>
-                    </div>
-                    <div class="text-right">
-                      <p class="font-bold text-green-600">${{order.totalAmount.toFixed(2)}}</p>
-                      <span [class]="'px-2 py-1 rounded-full text-xs font-medium ' + (order.orderStatus === 'DELIVERED' ? 'text-green-600 bg-green-100' : order.orderStatus === 'CANCELLED' ? 'text-red-600 bg-red-100' : 'text-blue-600 bg-blue-100')">
-                        {{order.orderStatus}}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+          <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+            <button
+              type="submit"
+              [disabled]="loyaltyForm.invalid"
+              class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+              Update Points
+            </button>
+            <button
+              type="button"
+              (click)="closeLoyaltyModal()"
+              class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+              Cancel
+            </button>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   </div>

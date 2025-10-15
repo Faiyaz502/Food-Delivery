@@ -231,6 +231,12 @@
       <button class="close-btn text-gray-400 hover:text-gray-600 text-2xl font-bold" (click)="closeCreateModal()">&times;</button>
     </div>
 
+       <div *ngIf="errorMessage" class="mx-2 alert alert-error bg-red-50 text-red-700 p-4 rounded-lg mb-6 flex justify-between items-center border border-red-200">
+    <span>{{ errorMessage }}</span>
+    <button class="close-btn text-red-500 hover:text-red-700 font-bold" (click)="dismissMessage()">&times;</button>
+  </div>
+
+
     <form (ngSubmit)="createUser()" class="modal-body p-6">
       <div class="form-section mb-8">
         <h3 class="section-title text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Basic Information</h3>
