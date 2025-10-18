@@ -30,6 +30,7 @@ export interface UserUpdateDTO {
   firstName?: string;
   lastName?: string;
   phoneNumber?: string;
+  profilePictureUrl:string ;
 }
 
 export interface PasswordChangeDTO {

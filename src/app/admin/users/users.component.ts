@@ -104,7 +104,8 @@ export class UsersComponent {
   editUser: UserUpdateDTO = {
     firstName: '',
     lastName: '',
-    phoneNumber: ''
+    phoneNumber: '' ,
+    profilePictureUrl: ''
   };
 
   constructor(
@@ -401,7 +402,8 @@ export class UsersComponent {
     this.editUser = {
       firstName: user.firstName,
       lastName: user.lastName,
-      phoneNumber: user.phoneNumber
+      phoneNumber: user.phoneNumber ,
+      profilePictureUrl : user.profilePictureUrl || ''
     };
     this.showUserModal = true;
     this.errorMessage = '';
