@@ -17,11 +17,11 @@ export enum VerificationStatus {
   VERIFIED = 'VERIFIED',
   REJECTED = 'REJECTED'
 }
-
 export enum AvailabilityStatus {
   AVAILABLE = 'AVAILABLE',
   BUSY = 'BUSY',
-  OFFLINE = 'OFFLINE'
+  OFFLINE = 'OFFLINE',
+  ON_BREAK = 'ON_BREAK'
 }
 
 export enum VehicleType {

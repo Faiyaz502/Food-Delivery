@@ -56,7 +56,7 @@ export class ChatComponent {
     this.apiService.getRiders().subscribe(riders => {
       this.apiService.getUsers().subscribe(users => {
         this.riders = riders.map(rider => {
-          const user = users.find(u => u.id === rider.user_id);
+          const user = users.find(u => u.id === rider.id);
           return this.mapRiderToContact(rider, user);
         });
       });
@@ -90,12 +90,12 @@ export class ChatComponent {
     return {
       id: rider.id,
       name: user?.firstName || 'Unknown Rider',
-      avatar: rider.image_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.firstName || 'Rider')}&background=random`,
+      avatar: rider.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.firstName || 'Rider')}&background=random`,
       type: 'rider',
       last_message: this.getRandomMessage(),
       last_message_time: this.getRandomTime(),
       unread_count: Math.floor(Math.random() * 3),
-      status: rider.availability ? 'online' : 'offline'
+      status: rider.availabilityStatus ? 'online' : 'offline'
     };
   }
 

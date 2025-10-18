@@ -141,7 +141,7 @@ export class DashboardComponent  {
 
   calculateRiderStatistics() {
     this.totalRiders = this.riders.length;
-    this.availableRiders = this.riders.filter(rider => rider.availability).length;
+    this.availableRiders = this.riders.filter(rider => rider.availabilityStatus).length;
   }
 
   getRecentTransactions() {
@@ -157,7 +157,7 @@ export class DashboardComponent  {
 
   getAvailableRiders() {
     this.availableRidersList = this.riders
-      .filter(rider => rider.availability)
+      .filter(rider => rider.availabilityStatus)
       .map(rider => {
         const user = this.users.find(u => u.id === rider.id);
         return {
