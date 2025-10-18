@@ -21,6 +21,10 @@ import { CustomerComponent } from './customer/customer.component';
 import { ReviewComponent } from './review/review.component';
 import { ChatComponent } from './chat/chat.component';
 import { ProfileComponent } from './profile/profile.component';
+import { DialogComponent } from './riders/dialog/dialog.component';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { ToastrModule } from 'ngx-toastr';
+import { MatDialogModule } from '@angular/material/dialog';
 
 
 
@@ -42,17 +46,26 @@ import { ProfileComponent } from './profile/profile.component';
     CustomerComponent,
     ReviewComponent,
     ChatComponent,
-    ProfileComponent
+    ProfileComponent,
+    DialogComponent,
+
 
 
 
   ],
   imports: [
+
+
     CommonModule,
     AdminRoutingModule,
     FormsModule,
     AnalyticsModule ,
-   ReactiveFormsModule
+   ReactiveFormsModule,
+   DragDropModule,
+
+   ToastrModule,
+    MatDialogModule,
+
 
 
   ]

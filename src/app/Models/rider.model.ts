@@ -43,6 +43,56 @@ export interface Rider {
   shiftEndTime: string;
   createdAt: string;
   updatedAt: string;
+  assignedOrders?: any[];
 }
+
+export interface DeliveryStats {
+  totalDeliveries: number;
+  successfulDeliveries: number;
+  failedDeliveries: number;
+  cancelledDeliveries: number;
+  avgDeliveryTime: number;
+  totalEarnings: number;
+  successRate: number;
+  avgRating: number;
+  todayDeliveries: number;
+  weekDeliveries: number;
+  monthDeliveries: number;
+}
+
+export interface LocationUpdate {
+  latitude: number;
+  longitude: number;
+}
+
+export interface PendingOrder {
+  id: number;
+  orderId: number;
+  restaurantName: string;
+  customerName: string;
+  deliveryAddress: string;
+  orderTotal: number;
+  distance: number;
+  estimatedTime: number;
+  createdAt: string;
+  pickupLatitude: number;
+  pickupLongitude: number;
+  deliveryLatitude: number;
+  deliveryLongitude: number;
+}
+
+export interface DeliveryAssignment {
+  deliveryId: number;
+  deliveryPersonId: number;
+}
+
+export interface PaginatedResponse<T> {
+  content: T[];
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
+}
+
 
 

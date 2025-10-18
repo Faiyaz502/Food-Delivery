@@ -1,0 +1,61 @@
+@keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-slideIn {
+    animation: slideIn 0.3s ease-out;
+  }
+
+  .animate-fadeIn {
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  .cdk-drag-preview {
+    opacity: 0.8;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    border-radius: 0.5rem;
+  }
+
+  .cdk-drop-list-dragging ::ng-deep .cdk-drag:not(.cdk-drag-placeholder) {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+  }
+
+.element {
+  transition-property: background, border-color;
+  transition-duration: 0.25s;
+  transition-timing-function: ease;
+  transition-delay: 0s;
+}
+.cdk-drop-list {
+  transition: background 0.25s ease, border-color 0.25s ease;
+}
+
+/* Optional visual feedback when hovering a draggable over a drop zone */
+.cdk-drop-list-dragging.cdk-drop-list-receiving {
+  background: rgba(139, 92, 246, 0.08); /* subtle purple glow */
+  border-color: #8b5cf6;
+}
+
+/* For smoother dragging on touch devices */
+.cdk-drag-preview {
+  touch-action: none !important;
+  cursor: grabbing;
+}
