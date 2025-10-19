@@ -5,10 +5,13 @@ import { AnalyticsComponent } from './analytics/analytics.component';
 
 const routes: Routes = [
 
-   { path: '', redirectTo: '/admin', pathMatch: 'full' },
+   { path: '', redirectTo: '/main', pathMatch: 'full' },
+
   { path: 'admin',component:AdminComponent,loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule) },
 
-   { path: 'analytics',component:AnalyticsComponent ,loadChildren: () => import('./analytics/analytics.module').then(m => m.AnalyticsModule) }
+   { path: 'analytics',component:AnalyticsComponent ,loadChildren: () => import('./analytics/analytics.module').then(m => m.AnalyticsModule) },
+
+   { path: 'main', loadChildren: () => import('./main/main.module').then(m => m.MainModule) }
 ];
 
 @NgModule({

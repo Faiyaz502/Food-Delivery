@@ -1,0 +1,73 @@
+<div class="min-h-screen bg-gray-50">
+  <div class="relative">
+    <img [src]="restaurant.imageUrls[0]" alt="{{ restaurant.name }} Banner"
+         class="w-full h-80 object-cover shadow-lg">
+
+    <div class="absolute inset-0 bg-black bg-opacity-30 flex items-end p-8">
+      <div class="text-white">
+        <h1 class="text-4xl font-bold mb-1">{{ restaurant.name }}</h1>
+
+        <div class="flex items-center space-x-2">
+          <span class="bg-green-500 text-white text-sm font-semibold px-2 py-0.5 rounded-full">★ {{ restaurant.rating }} ({{ restaurant.totalReviews }})</span>
+          <span class="text-lg font-light">Delivery Fee: ₹{{ 30 }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+      <section class="lg:col-span-9">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6 border-b pb-2">Full Menu</h2>
+
+        <div class="flex space-x-4 overflow-x-auto pb-4 sticky top-16 bg-white z-20 shadow-sm mb-6">
+          <button
+            *ngFor="let category of menuCategories"
+            (click)="selectCategory(category)"
+            [ngClass]="{'bg-red-600 text-white': selectedCategory === category, 'bg-gray-200 text-gray-700 hover:bg-red-100': selectedCategory !== category}"
+            class="px-4 py-2 text-sm font-medium rounded-full flex-shrink-0 transition duration-150"
+          >
+            {{ category.name }}
+          </button>
+        </div>
+
+        <div *ngFor="let category of menuCategories" [id]="category.slug">
+          <h3 class="text-2xl font-bold text-gray-800 mb-4 mt-6">{{ category.name }}</h3>
+          <div class="space-y-4">
+            <!-- <app-menu-item-card
+              *ngFor="let item of category.items"
+              [item]="item"
+              (addItemToCartEvent)="addToCart(item)">
+            </app-menu-item-card> -->
+          </div>
+        </div>
+      </section>
+
+      <aside class="lg:col-span-3">
+        <div class="sticky top-28 bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+          <h3 class="text-xl font-bold text-gray-800 mb-4">Customer Reviews</h3>
+
+          <div *ngIf="reviews.length > 0; else noReviews">
+            <div class="mb-4">
+              <p class="text-4xl font-extrabold text-center text-red-600">{{ reviewSummary.averageDeliveryRating | number:'1.1-1' }}</p>
+              <p class="text-sm text-gray-500 text-center">Based on {{ reviewSummary.totalReviews }} reviews</p>
+            </div>
+
+            <div *ngFor="let review of reviews.slice(0, 3)" class="border-t pt-3 mt-3">
+              <p class="font-semibold text-gray-800">{{ review.userName }}</p>
+              <p class="text-sm text-yellow-500">★ {{ review.foodRating | number:'1.1-1' }}</p>
+              <p class="text-gray-600 text-sm italic line-clamp-2">"{{ review.comment }}"</p>
+            </div>
+            <button class="mt-4 w-full text-red-600 hover:text-red-700 font-medium">See all Reviews ({{ restaurant.totalReviews }})</button>
+          </div>
+
+          <ng-template #noReviews>
+            <p class="text-gray-500 italic text-center">Be the first to leave a review!</p>
+          </ng-template>
+        </div>
+      </aside>
+
+    </div>
+  </main>
+</div>

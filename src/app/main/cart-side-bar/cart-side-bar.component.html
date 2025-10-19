@@ -1,0 +1,61 @@
+<div [ngClass]="{'translate-x-0': isOpen, 'translate-x-full': !isOpen}"
+     class="fixed top-0 right-0 h-full w-96 bg-white shadow-2xl transform transition-transform duration-300 ease-in-out z-40 flex flex-col">
+
+  <div class="p-4 border-b flex justify-between items-center">
+    <h2 class="text-2xl font-bold text-gray-800">🛒 Your Cart ({{ cart?.totalItems || 0 }})</h2>
+    <button (click)="closeCart()" class="text-gray-500 hover:text-red-600">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+    </button>
+  </div>
+
+  <div class="flex-grow p-4 space-y-4 overflow-y-auto">
+    <div *ngIf="(cart?.items?.length ?? 0) > 0; else emptyCart">
+      <div *ngFor="let item of cart?.items" class="flex items-center justify-between border-b pb-3 pt-1">
+        <div class="flex-grow">
+          <p class="font-semibold text-gray-800">{{ item.menuItemName }}</p>
+          <p class="text-sm text-gray-500">₹{{ item.unitPrice | number:'1.2-2' }} x {{ item.quantity }}</p>
+        </div>
+
+        <div class="flex items-center space-x-4">
+          <div class="flex items-center border rounded-lg overflow-hidden">
+            <button (click)="updateQuantity(item.id, item.quantity - 1)" [disabled]="item.quantity <= 1" class="p-1 px-2 text-red-600 bg-gray-50 hover:bg-gray-100 disabled:opacity-50">
+              -
+            </button>
+            <span class="px-3 text-sm font-medium">{{ item.quantity }}</span>
+            <button (click)="updateQuantity(item.id, item.quantity + 1)" class="p-1 px-2 text-red-600 bg-gray-50 hover:bg-gray-100">
+              +
+            </button>
+          </div>
+          <p class="font-bold text-lg text-red-600">₹{{ item.totalPrice | number:'1.2-2' }}</p>
+          <button (click)="removeItem(item.id)" class="text-gray-400 hover:text-red-600" aria-label="Remove Item">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <ng-template #emptyCart>
+      <div class="text-center py-10">
+        <p class="text-lg text-gray-500">Your cart is empty. Start adding delicious food!</p>
+        <button (click)="closeCart(); navigateTo('/')" class="mt-4 text-red-600 hover:underline">
+            Browse Restaurants
+        </button>
+      </div>
+    </ng-template>
+  </div>
+
+  <div *ngIf="(cart?.items?.length ?? 0) > 0" class="p-4 border-t bg-gray-50">
+    <div class="flex justify-between font-semibold text-lg text-gray-800">
+      <span>Subtotal:</span>
+      <span>₹{{ cart?.subtotal | number:'1.2-2' }}</span>
+    </div>
+    <p class="text-sm text-gray-500 mt-1 mb-4">Delivery and tax calculated at checkout.</p>
+
+    <button
+      (click)="navigateToCheckout()"
+      class="w-full py-3 text-center bg-red-600 text-white font-bold text-lg rounded-lg hover:bg-red-700 transition duration-150"
+    >
+      Proceed to Checkout
+    </button>
+  </div>
+</div>
+<div *ngIf="isOpen" (click)="closeCart()" class="fixed inset-0 bg-black opacity-50 z-30"></div>

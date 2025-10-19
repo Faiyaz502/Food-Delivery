@@ -1,0 +1,100 @@
+
+<header class="sticky top-0 z-50 bg-white shadow-md">
+  <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    <a routerLink="/" class="text-2xl font-bold text-red-600 tracking-wider">
+      Food<span class="text-gray-900">App</span>
+    </a>
+
+    <div class="hidden md:flex space-x-8 text-lg font-medium">
+      <a routerLink="/" class="text-gray-700 hover:text-red-600 transition duration-150">Home</a>
+      <a routerLink="/restaurants" class="text-gray-700 hover:text-red-600 transition duration-150">Restaurants</a>
+      <a routerLink="/join-us" class="text-gray-700 hover:text-red-600 transition duration-150">Join Us</a>
+    </div>
+
+    <div class="flex items-center space-x-4">
+      <button
+        (click)="toggleCartSidebar()"
+        class="p-2 relative rounded-full hover:bg-gray-100 transition duration-150"
+        aria-label="Open Cart"
+      >
+        <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+        <span *ngIf="cartItemCount > 0" class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">{{ cartItemCount }}</span>
+      </button>
+
+      <button
+        (click)="toggleLeftSidebar()"
+        class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden hover:ring-2 ring-red-500 transition duration-150"
+        aria-label="Open Profile Menu"
+      >
+        <img *ngIf="user.profilePictureUrl; else noImage" [src]="user.profilePictureUrl" alt="User Profile" class="w-full h-full object-cover">
+        <ng-template #noImage>
+          <svg class="w-6 h-6 text-gray-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
+        </ng-template>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<div class="min-h-screen bg-gray-50">
+
+  <section class="relative w-full overflow-hidden">
+    <div class="h-96 bg-cover bg-center flex items-center justify-center p-10" style="background-image: url('https://via.placeholder.com/1600x400/FF5733/ffffff?text=Delicious+Food+Delivered+Fast');">
+      <div class="text-center text-white p-6 bg-black bg-opacity-40 rounded-xl">
+        <h1 class="text-4xl sm:text-5xl font-extrabold mb-2">Crave It? Get It.</h1>
+        <p class="text-xl sm:text-2xl font-light">Explore the best restaurants near you!</p>
+        <div class="mt-4 flex justify-center">
+            <input type="text" placeholder="Enter delivery address..." class="p-3 rounded-l-lg w-full max-w-md text-gray-800 focus:ring-red-500 focus:border-red-500">
+            <button class="bg-red-600 text-white p-3 rounded-r-lg hover:bg-red-700 font-semibold">Search</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+    <section class="mb-16">
+      <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">✨ Our Services</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition duration-300 transform hover:-translate-y-1 text-center border-t-4 border-red-600">
+          <svg class="w-10 h-10 text-red-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          <h3 class="text-xl font-semibold mb-2">Fast Delivery</h3>
+          <p class="text-gray-600">Get your food within 30 minutes, guaranteed.</p>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition duration-300 transform hover:-translate-y-1 text-center border-t-4 border-red-600">
+          <svg class="w-10 h-10 text-red-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2l-2 2v-2h6.586a1 1 0 01.707.293l4 4a1 1 0 001.414 0l4-4a1 1 0 00.293-.707V9.5a1 1 0 00-1-1h-1.5"></path></svg>
+          <h3 class="text-xl font-semibold mb-2">Live Support</h3>
+          <p class="text-gray-600">24/7 chat support for all your order needs.</p>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition duration-300 transform hover:-translate-y-1 text-center border-t-4 border-red-600">
+          <svg class="w-10 h-10 text-red-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c1.657 0 3 .895 3 2s-1.343 2-3 2a3 3 0 00-3 3v2m8-7a8 8 0 100 16 8 8 0 000-16z"></path></svg>
+          <h3 class="text-xl font-semibold mb-2">Exclusive Deals</h3>
+          <p class="text-gray-600">Get access to coupons and loyalty rewards.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="text-3xl font-bold text-gray-800 mb-8">🍽️ Popular Restaurants</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        <!-- <app-restaurant-card
+          *ngFor="let restaurant of demoRestaurants"
+          [restaurant]="restaurant"
+          (click)="navigateToRestaurant(restaurant.id)">
+        </app-restaurant-card> -->
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer class="bg-gray-900 text-white p-8">
+  <div class="max-w-7xl mx-auto text-center">
+    <p class="text-lg font-bold mb-2">FoodApp</p>
+    <p class="text-sm text-gray-400">© 2025 FoodApp. All rights reserved.</p>
+    <div class="mt-4 space-x-4 text-sm">
+      <a href="#" class="hover:text-red-500">Privacy Policy</a>
+      <a href="#" class="hover:text-red-500">Terms of Service</a>
+      <a href="#" class="hover:text-red-500">Contact</a>
+    </div>
+  </div>
+</footer>

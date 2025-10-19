@@ -106,7 +106,7 @@ export interface CartItem {
 }
 
 export interface AddCartItemDTO {
-  menuItemId: number;
+  menuItemId: number | undefined;
   quantity: number;
   specialInstructions?: string;
 }

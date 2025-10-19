@@ -16,7 +16,7 @@ import { User } from '../Models/Users/user.models';
   providedIn: 'root'
 })
 export class ApiService {
-  private baseUrl = 'http://localhost:3000';
+  private baseUrl = 'http://localhost:8080/api/';
 
   constructor(private http: HttpClient) { }
 
@@ -47,7 +47,7 @@ export class ApiService {
   }
 
   getRestaurantById(id: number): Observable<Restaurant> {
-    return this.http.get<Restaurant>(`${this.baseUrl}/restaurants/${id}`);
+    return this.http.get<Restaurant>(`http://localhost:8080/api/restaurants/${id}`);
   }
 
   createRestaurant(restaurant: Omit<Restaurant, 'id'>): Observable<Restaurant> {
