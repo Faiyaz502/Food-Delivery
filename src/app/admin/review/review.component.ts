@@ -1,267 +1,272 @@
-import { filter } from 'rxjs/operators';
-import { Component, ElementRef, ViewChild } from '@angular/core';
-import { Chart } from 'chart.js';
-import { Restaurant } from 'src/app/Models/restaurant.model';
-import { Review } from 'src/app/Models/review.model';
-import { ApiService } from 'src/app/services/api.service';
-import { User } from 'src/app/Models/Users/user.models';
-interface ReviewWithDetails extends Review {
-  user_name?: string;
-  restaurant_name?: string;
-  restaurant_image?: string;
-  is_flagged?: boolean;
-  status?: 'approved' | 'pending' | 'rejected';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+
+// ApexCharts types
+import {
+  ApexAxisChartSeries,
+  ApexChart,
+  ApexXAxis,
+  ApexYAxis,
+  ApexTitleSubtitle,
+  ApexDataLabels
+} from 'ng-apexcharts';
+/** Represents a paginated response from the backend. (Needed for service response handling) */
+interface Page<T> {
+  content: T[];
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number; // Current page number (0-indexed)
+  last: boolean;
+  first: boolean;
+  // Add other properties as needed
 }
+// Models
+import { CouponResponse, DiscountType, CouponType, CouponCreateRequest, CouponApplyRequest } from 'src/app/Models/NotificationAndCoupon/coupon.model';
+import { ReviewResponse, RestaurantReviewSummary, ReviewUpdateRequest } from 'src/app/Models/NotificationAndCoupon/review.model';
+
+// Services
+import { CouponService } from 'src/app/services/reviewAndCoupon/coupon.service';
+import { ReviewService } from 'src/app/services/reviewAndCoupon/review.service';
+
 @Component({
   selector: 'app-review',
   templateUrl: './review.component.html',
   styleUrls: ['./review.component.scss']
 })
-export class ReviewComponent {
+export class ReviewComponent implements OnInit {
 
-  reviews: ReviewWithDetails[] = [];
-  filteredReviews: ReviewWithDetails[] = [];
-  users: User[] = [];
-  restaurants: Restaurant[] = [];
+// Dependency injection via inject() is often preferred but constructor is fine too
 
-  // Filter properties
-  ratingFilter: number = 0;
-  dateFilter: string = '';
-  userFilter: string = 'all';
-  restaurantFilter: string = 'all';
-  statusFilter: string = 'all';
 
-  // View modes
-  currentView: 'list' | 'flagged' | 'trends' = 'list';
+    coupon! : CouponApplyRequest ; 
+  // Reviews
+  reviews: ReviewResponse[] = [];
+  selectedReview: ReviewResponse | null = null;
+  reviewForm: FormGroup;
+  restaurantSummaries: RestaurantReviewSummary[] = [];
 
-  // Chart data for trends
-  chartData = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-    ratings: [4.2, 4.3, 4.1, 4.4, 4.5, 4.3]
+  // Coupons
+  coupons: CouponResponse[] = [];
+  couponForm: FormGroup;
+  validationResult: any ;
+
+  // Charts - Fully initialized to avoid TS errors
+  public foodRatingChartOptions = {
+    series: [] as ApexAxisChartSeries,
+    chart: { type: 'bar', height: 350 } as ApexChart,
+    xaxis: { categories: [] } as ApexXAxis,
+    yaxis: { max: 5 } as ApexYAxis,
+    title: { text: 'Restaurant Ratings' } as ApexTitleSubtitle,
+    dataLabels: { enabled: false } as ApexDataLabels
   };
 
-  constructor(private apiService: ApiService) {}
+  public couponUsageChartOptions = {
+    series: [] as ApexAxisChartSeries,
+    chart: { type: 'bar', height: 300 } as ApexChart,
+    xaxis: { categories: [] } as ApexXAxis,
+    title: { text: 'Coupon Usage' } as ApexTitleSubtitle,
+    dataLabels: { enabled: false } as ApexDataLabels
+  };
 
-  ngOnInit() {
-    this.loadData();
-
-  }
-
-  loadData() {
-    // Load users, restaurants, and reviews
-    this.apiService.getUsers().subscribe(users => {
-      this.users = users;
-
-      this.apiService.getRestaurants().subscribe(restaurants => {
-        this.restaurants = restaurants;
-
-        this.apiService.getReviews().subscribe(reviews => {
-          this.reviews = reviews.map(review => this.enrichReview(review));
-          this.filteredReviews = [...this.reviews];
-
-          this.createReviewChart()
-        });
-
-
-      });
+  constructor(  private fb: FormBuilder,
+    private reviewService: ReviewService,
+    private couponService: CouponService) {
+    this.reviewForm = this.fb.group({
+      foodRating: [5],
+      deliveryRating: [5],
+      comment: [''],
+      deliveryPersonRating: [null]
     });
 
-     ;
+    this.couponForm = this.fb.group({
+      code: [''],
+      description: [''],
+      discountType: [DiscountType.PERCENTAGE],
+      discountValue: [10],
+      minOrderAmount: [50],
+      maxDiscountAmount: [100],
+      couponType: [CouponType.GENERAL],
+      usageLimit: [100],
+      validFrom: [new Date().toISOString().substring(0, 16)],
+      validUntil: [new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().substring(0, 16)],
+      applicableOnFirstOrder: [false]
+    });
   }
 
-  enrichReview(review: Review): ReviewWithDetails {
-    const user = this.users.find(u => u.id === review.user_id);
-    const restaurant = this.restaurants.find(r => r.id === review.restaurant_id);
+  ngOnInit(): void {
+    this.loadReviews();
+    this.loadCoupons();
+    this.loadRestaurantSummaries();
+  }
 
-    return {
-      ...review,
-      user_name: user?.firstName || 'Unknown User',
-      restaurant_name: restaurant?.name || 'Unknown Restaurant',
-      restaurant_image: restaurant?.image_url,
-      is_flagged: Math.random() > 0.8, // Random flagged status for demo
-      status: Math.random() > 0.3 ? 'approved' : 'pending' // Random status for demo
+  // === REVIEWS ===
+  /**
+   * FIX 1: Replaced getProductReviews with getReviewsByRestaurant (assuming restaurantId 1)
+   * and correctly mapped the Page<ReviewResponse> return type to extract reviews.
+   */
+  loadReviews(): void {
+    // Assuming we are loading reviews for a specific Restaurant ID, e.g., 1
+    // The service returns a Page<ReviewResponse>
+    this.reviewService.getReviewsByRestaurant(1).subscribe((page: Page<ReviewResponse>) => {
+      this.reviews = page.content;
+    });
+  }
+
+  selectReview(review: ReviewResponse): void {
+    this.selectedReview = review;
+    this.reviewForm.patchValue({
+      foodRating: review.foodRating,
+      deliveryRating: review.deliveryRating,
+      comment: review.comment,
+      deliveryPersonRating: review.deliveryPersonRating || null
+    });
+  }
+
+  /**
+   * FIX 2: Updated updateReview to include the required 'userId' argument,
+   * which is extracted from the owner of the currently selected review.
+   */
+  updateReview(): void {
+    if (!this.selectedReview) return;
+    const updateData: ReviewUpdateRequest = this.reviewForm.value;
+    const userId = this.selectedReview.userId; // Get the ID of the user who owns the review
+
+    this.reviewService.updateReview(this.selectedReview.id, userId, updateData).subscribe((updated: ReviewResponse) => {
+      const index = this.reviews.findIndex(r => r.id === updated.id);
+      if (index !== -1) this.reviews[index] = updated;
+      this.selectedReview = updated;
+    });
+  }
+
+  /**
+   * FIX 3: Updated deleteReview to include the required 'userId' argument,
+   * extracted by finding the review in the local array first.
+   */
+  deleteReview(id: number): void {
+    const reviewToDelete = this.reviews.find(r => r.id === id);
+    if (!reviewToDelete) return; // Cannot delete without knowing the userId
+
+    const userId = reviewToDelete.userId;
+
+    this.reviewService.deleteReview(id, userId).subscribe(() => {
+      this.reviews = this.reviews.filter(r => r.id !== id);
+      if (this.selectedReview?.id === id) this.selectedReview = null;
+    });
+  }
+
+  // === COUPONS ===
+  loadCoupons(): void {
+    // Assuming getActiveCoupons() is a valid method on the CouponService
+    this.couponService.getActiveCoupons().subscribe((coupons: CouponResponse[]) => {
+      this.coupons = coupons;
+      this.updateCouponUsageChart();
+    });
+  }
+
+  createCoupon(): void {
+    const req: CouponCreateRequest = this.couponForm.value;
+    this.couponService.createCoupon(req).subscribe((coupon: CouponResponse) => {
+      this.coupons.push(coupon);
+      this.couponForm.reset({
+        code: '',
+        description: '',
+        discountType: DiscountType.PERCENTAGE,
+        discountValue: 10,
+        minOrderAmount: 50,
+        maxDiscountAmount: 100,
+        couponType: CouponType.GENERAL,
+        usageLimit: 100,
+        validFrom: new Date().toISOString().substring(0, 16),
+        validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().substring(0, 16),
+        applicableOnFirstOrder: false
+      });
+      this.updateCouponUsageChart();
+    });
+  }
+
+  validateCoupon(): void {
+    const code = (document.getElementById('validateCode') as HTMLInputElement)?.value || '';
+    const amount = parseFloat((document.getElementById('validateAmount') as HTMLInputElement)?.value || '0');
+    if (!code || !amount) return;
+
+    this.couponService.validateCode(code).subscribe((res: any) => {
+
+      console.log(res);
+      
+      this.validationResult = res;
+
+      console.log(this.validationResult);
+      
+    });
+  }
+
+  applyCoupon(code: string, amount : number): void {
+    // NOTE: The backend endpoint for applyCoupon takes a body (CouponApplyRequest).
+    this.coupon.couponCode = code;
+    this.coupon.orderAmount = amount;
+    
+    // The component logic here seems to assume a simpler service call which takes only the code.
+    // Keeping the original component logic, but noting the mismatch with a typical applyCoupon endpoint.
+    this.couponService.applyCoupon(this.coupon).subscribe(() => {
+      this.loadCoupons();
+
+    this.coupon.couponCode = '';
+    this.coupon.orderAmount = 0;
+
+    });
+  }
+
+  deactivateCoupon(id: number): void {
+    this.couponService.deactivateCoupon(id).subscribe(() => {
+      this.coupons = this.coupons.map(c => c.id === id ? { ...c, isActive: false } : c);
+    });
+  }
+
+  // === CHARTS ===
+  loadRestaurantSummaries(): void {
+    // We retain the mock data as the ReviewService only provides getRestaurantReviewSummary(id)
+    // and doesn't have a get all summaries method.
+    this.restaurantSummaries = [
+      { restaurantId: 1, restaurantName: 'Burger Palace', averageFoodRating: 4.5, averageDeliveryRating: 4.2, overallRating: 4.35, totalReviews: 120 },
+      { restaurantId: 2, restaurantName: 'Pizza Heaven', averageFoodRating: 4.7, averageDeliveryRating: 3.9, overallRating: 4.3, totalReviews: 95 },
+      { restaurantId: 3, restaurantName: 'Sushi Delight', averageFoodRating: 4.8, averageDeliveryRating: 4.6, overallRating: 4.7, totalReviews: 88 }
+    ];
+    this.updateFoodRatingChart();
+  }
+
+  updateFoodRatingChart(): void {
+    const names = this.restaurantSummaries.map(r => r.restaurantName);
+    const foodRatings = this.restaurantSummaries.map(r => r.averageFoodRating);
+    const deliveryRatings = this.restaurantSummaries.map(r => r.averageDeliveryRating);
+
+    this.foodRatingChartOptions = {
+      series: [
+        { name: 'Food Rating', data: foodRatings },
+        { name: 'Delivery Rating', data: deliveryRatings }
+      ],
+      chart: { type: 'bar', height: 350 },
+      xaxis: { categories: names },
+      yaxis: { max: 5 },
+      title: { text: 'Restaurant Ratings' },
+      dataLabels: { enabled: false }
     };
   }
 
-  applyFilters() {
-    this.filteredReviews = this.reviews.filter(review => {
-      const matchesRating = this.ratingFilter === 0 || review.rating === this.ratingFilter;
-      const matchesUser = this.userFilter === 'all' || review.user_id.toString() === this.userFilter;
-      const matchesRestaurant = this.restaurantFilter === 'all' || review.restaurant_id.toString() === this.restaurantFilter;
-      const matchesStatus = this.statusFilter === 'all' || review.status === this.statusFilter;
+  updateCouponUsageChart(): void {
+    const codes = this.coupons.map(c => c.code);
+    const usage = this.coupons.map(c => c.usedCount || 0);
 
-      let matchesDate = true;
-      if (this.dateFilter) {
-        const reviewDate = new Date(review.created_at).toISOString().split('T')[0];
-        matchesDate = reviewDate === this.dateFilter;
-      }
-
-      return matchesRating && matchesUser && matchesRestaurant && matchesStatus && matchesDate;
-    });
+    this.couponUsageChartOptions = {
+      series: [{ name: 'Usage Count', data: usage }],
+      chart: { type: 'bar', height: 300 },
+      xaxis: { categories: codes },
+      title: { text: 'Coupon Usage' },
+      dataLabels: { enabled: false }
+    };
   }
 
-  setView(view: 'list' | 'flagged' | 'trends') {
-    this.currentView = view;
-    if (view === 'flagged') {
-      this.filteredReviews = this.reviews.filter(review => review.is_flagged);
-    } else if (view === 'list') {
-      this.applyFilters();
-    }
-  }
-
-  approveReview(review: ReviewWithDetails) {
-    review.status = 'approved';
-    // In a real app, call API to update review status
-  }
-
-  rejectReview(review: ReviewWithDetails) {
-    review.status = 'rejected';
-    // In a real app, call API to update review status
-  }
-
-  getStarArray(rating: number): boolean[] {
-    return Array(5).fill(false).map((_, i) => i < rating);
-  }
-
-  getStatusColor(status: string): string {
-    switch (status) {
-      case 'approved': return 'text-green-600 bg-green-100';
-      case 'rejected': return 'text-red-600 bg-red-100';
-      case 'pending': return 'text-yellow-600 bg-yellow-100';
-      default: return 'text-gray-600 bg-gray-100';
-    }
-  }
-
-  getRatingColor(rating: number): string {
-    if (rating >= 4) return 'text-green-600';
-    if (rating >= 3) return 'text-yellow-600';
-    return 'text-red-600';
-  }
-
-
-  // chart
-
-  @ViewChild('reviewChart') reviewsChart! : ElementRef ;
-
-  // selectedYear = new Date().getFullYear;
-  // selectedMonth = new Date().getMonth ;
-  // availableYears = [2024,2025];
-  // availableMonths = [
-  //     { value: 1, name: 'January' },
-  //     { value: 2, name: 'February' },
-  //     { value: 3, name: 'March' },
-  //     { value: 4, name: 'April' },
-  //     { value: 5, name: 'May' },
-  //     { value: 6, name: 'June' },
-  //     { value: 7, name: 'July' },
-  //     { value: 8, name: 'August' },
-  //     { value: 9, name: 'September' },
-  //     { value: 10, name: 'October' },
-  //     { value: 11, name: 'November' },
-  //     { value: 12, name: 'December' }
-  //   ];
-
-
-    // FilteredReviewsYr! : Review[] ;
-
-
-  //   getReviewsbyYear(year : string ){
-  //     this.apiService.getReviews().subscribe(reviews => {
-  //   const filtered = reviews.filter(
-  //     x => new Date(x.created_at).getFullYear() === +year
-  //   );
-
-  //   this.FilteredReviewsYr = filtered; // store in a component variable
-  // });
-  //   }
-
-
-
-
-        createReviewChart() {
-          if (!this.reviewsChart) return;
-
-        //  const reviewByMonth = Array(12).fill(0);
-
-        //   this.FilteredReviewsYr.forEach(x => {
-
-        //     const month = new Date(x.created_at).getMonth();
-
-        //     reviewByMonth[month] += 1;
-
-
-        //   })
-
-
-
-
-          const ctx = this.reviewsChart.nativeElement.getContext('2d');
-          new Chart(ctx, {
-            type: 'line',
-            data: {
-              labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-              datasets: [{
-                label: 'Monthly Reviews Trends',
-                // data : reviewByMonth,
-                data: [65, 59, 80, 81, 56, 55, 40, 65, 75, 85, 90, 95],
-                borderColor: '#4F46E5',
-                backgroundColor: 'rgba(79, 70, 229, 0.1)',
-                tension: 0.4,
-                fill: true
-              }]
-            },
-            options: {
-              responsive: true,
-              plugins: {
-                title: {
-                  display: true,
-                  text: 'Monthly Sales Trend'
-                }
-              },
-              scales: {
-                y: {
-                  beginAtZero: true
-                }
-              }
-            }
-          });
-        }
-
-         createSalesChart() {
-      if (!this.reviewsChart) return;
-
-      const ctx = this.reviewsChart.nativeElement.getContext('2d');
-      new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-          datasets: [{
-            label: 'Monthly Sales',
-            data: [65, 59, 80, 81, 56, 55, 40, 65, 75, 85, 90, 95],
-            borderColor: '#4F46E5',
-            backgroundColor: 'rgba(79, 70, 229, 0.1)',
-            tension: 0.4,
-            fill: true
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            title: {
-              display: true,
-              text: 'Monthly Sales Trend'
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: true
-            }
-          }
-        }
-      });
-    }
-
-
-
-
+  // Expose enums to template
+  protected readonly DiscountType = DiscountType;
+  protected readonly CouponType = CouponType;
 }

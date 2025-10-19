@@ -5,7 +5,8 @@ import { ToastrService } from 'ngx-toastr';
 import { MatDialog } from '@angular/material/dialog';
 
 import { Rider } from 'src/app/Models/rider.model';
-import { DeliveryService } from 'src/app/services/delivery/delivery.service';
+
+import { DeliveryResponse, DeliveryService } from 'src/app/services/delivery/delivery.service';
 import { RiderService } from 'src/app/services/Rider/rider.service';
 import { DialogComponent } from './dialog/dialog.component';
 import * as ApexCharts from 'apexcharts';
@@ -57,6 +58,7 @@ export class RidersComponent {
   selectedRider: Rider | null = null;
   riderStats: RiderStats | null = null;
   riderHeatmapData: any[] = [];
+  deliveryResponse! : DeliveryResponse ;
 
   // State properties
   loading = false;
@@ -180,6 +182,7 @@ export class RidersComponent {
 
       if (rider && order) {
         console.log('Assigning order to rider:', rider.riderName);
+        
         this.assignOrderToRider(order, rider);
       } else {
         console.error('Rider not found or invalid order', { riderId, rider, order });
@@ -191,7 +194,18 @@ export class RidersComponent {
   assignOrderToRider(order: PendingOrder, rider: Rider): void {
     this.loading = true;
 
-    this.deliveryService.assignDeliveryPerson(order.id, rider.id).subscribe({
+    this.deliveryService.getDeliveryByOrderId(order.id).subscribe({
+
+      next:(response)=>{
+        this.deliveryResponse = response;
+        console.log(response);
+        
+        this.toastr.success(`Delivery Found in Order `)
+
+
+          ///Assign rider
+
+              this.deliveryService.assignDeliveryPerson(this.deliveryResponse.id, rider.id).subscribe({
       next: (response) => {
         this.toastr.success(`Order ${order.orderNumber} assigned to ${rider.riderName}`);
         this.loadPendingOrders();
@@ -204,6 +218,26 @@ export class RidersComponent {
         this.loading = false;
       }
     });
+
+
+
+
+
+
+
+
+      },
+       error: (err) => {
+        this.toastr.error('Failed to Find delivery: ' + (err.error?.message || err.message));
+        console.error(err);
+        this.loading = false;
+      }
+
+    })
+
+      
+
+
   }
 
   selectRider(rider: Rider): void {

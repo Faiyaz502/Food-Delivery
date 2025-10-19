@@ -25,6 +25,9 @@ import { DialogComponent } from './riders/dialog/dialog.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ToastrModule } from 'ngx-toastr';
 import { MatDialogModule } from '@angular/material/dialog';
+import { CouponComponent } from './coupon/coupon/coupon.component';
+import { NotificationComponent } from './notification/notification.component';
+import { NgApexchartsModule } from 'ng-apexcharts';
 
 
 
@@ -48,6 +51,8 @@ import { MatDialogModule } from '@angular/material/dialog';
     ChatComponent,
     ProfileComponent,
     DialogComponent,
+    CouponComponent,
+    NotificationComponent,
 
 
 
@@ -65,6 +70,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 
    ToastrModule,
     MatDialogModule,
+     NgApexchartsModule
 
 
 

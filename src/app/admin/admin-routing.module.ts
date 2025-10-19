@@ -14,6 +14,8 @@ import { CustomerComponent } from './customer/customer.component';
 import { ReviewComponent } from './review/review.component';
 import { ChatComponent } from './chat/chat.component';
 import { ProfileComponent } from './profile/profile.component';
+import { CouponComponent } from './coupon/coupon/coupon.component';
+import { NotificationComponent } from './notification/notification.component';
 
 
 const routes: Routes = [
@@ -29,6 +31,8 @@ const routes: Routes = [
   { path: 'review', component: ReviewComponent },
   { path: 'chat', component: ChatComponent },
   { path: 'profile', component: ProfileComponent },
+  { path: 'coupon', component: CouponComponent },
+  { path: 'notification', component: NotificationComponent },
 ];
 
 @NgModule({

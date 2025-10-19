@@ -15,7 +15,7 @@ interface PendingOrder {
   orderStatus: string;
 }
 
-interface DeliveryResponse {
+export interface DeliveryResponse {
   id: number;
   deliveryId: number;
   orderId: number;
