@@ -1,73 +1,363 @@
-<div class="min-h-screen bg-gray-50">
-  <div class="relative">
-    <img [src]="restaurant.imageUrls[0]" alt="{{ restaurant.name }} Banner"
-         class="w-full h-80 object-cover shadow-lg">
+<main class="container mx-auto px-4 py-8 pt-24 sm:pt-28">
 
-    <div class="absolute inset-0 bg-black bg-opacity-30 flex items-end p-8">
-      <div class="text-white">
-        <h1 class="text-4xl font-bold mb-1">{{ restaurant.name }}</h1>
+        <!-- Restaurant Header with Gallery -->
+        <section class="mb-12">
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Main Image and Gallery -->
+                <div class="space-y-4">
+                    <!-- Main Image (Mock Data) -->
+                    <img
+                        src="https://placehold.co/800x400/3B82F6/ffffff?text=Gourmet+Signature+Dish"
+                        alt="Restaurant food, signature dish"
+                        class="w-full h-[300px] sm:h-[400px] object-cover rounded-xl shadow-card"
+                        onerror="this.onerror=null; this.src='https://placehold.co/800x400/CCCCCC/333333?text=Image+Unavailable';"
+                    />
 
-        <div class="flex items-center space-x-2">
-          <span class="bg-green-500 text-white text-sm font-semibold px-2 py-0.5 rounded-full">★ {{ restaurant.rating }} ({{ restaurant.totalReviews }})</span>
-          <span class="text-lg font-light">Delivery Fee: ₹{{ 30 }}</span>
-        </div>
-      </div>
-    </div>
-  </div>
+                    <!-- Thumbnail Gallery (Mock Data) -->
+                    <div class="grid grid-cols-4 gap-3">
+                        <img
+                            src="https://placehold.co/100x100/10B981/ffffff?text=Interior"
+                            alt="Interior"
+                            class="w-full h-24 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-smooth border-2 border-transparent hover:border-primary"
+                        />
+                        <img
+                            src="https://placehold.co/100x100/F59E0B/ffffff?text=Dessert"
+                            alt="Dessert"
+                            class="w-full h-24 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-smooth border-2 border-transparent hover:border-primary"
+                        />
+                        <img
+                            src="https://placehold.co/100x100/EF4444/ffffff?text=Bar+Area"
+                            alt="Bar Area"
+                            class="w-full h-24 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-smooth border-2 border-transparent hover:border-primary"
+                        />
+                        <img
+                            src="https://placehold.co/100x100/6366F1/ffffff?text=Outdoor+Seating"
+                            alt="Outdoor Seating"
+                            class="w-full h-24 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-smooth border-2 border-transparent hover:border-primary"
+                        />
+                    </div>
+                </div>
 
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- Restaurant Info -->
+                <div class="space-y-6">
+                    <div>
+                        <!-- Restaurant Name (Not sticky, scrolls with content) -->
+                        <h1 class="text-4xl font-extrabold text-foreground mb-3">Gourmet Kitchen</h1>
 
-      <section class="lg:col-span-9">
-        <h2 class="text-2xl font-bold text-gray-800 mb-6 border-b pb-2">Full Menu</h2>
+                        <!-- Rating and Time -->
+                        <div class="flex flex-wrap items-center gap-6 text-muted-foreground mb-4">
+                            <div class="flex items-center gap-1 font-semibold">
+                                <!-- Placeholder for Star Icon -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 fill-primary text-primary" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+                                <span class="text-xl font-bold text-foreground">4.8</span>
+                                <span class="text-sm">(324 reviews)</span>
+                            </div>
+                            <div class="flex items-center gap-1 font-semibold">
+                                <!-- Placeholder for Clock Icon -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                                <span class="text-sm">Delivery: 30-45 min</span>
+                            </div>
+                        </div>
+                    </div>
 
-        <div class="flex space-x-4 overflow-x-auto pb-4 sticky top-16 bg-white z-20 shadow-sm mb-6">
-          <button
-            *ngFor="let category of menuCategories"
-            (click)="selectCategory(category)"
-            [ngClass]="{'bg-red-600 text-white': selectedCategory === category, 'bg-gray-200 text-gray-700 hover:bg-red-100': selectedCategory !== category}"
-            class="px-4 py-2 text-sm font-medium rounded-full flex-shrink-0 transition duration-150"
-          >
-            {{ category.name }}
-          </button>
-        </div>
+                    <!-- Contact Details -->
+                    <div class="space-y-4 p-4 border border-border rounded-xl bg-card shadow-sm">
+                        <h2 class="text-lg font-bold text-foreground mb-2">Details</h2>
+                        <div class="flex items-start gap-3">
+                            <!-- Placeholder for MapPin Icon -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary flex-shrink-0 mt-1" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5a2.5 2.5 0 0 1 0 5z"/></svg>
+                            <div>
+                                <p class="font-semibold text-foreground">Address</p>
+                                <p class="text-muted-foreground">123 Culinary Street, Food District, FC 12345</p>
+                            </div>
+                        </div>
 
-        <div *ngFor="let category of menuCategories" [id]="category.slug">
-          <h3 class="text-2xl font-bold text-gray-800 mb-4 mt-6">{{ category.name }}</h3>
-          <div class="space-y-4">
-            <!-- <app-menu-item-card
-              *ngFor="let item of category.items"
-              [item]="item"
-              (addItemToCartEvent)="addToCart(item)">
-            </app-menu-item-card> -->
-          </div>
-        </div>
-      </section>
+                        <div class="flex items-start gap-3">
+                            <!-- Placeholder for Phone Icon -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary flex-shrink-0 mt-1" viewBox="0 0 24 24"><path fill="currentColor" d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>
+                            <div>
+                                <p class="font-semibold text-foreground">Phone</p>
+                                <p class="text-muted-foreground">+1 (555) 123-4567</p>
+                            </div>
+                        </div>
 
-      <aside class="lg:col-span-3">
-        <div class="sticky top-28 bg-white p-6 rounded-xl shadow-lg border border-gray-100">
-          <h3 class="text-xl font-bold text-gray-800 mb-4">Customer Reviews</h3>
+                        <div class="flex items-start gap-3">
+                            <!-- Placeholder for Clock Icon -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary flex-shrink-0 mt-1" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                            <div>
+                                <p class="font-semibold text-foreground">Opening Hours</p>
+                                <p class="text-muted-foreground">Mon-Sun: 11:00 AM - 11:00 PM</p>
+                            </div>
+                        </div>
+                    </div>
 
-          <div *ngIf="reviews.length > 0; else noReviews">
-            <div class="mb-4">
-              <p class="text-4xl font-extrabold text-center text-red-600">{{ reviewSummary.averageDeliveryRating | number:'1.1-1' }}</p>
-              <p class="text-sm text-gray-500 text-center">Based on {{ reviewSummary.totalReviews }} reviews</p>
+                    <!-- Description -->
+                    <div class="pt-4">
+                        <p class="text-muted-foreground leading-relaxed italic">
+                            "Experience culinary excellence at Gourmet Kitchen, where passion meets perfection.
+                            Our menu blends modern techniques with traditional flavors, serving freshly prepared dishes using locally sourced, seasonal ingredients. A true feast for all the senses."
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Menu Section -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-foreground mb-6 border-b-2 border-primary/20 pb-2">Chef's Recommendations</h2>
+
+            <!-- Tabs Structure (Simplified static design using buttons/divs) -->
+            <div class="w-full">
+                <!-- Tabs List -->
+                <div class="flex flex-wrap gap-2 p-1 bg-gray-100 rounded-lg mb-8 shadow-inner">
+                    <!-- Active Tab -->
+                    <button class="px-5 py-2 text-sm font-semibold rounded-lg shadow-md bg-primary text-white transition-smooth">Burgers & Sandwiches</button>
+                    <!-- Inactive Tabs -->
+                    <button class="px-5 py-2 text-sm font-medium rounded-lg text-muted-foreground hover:bg-white transition-smooth">Artisan Pasta</button>
+                    <button class="px-5 py-2 text-sm font-medium rounded-lg text-muted-foreground hover:bg-white transition-smooth">Signature Salads</button>
+                    <button class="px-5 py-2 text-sm font-medium rounded-lg text-muted-foreground hover:bg-white transition-smooth">Decadent Desserts</button>
+                </div>
+
+                <!-- Tab Content (Static for Burgers) -->
+                <div>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <!-- Menu Item Card 1 (Mock Data) -->
+                        <div class="bg-card rounded-xl p-0 shadow-card border border-border hover:shadow-hover transition-smooth">
+                            <div class="p-6 flex justify-between items-center">
+                                <div class="pr-4">
+                                    <h3 class="text-lg font-semibold text-foreground mb-1">The Truffle Deluxe</h3>
+                                    <p class="text-muted-foreground text-sm">Wagyu patty, Swiss cheese, wild mushrooms, and house-made truffle aioli.</p>
+                                </div>
+                                <span class="text-primary text-xl font-extrabold flex-shrink-0">$19.50</span>
+                            </div>
+                        </div>
+                        <!-- Menu Item Card 2 (Mock Data) -->
+                        <div class="bg-card rounded-xl p-0 shadow-card border border-border hover:shadow-hover transition-smooth">
+                            <div class="p-6 flex justify-between items-center">
+                                <div class="pr-4">
+                                    <h3 class="text-lg font-semibold text-foreground mb-1">Blackened Salmon Sandwich</h3>
+                                    <p class="text-muted-foreground text-sm">Cajun-spiced salmon, crisp slaw, and lemon-dill sauce on toasted brioche.</p>
+                                </div>
+                                <span class="text-primary text-xl font-extrabold flex-shrink-0">$16.25</span>
+                            </div>
+                        </div>
+                        <!-- Menu Item Card 3 (Mock Data) -->
+                        <div class="bg-card rounded-xl p-0 shadow-card border border-border hover:shadow-hover transition-smooth">
+                            <div class="p-6 flex justify-between items-center">
+                                <div class="pr-4">
+                                    <h3 class="text-lg font-semibold text-foreground mb-1">Smoked BBQ Pulled Pork</h3>
+                                    <p class="text-muted-foreground text-sm">Slow-smoked pork shoulder, tangy BBQ glaze, and pickled red onions.</p>
+                                </div>
+                                <span class="text-primary text-xl font-extrabold flex-shrink-0">$14.00</span>
+                            </div>
+                        </div>
+                        <!-- Menu Item Card 4 (Mock Data) -->
+                        <div class="bg-card rounded-xl p-0 shadow-card border border-border hover:shadow-hover transition-smooth">
+                            <div class="p-6 flex justify-between items-center">
+                                <div class="pr-4">
+                                    <h3 class="text-lg font-semibold text-foreground mb-1">The Vegetarian Portobello</h3>
+                                    <p class="text-muted-foreground text-sm">Grilled portobello cap, pesto, roasted red peppers, and fresh mozzarella.</p>
+                                </div>
+                                <span class="text-primary text-xl font-extrabold flex-shrink-0">$13.50</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reviews Section - CONVERTED TO CAROUSEL -->
+        <section class="mb-12">
+            <div class="flex justify-between items-center mb-6 border-b-2 border-primary/20 pb-2">
+                <h2 class="text-3xl font-bold text-foreground">Customer Reviews</h2>
+
+                <!-- Carousel Controls -->
+                <div class="flex space-x-2">
+                    <button id="prev-review" class="w-10 h-10 flex items-center justify-center text-primary border border-primary/50 bg-card rounded-full shadow-md hover:bg-primary hover:text-white transition-smooth disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                        <!-- Left Arrow Icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                    </button>
+                    <button id="next-review" class="w-10 h-10 flex items-center justify-center text-primary border border-primary/50 bg-card rounded-full shadow-md hover:bg-primary hover:text-white transition-smooth">
+                        <!-- Right Arrow Icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                    </button>
+                </div>
             </div>
 
-            <div *ngFor="let review of reviews.slice(0, 3)" class="border-t pt-3 mt-3">
-              <p class="font-semibold text-gray-800">{{ review.userName }}</p>
-              <p class="text-sm text-yellow-500">★ {{ review.foodRating | number:'1.1-1' }}</p>
-              <p class="text-gray-600 text-sm italic line-clamp-2">"{{ review.comment }}"</p>
+            <div id="carousel-container" class="carousel-container">
+                <div id="reviews-wrapper" class="reviews-wrapper">
+
+                    <!-- Review Card 1 (Mock Data) -->
+                    <div class="review-card pb-6">
+                        <div class="bg-card rounded-xl shadow-card border border-border h-full">
+                            <div class="p-6">
+                                <div class="flex items-start justify-between mb-3">
+                                    <div>
+                                        <h3 class="font-semibold text-lg text-foreground">Sarah K.</h3>
+                                        <p class="text-sm text-muted-foreground">Ordered: Truffle Deluxe</p>
+                                    </div>
+                                    <!-- 5 Stars -->
+                                    <div class="flex gap-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-primary text-primary" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-primary text-primary" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-primary text-primary" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-primary text-primary" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-primary text-primary" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+                                    </div>
+                                </div>
+                                <p class="text-foreground italic mb-2">"A truly exceptional burger! The truffle aioli was divine. Five stars for flavor and presentation. The service was impeccable, and the ambiance made the experience even better."</p>
+                                <p class="text-xs text-muted-foreground">Reviewed on: 2 days ago</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Review Card 2 (Mock Data) -->
+                    <div class="review-card pb-6">
+                        <div class="bg-card rounded-xl shadow-card border border-border h-full">
+                            <div class="p-6">
+                                <div class="flex items-start justify-between mb-3">
+                                    <div>
+                                        <h3 class="font-semibold text-lg text-foreground">Mark T.</h3>
+                                        <p class="text-sm text-muted-foreground">Ordered: Blackened Salmon</p>
+                                    </div>
+                                    <!-- 4 Stars -->
+                                    <div class="flex gap-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-primary text-primary" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-primary text-primary" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-primary text-primary" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-primary text-primary" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-300" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+                                    </div>
+                                </div>
+                                <p class="text-foreground italic mb-2">"The salmon was fresh, but the bun was a little soggy from the delivery. Otherwise, great flavor and arrived on time. I'd definitely order again but maybe pick it up next time."</p>
+                                <p class="text-xs text-muted-foreground">Reviewed on: 5 days ago</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Review Card 3 (New Mock Data) -->
+                    <div class="review-card pb-6">
+                        <div class="bg-card rounded-xl shadow-card border border-border h-full">
+                            <div class="p-6">
+                                <div class="flex items-start justify-between mb-3">
+                                    <div>
+                                        <h3 class="font-semibold text-lg text-foreground">Jessica A.</h3>
+                                        <p class="text-sm text-muted-foreground">Ordered: Vegetarian Portobello</p>
+                                    </div>
+                                    <!-- 5 Stars -->
+                                    <div class="flex gap-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-primary text-primary" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-primary text-primary" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-primary text-primary" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-primary text-primary" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-primary text-primary" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+                                    </div>
+                                </div>
+                                <p class="text-foreground italic mb-2">"Hands down the best veggie burger I've ever had. So flavorful and substantial. A perfect meat-free option that doesn't feel like a compromise."</p>
+                                <p class="text-xs text-muted-foreground">Reviewed on: 1 week ago</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Review Card 4 (New Mock Data) -->
+                    <div class="review-card pb-6">
+                        <div class="bg-card rounded-xl shadow-card border border-border h-full">
+                            <div class="p-6">
+                                <div class="flex items-start justify-between mb-3">
+                                    <div>
+                                        <h3 class="font-semibold text-lg text-foreground">David L.</h3>
+                                        <p class="text-sm text-muted-foreground">Ordered: Pulled Pork</p>
+                                    </div>
+                                    <!-- 5 Stars -->
+                                    <div class="flex gap-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-primary text-primary" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-primary text-primary" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-primary text-primary" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-primary text-primary" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-primary text-primary" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+                                    </div>
+                                </div>
+                                <p class="text-foreground italic mb-2">"Perfectly smoked and tender. The BBQ sauce was incredible—sweet and tangy without overpowering the meat. This is my new favorite lunch spot."</p>
+                                <p class="text-xs text-muted-foreground">Reviewed on: 2 weeks ago</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
             </div>
-            <button class="mt-4 w-full text-red-600 hover:text-red-700 font-medium">See all Reviews ({{ restaurant.totalReviews }})</button>
-          </div>
+        </section>
+        <!-- End of Carousel Section -->
 
-          <ng-template #noReviews>
-            <p class="text-gray-500 italic text-center">Be the first to leave a review!</p>
-          </ng-template>
+        <!-- Special Section (Features) -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-foreground mb-6 border-b-2 border-primary/20 pb-2">Our Commitments</h2>
+            <div class="grid md:grid-cols-3 gap-6">
+
+                <div class="bg-card rounded-xl shadow-card border border-border text-center hover:shadow-lg transition-smooth">
+                    <div class="p-6">
+                        <!-- Award Icon Placeholder -->
+                        <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-primary" viewBox="0 0 24 24"><path fill="currentColor" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                        </div>
+                        <h3 class="font-semibold text-xl text-foreground mb-2">Award Winning Quality</h3>
+                        <p class="text-muted-foreground text-sm">
+                            Voted Best Modern Bistro in the city for the past three consecutive years.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="bg-card rounded-xl shadow-card border border-border text-center hover:shadow-lg transition-smooth">
+                    <div class="p-6">
+                        <!-- Fresh Ingredients Icon Placeholder -->
+                        <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-primary" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.73-7-4.34-7-8.93a8 8 0 0 1 8-8c1.39 0 2.7.35 3.88.97l-3.32 3.32a3.999 3.999 0 0 0-4.56 4.56l-3.32 3.32z"/></svg>
+                        </div>
+                        <h3 class="font-semibold text-xl text-foreground mb-2">Farm to Table Freshness</h3>
+                        <p class="text-muted-foreground text-sm">
+                            We partner directly with local farms to ensure unparalleled quality and taste.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="bg-card rounded-xl shadow-card border border-border text-center hover:shadow-lg transition-smooth">
+                    <div class="p-6">
+                        <!-- Delivery Icon Placeholder -->
+                        <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-primary" viewBox="0 0 24 24"><path fill="currentColor" d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-9-2c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10z"/></svg>
+                        </div>
+                        <h3 class="font-semibold text-xl text-foreground mb-2">Guaranteed Hot Delivery</h3>
+                        <p class="text-muted-foreground text-sm">
+                            Insulated packaging ensures your meal arrives piping hot, guaranteed.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Map Section -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-foreground mb-6 border-b-2 border-primary/20 pb-2">Find Us</h2>
+            <div class="bg-card rounded-xl shadow-lg border border-border">
+                <div class="p-0">
+                    <!-- Map Placeholder -->
+                    <div class="w-full h-[400px] bg-gray-200 rounded-xl flex items-center justify-center overflow-hidden">
+                        <div class="text-center space-y-2 p-6 bg-white/70 backdrop-blur-sm rounded-lg border border-border shadow-xl">
+                            <!-- MapPin Icon Placeholder -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-primary mx-auto" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5a2.5 2.5 0 0 1 0 5z"/></svg>
+                            <p class="text-foreground font-semibold text-lg">Gourmet Kitchen Location</p>
+                            <p class="text-sm text-muted-foreground">123 Culinary Street, Food District, FC 12345</p>
+                            <a href="#" class="inline-block mt-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-full hover:bg-opacity-90 transition-smooth">Get Directions</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full py-6 bg-card border-t border-border mt-8">
+        <div class="container mx-auto px-4 text-center text-sm text-muted-foreground">
+            &copy; 2025 Gourmet Kitchen. All rights reserved. | <a href="#" class="hover:text-primary transition-colors">Privacy Policy</a>
         </div>
-      </aside>
+    </footer>
 
-    </div>
-  </main>
-</div>

@@ -1,5 +1,44 @@
-<app-left-side-bar></app-left-side-bar>
 
-<router-outlet></router-outlet>
 
-<app-cart-side-bar></app-cart-side-bar>
+<!-- Navbar -->
+<nav class="sticky top-0 z-50 w-full border-b bg-white shadow-sm backdrop-blur-sm">
+  <div class="container mx-auto flex h-16 items-center justify-between px-4">
+    <div class="flex items-center gap-2">
+      <div class="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-500">
+        <span class="text-xl font-bold text-white">F</span>
+      </div>
+      <span class="text-xl font-bold text-blue-600">FoodDelivery</span>
+    </div>
+
+    <!-- Cart & Profile buttons -->
+    <div class="flex items-center gap-3">
+      <button (click)="toggleCart()"
+              class="relative h-10 w-10 rounded-full border-2 border-gray-300 hover:border-blue-600 hover:bg-blue-50 flex items-center justify-center">
+        <i class="fas fa-shopping-cart text-gray-700"></i>
+        <span class="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-xs font-medium text-white">3</span>
+      </button>
+      <button (click)="toggleProfile()"
+              class="h-10 w-10 rounded-full border-2 border-gray-300 hover:border-blue-600 hover:bg-blue-50 flex items-center justify-center">
+        <i class="fas fa-user text-gray-700"></i>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Router Outlet -->
+<div class="min-h-screen">
+  <router-outlet></router-outlet>
+</div>
+
+<!-- Sidebars -->
+<app-left-side-bar="isProfileOpen" (close)="closeSidebars()"></app-left-side-bar>
+<app-cart-side-bar [isOpen]="isCartOpen" (close)="closeSidebars()"></app-cart-side-bar>
+
+<!-- Overlay -->
+<div
+  *ngIf="isCartOpen || isProfileOpen"
+  class="fixed inset-0 z-40 bg-black bg-opacity-40"
+  (click)="closeSidebars()"
+></div>
+
+

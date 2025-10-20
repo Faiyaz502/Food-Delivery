@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AdminComponent } from './admin/admin.component';
 import { AnalyticsComponent } from './analytics/analytics.component';
+import { MainComponent } from './main/main.component';
 
 const routes: Routes = [
 
@@ -11,7 +12,7 @@ const routes: Routes = [
 
    { path: 'analytics',component:AnalyticsComponent ,loadChildren: () => import('./analytics/analytics.module').then(m => m.AnalyticsModule) },
 
-   { path: 'main', loadChildren: () => import('./main/main.module').then(m => m.MainModule) }
+   { path: 'main',loadChildren: () => import('./main/main.module').then(m => m.MainModule) }
 ];
 
 @NgModule({

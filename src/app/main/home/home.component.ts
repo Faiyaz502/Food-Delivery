@@ -1,6 +1,6 @@
 
 import { fromEvent, Subject, switchMap, takeUntil, tap, timer } from 'rxjs';
-import { Component, OnInit, ElementRef, ViewChild, Renderer2, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, Renderer2, EventEmitter, Output, HostListener } from '@angular/core';
 import { User } from 'src/app/Models/Users/user.models';
 import { CartService } from 'src/app/services/Orders/order.service';
 
@@ -21,29 +21,26 @@ interface CarouselItem {
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent {
-@Output() toggleLeftSidebarEvent = new EventEmitter<void>();
-  @Output() toggleCartSidebarEvent = new EventEmitter<void>();
+   isCartOpen = false;
+  isProfileOpen = false;
 
-  cartItemCount: number = 0;
-  // DEMO DATA - Replace with actual user/auth service subscription
-  user: Partial<User> = {
-    profilePictureUrl: 'https://via.placeholder.com/150/ff0000/ffffff?text=JD'
-  };
-
-  constructor(private cartService: CartService) {}
-
-  ngOnInit(): void {
-    // Subscribe to cart changes to update the count
-    this.cartService.currentCart$.subscribe(cart => {
-      this.cartItemCount = cart?.totalItems || 0;
-    });
+  toggleCart() {
+    this.isCartOpen = !this.isCartOpen;
+    if (this.isCartOpen) {
+      this.isProfileOpen = false; // Close profile if cart opens
+    }
   }
 
-  toggleLeftSidebar() {
-    this.toggleLeftSidebarEvent.emit();
+  toggleProfile() {
+    this.isProfileOpen = !this.isProfileOpen;
+    if (this.isProfileOpen) {
+      this.isCartOpen = false; // Close cart if profile opens
+    }
   }
 
-  toggleCartSidebar() {
-    this.toggleCartSidebarEvent.emit();
+  closeSidebars() {
+    this.isCartOpen = false;
+    this.isProfileOpen = false;
   }
 }
+

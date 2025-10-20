@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgFor } from '@angular/common';
 
 import { MainRoutingModule } from './main-routing.module';
 import { MainComponent } from './main.component';
@@ -31,7 +31,8 @@ import { CheckoutComponent } from './checkout/checkout.component';
     MainRoutingModule,
     HttpClientModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgFor
 
   ]
 })
