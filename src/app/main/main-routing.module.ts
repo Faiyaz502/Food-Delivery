@@ -5,6 +5,7 @@ import { RestauranPageComponent } from './restauran-page/restauran-page.componen
 import { MainComponent } from './main.component';
 import { CheckoutComponent } from './checkout/checkout.component';
 import { TrackOrderComponent } from './track-order/track-order.component';
+import { SupportComponent } from './support/support.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -12,6 +13,7 @@ const routes: Routes = [
   { path: 'restaurant', component: RestauranPageComponent },
   { path: 'checkout', component: CheckoutComponent },
   { path: 'trackOrder', component: TrackOrderComponent },
+  { path: 'support', component: SupportComponent },
 
 
 

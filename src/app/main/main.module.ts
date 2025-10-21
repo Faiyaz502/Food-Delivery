@@ -16,6 +16,7 @@ import { CheckoutComponent } from './checkout/checkout.component';
 import { NavComponent } from './nav/nav.component';
 import { A11yModule } from "@angular/cdk/a11y";
 import { TrackOrderComponent } from './track-order/track-order.component';
+import { SupportComponent } from './support/support.component';
 
 
 @NgModule({
@@ -28,6 +29,7 @@ import { TrackOrderComponent } from './track-order/track-order.component';
     CheckoutComponent,
     NavComponent,
     TrackOrderComponent,
+    SupportComponent,
 
 
   ],
