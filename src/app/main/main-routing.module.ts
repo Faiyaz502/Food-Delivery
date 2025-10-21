@@ -3,11 +3,13 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { RestauranPageComponent } from './restauran-page/restauran-page.component';
 import { MainComponent } from './main.component';
+import { CheckoutComponent } from './checkout/checkout.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'home', component: HomeComponent },
-  { path: 'restaurant/:id', component: RestauranPageComponent }
+  { path: 'restaurant', component: RestauranPageComponent },
+  { path: 'checkout', component: CheckoutComponent },
 
 
 

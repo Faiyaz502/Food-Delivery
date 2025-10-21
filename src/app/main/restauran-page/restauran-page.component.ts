@@ -32,6 +32,9 @@ const MOCK_REVIEWS: Review[] = [
 })
 
 export class RestauranPageComponent {
+addToCart(arg0: string) {
+throw new Error('Method not implemented.');
+}
 
 
   // 1. STATE PROPERTIES (Replaced Signals)

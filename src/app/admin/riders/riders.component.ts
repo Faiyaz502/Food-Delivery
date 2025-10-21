@@ -179,6 +179,13 @@ export class RidersComponent {
       console.log('Parsed Rider ID:', riderId);
 
       const rider = this.riders.find(r => r.id === riderId);
+      if(rider?.availabilityStatus != 'AVAILABLE'){
+
+        this.toastr.warning('Unable to assign order - Rider is not available!!');
+        
+        return;
+          
+      }
 
       if (rider && order) {
         console.log('Assigning order to rider:', rider.riderName);

@@ -9,7 +9,7 @@ import { PaymentService } from 'src/app/services/payment/payment.service';
   styleUrls: ['./left-side-bar.component.scss']
 })
 export class LeftSideBarComponent {
-@Input() isOpen: boolean = true;
+@Input() isOpen: boolean = false;
   @Output() closeSidebarEvent = new EventEmitter<void>();
 
   // DEMO DATA - Replace with actual service calls
@@ -29,7 +29,8 @@ export class LeftSideBarComponent {
   }
 
   closeSidebar() {
-    this.closeSidebarEvent.emit();
+
+    this.isOpen = !this.isOpen;
   }
 
   navigateTo(route: string) {

@@ -13,6 +13,7 @@ import { AppRoutingModule } from '../app-routing.module';
 import { LeftSideBarComponent } from './left-side-bar/left-side-bar.component';
 import { CartSideBarComponent } from './cart-side-bar/cart-side-bar.component';
 import { CheckoutComponent } from './checkout/checkout.component';
+import { NavComponent } from './nav/nav.component';
 
 
 @NgModule({
@@ -23,6 +24,7 @@ import { CheckoutComponent } from './checkout/checkout.component';
     LeftSideBarComponent,
     CartSideBarComponent,
     CheckoutComponent,
+    NavComponent,
 
 
   ],

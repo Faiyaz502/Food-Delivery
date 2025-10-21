@@ -21,26 +21,6 @@ interface CarouselItem {
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent {
-   isCartOpen = false;
-  isProfileOpen = false;
-
-  toggleCart() {
-    this.isCartOpen = !this.isCartOpen;
-    if (this.isCartOpen) {
-      this.isProfileOpen = false; // Close profile if cart opens
-    }
-  }
-
-  toggleProfile() {
-    this.isProfileOpen = !this.isProfileOpen;
-    if (this.isProfileOpen) {
-      this.isCartOpen = false; // Close cart if profile opens
-    }
-  }
-
-  closeSidebars() {
-    this.isCartOpen = false;
-    this.isProfileOpen = false;
-  }
+ 
 }
 

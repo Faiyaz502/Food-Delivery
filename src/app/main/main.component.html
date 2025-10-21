@@ -1,13 +1,30 @@
-
-
-<!-- Navbar -->
 <nav class="sticky top-0 z-50 w-full border-b bg-white shadow-sm backdrop-blur-sm">
   <div class="container mx-auto flex h-16 items-center justify-between px-4">
+    <!-- Logo -->
     <div class="flex items-center gap-2">
-      <div class="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-500">
-        <span class="text-xl font-bold text-white">F</span>
+      <span class="text-xl font-bold text-blue-600">Swift</span><span class="text-xl font-bold text-red-600">FOOD</span>
+    </div>
+
+    <!-- Navigation Links -->
+    <div class="hidden md:flex items-center gap-6">
+      <a routerLink="home" class="font-medium text-gray-700 hover:text-blue-600 transition-colors">Home</a>
+      <a routerLink="restaurant" class="font-medium text-gray-700 hover:text-blue-600 transition-colors">Restaurant</a>
+      
+      <!-- Join Us Dropdown -->
+      <div class="relative group">
+        <button class="flex items-center gap-1 font-medium text-gray-700 hover:text-blue-600 transition-colors">
+          Join Us
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+        
+        <!-- Dropdown Menu -->
+        <div class="absolute hidden group-hover:block mt-2 w-48 bg-white rounded-md shadow-lg py-1 border border-gray-200 z-50">
+          <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Join as Rider</a>
+          <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Join as Restaurant Owner</a>
+        </div>
       </div>
-      <span class="text-xl font-bold text-blue-600">FoodDelivery</span>
     </div>
 
     <!-- Cart & Profile buttons -->
@@ -24,21 +41,16 @@
     </div>
   </div>
 </nav>
-
 <!-- Router Outlet -->
 <div class="min-h-screen">
   <router-outlet></router-outlet>
 </div>
 
 <!-- Sidebars -->
-<app-left-side-bar="isProfileOpen" (close)="closeSidebars()"></app-left-side-bar>
+<app-left-side-bar [isOpen]="isProfileOpen" (close)="closeSidebars()"></app-left-side-bar>
 <app-cart-side-bar [isOpen]="isCartOpen" (close)="closeSidebars()"></app-cart-side-bar>
 
-<!-- Overlay -->
-<div
-  *ngIf="isCartOpen || isProfileOpen"
-  class="fixed inset-0 z-40 bg-black bg-opacity-40"
-  (click)="closeSidebars()"
-></div>
+
+
 
 

@@ -119,50 +119,123 @@
                 </div>
 
                 <!-- Tab Content (Static for Burgers) -->
-                <div>
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <!-- Menu Item Card 1 (Mock Data) -->
-                        <div class="bg-card rounded-xl p-0 shadow-card border border-border hover:shadow-hover transition-smooth">
-                            <div class="p-6 flex justify-between items-center">
-                                <div class="pr-4">
-                                    <h3 class="text-lg font-semibold text-foreground mb-1">The Truffle Deluxe</h3>
-                                    <p class="text-muted-foreground text-sm">Wagyu patty, Swiss cheese, wild mushrooms, and house-made truffle aioli.</p>
-                                </div>
-                                <span class="text-primary text-xl font-extrabold flex-shrink-0">$19.50</span>
-                            </div>
-                        </div>
-                        <!-- Menu Item Card 2 (Mock Data) -->
-                        <div class="bg-card rounded-xl p-0 shadow-card border border-border hover:shadow-hover transition-smooth">
-                            <div class="p-6 flex justify-between items-center">
-                                <div class="pr-4">
-                                    <h3 class="text-lg font-semibold text-foreground mb-1">Blackened Salmon Sandwich</h3>
-                                    <p class="text-muted-foreground text-sm">Cajun-spiced salmon, crisp slaw, and lemon-dill sauce on toasted brioche.</p>
-                                </div>
-                                <span class="text-primary text-xl font-extrabold flex-shrink-0">$16.25</span>
-                            </div>
-                        </div>
-                        <!-- Menu Item Card 3 (Mock Data) -->
-                        <div class="bg-card rounded-xl p-0 shadow-card border border-border hover:shadow-hover transition-smooth">
-                            <div class="p-6 flex justify-between items-center">
-                                <div class="pr-4">
-                                    <h3 class="text-lg font-semibold text-foreground mb-1">Smoked BBQ Pulled Pork</h3>
-                                    <p class="text-muted-foreground text-sm">Slow-smoked pork shoulder, tangy BBQ glaze, and pickled red onions.</p>
-                                </div>
-                                <span class="text-primary text-xl font-extrabold flex-shrink-0">$14.00</span>
-                            </div>
-                        </div>
-                        <!-- Menu Item Card 4 (Mock Data) -->
-                        <div class="bg-card rounded-xl p-0 shadow-card border border-border hover:shadow-hover transition-smooth">
-                            <div class="p-6 flex justify-between items-center">
-                                <div class="pr-4">
-                                    <h3 class="text-lg font-semibold text-foreground mb-1">The Vegetarian Portobello</h3>
-                                    <p class="text-muted-foreground text-sm">Grilled portobello cap, pesto, roasted red peppers, and fresh mozzarella.</p>
-                                </div>
-                                <span class="text-primary text-xl font-extrabold flex-shrink-0">$13.50</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+       <div>
+  <div class="grid md:grid-cols-2 gap-6">
+    <!-- Menu Item Card 1 -->
+    <div class="bg-card rounded-xl p-0 shadow-card border border-border hover:shadow-hover transition-smooth overflow-hidden">
+      <div class="flex flex-col md:flex-row">
+        <!-- Image -->
+        <div class="md:w-1/3">
+          <img 
+            src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300&q=80" 
+            alt="The Truffle Deluxe" 
+            class="w-full h-full object-cover rounded-t-xl md:rounded-l-xl md:rounded-tr-none"
+          />
+        </div>
+        <!-- Content -->
+        <div class="p-6 flex flex-col justify-between md:w-2/3">
+          <div>
+            <h3 class="text-lg font-semibold text-foreground mb-1">The Truffle Deluxe</h3>
+            <p class="text-muted-foreground text-sm">Wagyu patty, Swiss cheese, wild mushrooms, and house-made truffle aioli.</p>
+          </div>
+          <div class="mt-4 flex justify-between items-center">
+            <span class="text-primary text-xl font-extrabold">$19.50</span>
+            <button 
+              (click)="addToCart('The Truffle Deluxe')" 
+              class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
+            >
+              Add to Cart
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Menu Item Card 2 -->
+    <div class="bg-card rounded-xl p-0 shadow-card border border-border hover:shadow-hover transition-smooth overflow-hidden">
+      <div class="flex flex-col md:flex-row">
+        <div class="md:w-1/3">
+          <img 
+            src="https://images.unsplash.com/photo-1606755962773-d324e0a13086?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300&q=80" 
+            alt="Blackened Salmon Sandwich" 
+            class="w-full h-full object-cover rounded-t-xl md:rounded-l-xl md:rounded-tr-none"
+          />
+        </div>
+        <div class="p-6 flex flex-col justify-between md:w-2/3">
+          <div>
+            <h3 class="text-lg font-semibold text-foreground mb-1">Blackened Salmon Sandwich</h3>
+            <p class="text-muted-foreground text-sm">Cajun-spiced salmon, crisp slaw, and lemon-dill sauce on toasted brioche.</p>
+          </div>
+          <div class="mt-4 flex justify-between items-center">
+            <span class="text-primary text-xl font-extrabold">$16.25</span>
+            <button 
+              (click)="addToCart('Blackened Salmon Sandwich')" 
+              class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
+            >
+              Add to Cart
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Menu Item Card 3 -->
+    <div class="bg-card rounded-xl p-0 shadow-card border border-border hover:shadow-hover transition-smooth overflow-hidden">
+      <div class="flex flex-col md:flex-row">
+        <div class="md:w-1/3">
+          <img 
+            src="https://images.unsplash.com/photo-1558030006-450675393462?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1031" 
+            alt="Smoked BBQ Pulled Pork" 
+            class="w-full h-full object-cover rounded-t-xl md:rounded-l-xl md:rounded-tr-none"
+          />
+        </div>
+        <div class="p-6 flex flex-col justify-between md:w-2/3">
+          <div>
+            <h3 class="text-lg font-semibold text-foreground mb-1">Smoked BBQ Pulled </h3>
+            <p class="text-muted-foreground text-sm">Slow-smoked Beef shoulder, tangy BBQ glaze, and pickled red onions.</p>
+          </div>
+          <div class="mt-4 flex justify-between items-center">
+            <span class="text-primary text-xl font-extrabold">$14.00</span>
+            <button 
+              (click)="addToCart('Smoked BBQ Pulled Pork')" 
+              class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
+            >
+              Add to Cart
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Menu Item Card 4 -->
+    <div class="bg-card rounded-xl p-0 shadow-card border border-border hover:shadow-hover transition-smooth overflow-hidden">
+      <div class="flex flex-col md:flex-row">
+        <div class="md:w-1/3">
+          <img 
+            src="https://images.unsplash.com/photo-1512058564366-18510be2db19?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300&q=80" 
+            alt="The Vegetarian Portobello" 
+            class="w-full h-full object-cover rounded-t-xl md:rounded-l-xl md:rounded-tr-none"
+          />
+        </div>
+        <div class="p-6 flex flex-col justify-between md:w-2/3">
+          <div>
+            <h3 class="text-lg font-semibold text-foreground mb-1">The Vegetarian Portobello</h3>
+            <p class="text-muted-foreground text-sm">Grilled portobello cap, pesto, roasted red peppers, and fresh mozzarella.</p>
+          </div>
+          <div class="mt-4 flex justify-between items-center">
+            <span class="text-primary text-xl font-extrabold">$13.50</span>
+            <button 
+              (click)="addToCart('The Vegetarian Portobello')" 
+              class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
+            >
+              Add to Cart
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
             </div>
         </section>
 

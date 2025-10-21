@@ -9,51 +9,52 @@ import { CartService } from 'src/app/services/Orders/order.service';
   styleUrls: ['./cart-side-bar.component.scss']
 })
 export class CartSideBarComponent {
-@Input() isOpen: boolean = true;
+@Input() isOpen: boolean = false;
   @Output() closeCartEvent = new EventEmitter<void>();
 
   cart: CartResponseDTO | null = null;
   // DEMO DATA - Replace with actual user/auth service subscription
   userId: number = 1;
 
-  constructor(private cartService: CartService, private router: Router) {}
+  // constructor(private cartService: CartService, private router: Router) {}
 
-  ngOnInit(): void {
-    // Load cart on component initialization (if not already loaded)
-    this.cartService.getOrCreateCart(this.userId).subscribe();
+  // ngOnInit(): void {
+  //   // Load cart on component initialization (if not already loaded)
+  //   this.cartService.getOrCreateCart(this.userId).subscribe();
 
-    // Subscribe to currentCart$ for real-time updates
-    this.cartService.currentCart$.subscribe(cart => {
-      this.cart = cart;
-    });
-  }
+  //   // Subscribe to currentCart$ for real-time updates
+  //   this.cartService.currentCart$.subscribe(cart => {
+  //     this.cart = cart;
+  //   });
+  // }
 
   closeCart() {
     this.closeCartEvent.emit();
+    this.isOpen = !this.isOpen;
   }
 
-  updateQuantity(cartItemId: number, quantity: number) {
-    if (quantity > 0) {
-      this.cartService.updateCartItemQuantity(this.userId, cartItemId, quantity).subscribe({
-        error: (err) => console.error('Failed to update cart item', err)
-      });
-    } else {
-      this.removeItem(cartItemId);
-    }
-  }
+  // updateQuantity(cartItemId: number, quantity: number) {
+  //   if (quantity > 0) {
+  //     this.cartService.updateCartItemQuantity(this.userId, cartItemId, quantity).subscribe({
+  //       error: (err) => console.error('Failed to update cart item', err)
+  //     });
+  //   } else {
+  //     this.removeItem(cartItemId);
+  //   }
+  // }
 
-  removeItem(cartItemId: number) {
-    this.cartService.removeItemFromCart(this.userId, cartItemId).subscribe({
-      error: (err) => console.error('Failed to remove cart item', err)
-    });
-  }
+  // removeItem(cartItemId: number) {
+  //   this.cartService.removeItemFromCart(this.userId, cartItemId).subscribe({
+  //     error: (err) => console.error('Failed to remove cart item', err)
+  //   });
+  // }
 
-  navigateToCheckout() {
-    this.closeCart();
-    this.router.navigate(['/checkout']);
-  }
+  // navigateToCheckout() {
+  //   this.closeCart();
+  //   this.router.navigate(['/checkout']);
+  // }
 
-  navigateTo(route: string) {
-    this.router.navigate([route]);
-  }
+  // navigateTo(route: string) {
+  //   this.router.navigate([route]);
+  // }
 }

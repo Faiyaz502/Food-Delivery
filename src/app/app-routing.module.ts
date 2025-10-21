@@ -12,7 +12,7 @@ const routes: Routes = [
 
    { path: 'analytics',component:AnalyticsComponent ,loadChildren: () => import('./analytics/analytics.module').then(m => m.AnalyticsModule) },
 
-   { path: 'main',loadChildren: () => import('./main/main.module').then(m => m.MainModule) }
+   { path: 'main',component:MainComponent,loadChildren: () => import('./main/main.module').then(m => m.MainModule) }
 ];
 
 @NgModule({
