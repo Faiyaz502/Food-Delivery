@@ -14,6 +14,8 @@ import { LeftSideBarComponent } from './left-side-bar/left-side-bar.component';
 import { CartSideBarComponent } from './cart-side-bar/cart-side-bar.component';
 import { CheckoutComponent } from './checkout/checkout.component';
 import { NavComponent } from './nav/nav.component';
+import { A11yModule } from "@angular/cdk/a11y";
+import { TrackOrderComponent } from './track-order/track-order.component';
 
 
 @NgModule({
@@ -25,6 +27,7 @@ import { NavComponent } from './nav/nav.component';
     CartSideBarComponent,
     CheckoutComponent,
     NavComponent,
+    TrackOrderComponent,
 
 
   ],
@@ -34,8 +37,8 @@ import { NavComponent } from './nav/nav.component';
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
-    NgFor
-
-  ]
+    NgFor,
+    A11yModule
+]
 })
 export class MainModule { }

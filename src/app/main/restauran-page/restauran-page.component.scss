@@ -6,7 +6,7 @@
         --card: 255 255 255;
         --border: 229 231 235; /* gray-200 */
         --muted-foreground: 107 114 128; /* gray-500 */
-        font-family: 'Inter', sans-serif;
+        font-family: "Roboto Slab", serif;
     }
 
     /* Utility class mapping for Tailwind palette */
@@ -23,6 +23,22 @@
     .shadow-card { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06); }
 
 
+    .ff-secondary {
+    font-family: 'Pacifico', cursive;
+}
+.roboto-bold {
+  font-family: "Roboto Slab", serif;
+  font-optical-sizing: auto;
+  font-weight: 800;
+  font-style: normal;
+}
+
+.roboto {
+  font-family: "Roboto Slab", serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}
     /* Carousel specific styles */
     .carousel-container {
         overflow: hidden;
@@ -49,3 +65,38 @@
             width: calc(50% - 0.75rem);
         }
     }
+
+    /*** Section Title ***/
+.section-title {
+    position: relative;
+    display: inline-block;
+     font-size: 4rem;
+}
+
+.section-title::before {
+    position: absolute;
+    content: "";
+    width: 45px;
+    height: 2px;
+    top: 50%;
+    left: -55px;
+    margin-top: -1px;
+    background: var(--primary);
+}
+
+.section-title::after {
+    position: absolute;
+    content: "";
+    width: 45px;
+    height: 2px;
+    top: 50%;
+    right: -55px;
+    margin-top: -1px;
+    background: var(--primary);
+}
+
+.section-title.text-start::before,
+.section-title.text-end::after {
+    display: none;
+}
+

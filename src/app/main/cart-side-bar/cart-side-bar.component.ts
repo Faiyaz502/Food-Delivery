@@ -16,7 +16,7 @@ export class CartSideBarComponent {
   // DEMO DATA - Replace with actual user/auth service subscription
   userId: number = 1;
 
-  // constructor(private cartService: CartService, private router: Router) {}
+  constructor(private cartService: CartService, private router: Router) {}
 
   // ngOnInit(): void {
   //   // Load cart on component initialization (if not already loaded)
@@ -49,10 +49,10 @@ export class CartSideBarComponent {
   //   });
   // }
 
-  // navigateToCheckout() {
-  //   this.closeCart();
-  //   this.router.navigate(['/checkout']);
-  // }
+  navigateToCheckout() {
+    this.closeCart();
+    this.router.navigate(['checkout']);
+  }
 
   // navigateTo(route: string) {
   //   this.router.navigate([route]);

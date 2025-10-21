@@ -9,7 +9,7 @@
   >
     <!-- Header -->
     <div class="p-4 border-b flex justify-between items-center flex-shrink-0">
-      <h2 class="font-bold text-lg">Account</h2>
+      <h2 class="font-bold text-lg ff-secondary">Account</h2>
       <button (click)="closeSidebar()" class="text-gray-500 hover:text-gray-700">
         <i class="fas fa-times"></i>
       </button>
@@ -23,34 +23,30 @@
           alt="User"
           class="w-20 h-20 rounded-full mx-auto mb-4 object-cover border-2 border-blue-100"
         />
-        <h3 class="font-semibold text-lg">Alex Johnson</h3>
-        <p class="text-sm text-gray-500">alex@example.com</p>
+        <h3 class="font-semibold text-lg roboto-bold ">Alex Johnson</h3>
+        <p class="text-sm text-gray-500 ">alex@example.com</p>
       </div>
 
       <nav class="p-4">
         <a
           href="#"
-          class="block px-4 py-3 text-blue-600 font-medium border-l-4 border-blue-600 bg-blue-50 mb-2 rounded-r"
+          class="block thirdff px-4 py-3 roboto-bold text-blue-600 font-medium border-l-4 border-blue-600 bg-blue-50 mb-2 rounded-r"
           >Profile</a
         >
         <a
-          href="#"
-          class="block px-4 py-3 text-gray-700 hover:bg-gray-100 hover:text-blue-600 rounded mb-2"
-          >Orders</a
+          routerLink="trackOrder" (click)="closeSidebar()"
+          class="block thirdff px-4 py-3 text-gray-700 hover:bg-gray-100 hover:text-blue-600 rounded mb-2"
+          >Track Order</a
         >
+
         <a
           href="#"
-          class="block px-4 py-3 text-gray-700 hover:bg-gray-100 hover:text-blue-600 rounded mb-2"
-          >Reviews</a
-        >
-        <a
-          href="#"
-          class="block px-4 py-3 text-gray-700 hover:bg-gray-100 hover:text-blue-600 rounded mb-2"
+          class="block px-4 py-3 thirdff text-gray-700 hover:bg-gray-100 hover:text-blue-600 rounded mb-2"
           >Payment</a
         >
         <a
           href="#"
-          class="block px-4 py-3 text-gray-700 hover:bg-gray-100 hover:text-blue-600 rounded"
+          class="block px-4 py-3 thirdff text-gray-700 hover:bg-gray-100 hover:text-blue-600 rounded"
           >Support</a
         >
       </nav>
@@ -63,12 +59,12 @@
       >
         <div class="flex justify-between items-start mb-4">
           <div>
-            <p class="text-xs opacity-80">Card Holder</p>
-            <p class="font-medium">ALEX JOHNSON</p>
+            <p class="text-xs opacity-80 roboto-bold">Card Holder</p>
+            <p class="font-medium roboto">ALEX JOHNSON</p>
           </div>
           <i class="fab fa-cc-visa text-3xl"></i>
         </div>
-        <p class="text-xl tracking-widest mb-3">•••• •••• •••• 4242</p>
+        <p class="text-xl tracking-widest thirdff mb-3">•••• •••• •••• 4242</p>
         <div class="flex justify-between text-xs opacity-90">
           <span>Expires: 12/26</span>
           <span>CVV: •••</span>
