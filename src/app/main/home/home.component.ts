@@ -3,6 +3,7 @@ import { fromEvent, Subject, switchMap, takeUntil, tap, timer } from 'rxjs';
 import { Component, OnInit, ElementRef, ViewChild, Renderer2, EventEmitter, Output, HostListener } from '@angular/core';
 import { User } from 'src/app/Models/Users/user.models';
 import { CartService } from 'src/app/services/Orders/order.service';
+import { MenuCategoryDto, MenuCategoryService } from 'src/app/services/restaurant/menu-category.service';
 
 // Define the structure for a carousel item
 interface CarouselItem {
@@ -20,7 +21,35 @@ interface CarouselItem {
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
  
+  categories!:MenuCategoryDto[];
+
+
+  constructor(private categoryService:MenuCategoryService){}
+  ngOnInit(): void {
+    this.getAllCategory();
+  }
+
+
+  getAllCategory(){
+
+    this.categoryService.getAllCategories().subscribe((res)=>{
+
+      console.log(res);
+      
+
+        this.categories = res ;
+
+
+    })
+
+
+
+  }
+
+
+
+
 }
 
