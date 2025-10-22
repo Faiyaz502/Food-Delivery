@@ -4,6 +4,10 @@ import { Component, OnInit, ElementRef, ViewChild, Renderer2, EventEmitter, Outp
 import { User } from 'src/app/Models/Users/user.models';
 import { CartService } from 'src/app/services/Orders/order.service';
 import { MenuCategoryDto, MenuCategoryService } from 'src/app/services/restaurant/menu-category.service';
+import { Restaurant } from 'src/app/Models/restaurant.model';
+import { RestaurantService } from 'src/app/services/restaurant/restaurant.service';
+import { MenuItemService } from 'src/app/services/menu-item.service';
+import { MenuItem } from 'src/app/Models/MenuItem.model';
 
 // Define the structure for a carousel item
 interface CarouselItem {
@@ -22,13 +26,25 @@ interface CarouselItem {
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
- 
+    isFavorite = false;
   categories!:MenuCategoryDto[];
+  restaurants!: Restaurant[];
+  menuItems!: MenuItem[];
 
 
-  constructor(private categoryService:MenuCategoryService){}
+  constructor(
+    private categoryService:MenuCategoryService,
+    private restaurantService:RestaurantService,
+    private menuItemsService: MenuItemService
+
+  ){}
+
+
+
   ngOnInit(): void {
     this.getAllCategory();
+    this.getAllRestaurant();
+    this.getAllMenuItems();
   }
 
 
@@ -36,13 +52,32 @@ export class HomeComponent implements OnInit {
 
     this.categoryService.getAllCategories().subscribe((res)=>{
 
-      console.log(res);
-      
-
         this.categories = res ;
+    })
+  }
+
+  getAllRestaurant(){
+
+    this.restaurantService.getRestaurants().subscribe((res)=>{
+
+      this.restaurants = res ;
+
+    })
+  }
+
+  getAllMenuItems(){
+
+    this.menuItemsService.getAllMenuItems().subscribe((res)=>{
+
+      this.menuItems = res ;
+
+      console.log(res);
+
 
 
     })
+
+
 
 
 

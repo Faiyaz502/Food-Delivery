@@ -311,17 +311,17 @@ private createMonthlyChart(orders: OrderResponseDTO[]) {
     calculateReviewStatistics() {
       if (this.reviews.length > 0) {
         this.totalReviews = this.reviews.length;
-        this.averageRating = this.reviews.reduce((sum, review) => sum + review.rating, 0) / this.reviews.length;
+        this.averageRating = this.reviews.reduce((sum, review) => sum + review.foodRating, 0) / this.reviews.length;
       }
     }
 
     getRecentReviews() {
       this.recentReviews = this.reviews
-        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
         .slice(0, 5)
         .map(review => {
-          const user = this.users.find(u => u.id === review.user_id);
-          const restaurant = this.restaurants.find(r => r.id === review.restaurant_id);
+          const user = this.users.find(u => u.id === review.userId);
+          const restaurant = this.restaurants.find(r => r.id === review.restaurantId);
           return {
             ...review,
             userName: user?.firstName || 'Unknown User',

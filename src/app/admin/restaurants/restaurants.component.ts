@@ -6,6 +6,7 @@ import { ApiService } from 'src/app/services/api.service';
 import 'leaflet-control-geocoder';
 
 import * as L from 'leaflet';
+import { MenuCategoryDto, MenuCategoryService } from 'src/app/services/restaurant/menu-category.service';
 
 @Component({
   selector: 'app-restaurants',
@@ -17,6 +18,7 @@ export class RestaurantsComponent {
   @ViewChild('modalMapRef', { static: false }) modalMapElement!: ElementRef;
   restaurants: Restaurant[] = [];
   menuItems: MenuItem[] = [];
+  categories!: MenuCategoryDto[];
   selectedRestaurant: Restaurant | null = null;
   showCreateModal = false;
   showEditModal = false;
@@ -69,10 +71,11 @@ removeImage(index: number) {
   catagoryName: ''
 };
 
-  constructor(private apiService: ApiService , private menuService :MenuItemService) {}
+  constructor(private apiService: ApiService , private menuService :MenuItemService,private menuCategoryService : MenuCategoryService) {}
 
   ngOnInit() {
     this.loadRestaurants();
+    this.getAllCategorys();
 
 
 
@@ -212,6 +215,23 @@ closeModal() {
     this.modalMap = undefined;
   }
 }
+
+  //fetch Category Data
+
+  getAllCategorys(){
+        this.menuCategoryService.getAllCategories().subscribe((res)=>{
+
+            this.categories = res ;
+
+        })
+
+
+  }
+
+
+
+
+
 
     //Modal Map
 

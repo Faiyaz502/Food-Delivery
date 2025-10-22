@@ -1,0 +1,37 @@
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { environment } from 'src/app/Envirment/environment';
+import { Restaurant } from 'src/app/Models/restaurant.model';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class RestaurantService {
+
+  private apiUrl = `${environment.apiUrl}/api`; // Backend URL
+
+  constructor(private http: HttpClient) {}
+
+
+    // Restaurants
+    getRestaurants(): Observable<Restaurant[]> {
+      return this.http.get<Restaurant[]>(`${this.apiUrl}/restaurants`);
+    }
+
+    getRestaurantById(id: number): Observable<Restaurant> {
+      return this.http.get<Restaurant>(`${this.apiUrl}/restaurants/${id}`);
+    }
+
+    createRestaurant(restaurant: Omit<Restaurant, 'id'>): Observable<Restaurant> {
+      return this.http.post<Restaurant>(`${this.apiUrl}/restaurants`, restaurant);
+    }
+
+    updateRestaurant(id: number, restaurant: Partial<Restaurant>): Observable<Restaurant> {
+      return this.http.put<Restaurant>(`${this.apiUrl}/restaurants/${id}`, restaurant);
+    }
+
+    deleteRestaurant(id: number): Observable<void> {
+      return this.http.delete<void>(`${this.apiUrl}/restaurants/${id}`);
+    }
+}

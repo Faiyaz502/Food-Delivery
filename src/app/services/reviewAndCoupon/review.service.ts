@@ -27,7 +27,7 @@ interface PageableParams {
 })
 export class ReviewService {
 
- 
+
 
   private http = inject(HttpClient);
   private readonly baseUrl = `${environment.apiUrl}/api/reviews`; // Base path for the controller
@@ -87,6 +87,17 @@ export class ReviewService {
     const params = this.buildPageableParams(pageable);
     return this.http.get<Page<ReviewResponse>>(url, { params });
   }
+
+    getReviewsListByRestaurant(
+    restaurantId: number): Observable<ReviewResponse[]> {
+    const url = `${this.baseUrl}/restaurant-List/${restaurantId}`;
+
+    return this.http.get<ReviewResponse[]>(url);
+  }
+
+
+
+
 
   // GET /api/reviews/user/{userId}
   getReviewsByUser(

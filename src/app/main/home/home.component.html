@@ -1,16 +1,32 @@
-
-
 <!-- Hero Carousel  -->
 <div class="relative h-[400px] md:h-[500px] overflow-hidden rounded-2xl mt-6">
-  <div class="absolute inset-0 opacity-100 translate-x-0 transition-all duration-700">
-    <img src="assets/img/hero1.jpg" alt="Hero Slide" class="h-full w-full object-cover" />
+  <div
+    class="absolute inset-0 opacity-100 translate-x-0 transition-all duration-700"
+  >
+    <img
+      src="assets/img/hero1.jpg"
+      alt="Hero Slide"
+      class="h-full w-full object-cover"
+    />
     <div class="absolute inset-0 bg-gradient-to-r from-black/80 to-transparent">
       <div class="container mx-auto flex h-full items-center px-8">
         <div class="max-w-lg text-white">
-          <p class="mb-2 text-sm font-medium uppercase tracking-wider roboto text-blue-400">Delicious & Fresh</p>
-          <h1 class="mb-4 text-4xl md:text-6xl font-bold ff-secondary">Taste the Flavor</h1>
-          <p class="mb-6 text-lg roboto">Order your favorite meals from top restaurants near you.</p>
-          <button class="bg-blue-600 hover:bg-blue-700 roboto text-white px-6 py-3 rounded-lg font-medium shadow-lg">Order Now</button>
+          <p
+            class="mb-2 text-sm font-medium uppercase tracking-wider roboto text-blue-400"
+          >
+            Delicious & Fresh
+          </p>
+          <h1 class="mb-4 text-4xl md:text-6xl font-bold ff-secondary">
+            Taste the Flavor
+          </h1>
+          <p class="mb-6 text-lg roboto">
+            Order your favorite meals from top restaurants near you.
+          </p>
+          <button
+            class="bg-blue-600 hover:bg-blue-700 roboto text-white px-6 py-3 rounded-lg font-medium shadow-lg"
+          >
+            Order Now
+          </button>
         </div>
       </div>
     </div>
@@ -19,14 +35,27 @@
 
 <!-- Categories -->
 <section class="py-12">
-  <div class="container mx-auto px-4" >
-    <h2 class="mb-8 text-3xl font-bold text-center ff-secondary ">Browse by Category</h2>
-    <div class="flex gap-6 overflow-x-auto pb-4 scrollbar-hide" >
-      <div *ngFor="let categore of categories" class="group flex min-w-[120px] flex-col items-center gap-3 rounded-2xl bg-white p-4 shadow hover:shadow-lg hover:-translate-y-1 transition-all">
-        <div class="h-20 w-20 overflow-hidden rounded-full bg-gray-200 transition-transform group-hover:scale-110">
-          <img src="{{categore.imgUrl}}" alt="{{categore.name}}" class="h-full w-full object-cover" />
+  <div class="container mx-auto px-4">
+    <h2 class="mb-8 text-3xl font-bold text-center ff-secondary">
+      Browse by Category
+    </h2>
+    <div class="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
+      <div
+        *ngFor="let categore of categories"
+        class="group flex min-w-[120px] flex-col items-center gap-3 rounded-2xl bg-white p-4 shadow hover:shadow-lg hover:-translate-y-1 transition-all"
+      >
+        <div
+          class="h-20 w-20 overflow-hidden rounded-full bg-gray-200 transition-transform group-hover:scale-110"
+        >
+          <img
+            src="{{ categore.imgUrl }}"
+            alt="{{ categore.name }}"
+            class="h-full w-full object-cover"
+          />
         </div>
-        <span class="text-sm font-medium text-gray-700 roboto-bold">{{categore.name}}</span>
+        <span class="text-sm font-medium text-gray-700 roboto-bold">{{
+          categore.name
+        }}</span>
       </div>
     </div>
   </div>
@@ -36,193 +65,260 @@
 <section class="py-16 bg-gray-50">
   <div class="container mx-auto px-4">
     <div class="text-center mb-12">
-      <h2 class="text-3xl md:text-4xl font-bold ff-secondary text-gray-900 mb-4">Most Popular Items</h2>
+      <h2
+        class="text-3xl md:text-4xl font-bold ff-secondary text-gray-900 mb-4"
+      >
+        Most Popular Items
+      </h2>
       <p class="text-gray-600 max-w-2xl mx-auto roboto">
-        Loved by thousands of customers daily. Fresh, delicious, and ready in minutes.
+        Loved by thousands of customers daily. Fresh, delicious, and ready in
+        minutes.
       </p>
     </div>
 
     <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
       <!-- Popular Item 1 -->
-      <div class="group bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-        <div class="h-48 overflow-hidden">
-          <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Classic Cheeseburger" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+      <div
+        class="group cursor-pointer bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+        *ngFor="let menuItem of menuItems"
+      >
+        <!-- Image Section -->
+        <div class="relative h-48 overflow-hidden">
+          <img
+            [src]="
+              menuItem.imageUrl ||
+              'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80'
+            "
+            [alt]="menuItem.name"
+            class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          />
+
+
         </div>
+
+        <!-- Content Section -->
         <div class="p-5">
-          <div class="flex justify-between items-start">
-            <h3 class="text-lg font-semibold text-gray-900 roboto-bold">Classic Cheeseburger</h3>
-            <span class="text-lg font-bold text-emerald-600">$9.99</span>
+          <div class="flex justify-between items-start mb-1">
+            <h3
+              class="text-lg font-semibold text-gray-900 roboto-bold line-clamp-1"
+            >
+              {{ menuItem.name }}
+            </h3>
+            <span class="text-lg font-bold text-emerald-600">
+              ${{ menuItem.price | number : "1.2-2" }}
+            </span>
           </div>
-          <p class="text-sm text-gray-600 mt-2 roboto">
-            Juicy beef patty, melted cheddar, fresh lettuce, tomato, and special sauce.
+
+          <!-- Category Tag -->
+          <div *ngIf="menuItem.catagoryName" class="mb-2">
+            <span
+              class="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded"
+            >
+              {{ menuItem.catagoryName || 'CategoryName'}}
+            </span>
+          </div>
+
+          <!-- Description -->
+          <p class="text-sm text-gray-600 mt-1 roboto line-clamp-2">
+            {{ menuItem.description || "No description available." }}
           </p>
+
+          <!-- Spice Level Indicator -->
+          <div *ngIf="menuItem.isSpicy" class="mt-2 flex items-center">
+            <span class="text-xs font-medium text-gray-700 mr-2">Spice:</span>
+            <div class="flex">
+              <!-- Render chili icons based on spiceLevel (1-5) -->
+              <ng-container *ngFor="let i of [].constructor(5)">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-4 w-4"
+                  viewBox="0 0 20 20"
+                  [class.text-red-500]="i < menuItem.spiceLevel"
+                  [class.text-gray-300]="i >= menuItem.spiceLevel"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM7.75 12.5a.75.75 0 01.75-.75h1a.75.75 0 01.75.75v1a.75.75 0 01-.75.75h-1a.75.75 0 01-.75-.75v-1zm0-4a.75.75 0 01.75-.75h1a.75.75 0 01.75.75v1a.75.75 0 01-.75.75h-1a.75.75 0 01-.75-.75v-1zm0-4a.75.75 0 01.75-.75h1a.75.75 0 01.75.75v1a.75.75 0 01-.75.75h-1a.75.75 0 01-.75-.75V4.5z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </ng-container>
+              <span class="ml-1 text-xs text-gray-500">
+                ({{ menuItem.spiceLevel }})
+              </span>
+            </div>
+          </div>
+
+          <!-- Rating & Orders -->
           <div class="mt-3 flex items-center">
             <div class="flex text-amber-400">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+              <!-- Static 4-star example (replace with dynamic rating if available) -->
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                />
               </svg>
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+              <!-- Repeat 4 more times as in your original -->
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                />
               </svg>
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                />
               </svg>
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                />
               </svg>
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4 text-gray-300"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                />
               </svg>
             </div>
             <span class="text-xs text-gray-500 ml-2">(1.2k orders)</span>
           </div>
         </div>
       </div>
-
-      <!-- Popular Item 2 -->
-      <div class="group bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-        <div class="h-48 overflow-hidden">
-          <img src="https://images.unsplash.com/photo-1547592166-9c8c7e38e1dd?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Spicy Tuna Roll" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-        </div>
-        <div class="p-5">
-          <div class="flex justify-between items-start">
-            <h3 class="text-lg font-semibold text-gray-900 roboto-bold">Spicy Tuna Roll</h3>
-            <span class="text-lg font-bold text-emerald-600">$12.50</span>
-          </div>
-          <p class="text-sm text-gray-600 mt-2 roboto">
-            Fresh tuna, spicy mayo, avocado, and sesame seeds wrapped in nori.
-          </p>
-          <div class="mt-3 flex items-center">
-            <div class="flex text-amber-400">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-            </div>
-            <span class="text-xs text-gray-500 ml-2">(980 orders)</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Popular Item 3 -->
-      <div class="group bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-        <div class="h-48 overflow-hidden">
-          <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Margherita Pizza" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-        </div>
-        <div class="p-5">
-          <div class="flex justify-between items-start">
-            <h3 class="text-lg font-semibold text-gray-900 roboto-bold">Margherita Pizza</h3>
-            <span class="text-lg font-bold text-emerald-600">$14.00</span>
-          </div>
-          <p class="text-sm text-gray-600 mt-2 roboto">
-            Fresh mozzarella, basil, tomato sauce, and a hint of olive oil on thin crust.
-          </p>
-          <div class="mt-3 flex items-center">
-            <div class="flex text-amber-400">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-            </div>
-            <span class="text-xs text-gray-500 ml-2">(1.5k orders)</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Popular Item 4 -->
-      <div class="group bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-        <div class="h-48 overflow-hidden">
-          <img src="https://images.unsplash.com/photo-1563379926898-05f4571b6d39?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Chocolate Lava Cake" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-        </div>
-        <div class="p-5">
-          <div class="flex justify-between items-start">
-            <h3 class="text-lg font-semibold text-gray-900 roboto-bold">Chocolate Lava Cake</h3>
-            <span class="text-lg font-bold text-emerald-600">$7.99</span>
-          </div>
-          <p class="text-sm text-gray-600 mt-2 roboto">
-            Warm, gooey center with vanilla ice cream and berry compote.
-          </p>
-          <div class="mt-3 flex items-center">
-            <div class="flex text-amber-400">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-            </div>
-            <span class="text-xs text-gray-500 ml-2">(850 orders)</span>
-          </div>
-        </div>
-      </div>
     </div>
 
-       <!-- Explore More Button -->
+    <!-- Explore More Button -->
     <div class="mt-12 text-center">
-      <button class="px-8 py-3 bg-white text-blue-600 font-semibold roboto-bold rounded-full border-2 border-blue-600 hover:bg-blue-600 hover:text-white transition-colors duration-300 shadow-sm hover:shadow-md">
+      <button
+        class="px-8 py-3 bg-white text-blue-600 font-semibold roboto-bold rounded-full border-2 border-blue-600 hover:bg-blue-600 hover:text-white transition-colors duration-300 shadow-sm hover:shadow-md"
+      >
         Explore More
       </button>
     </div>
-
   </div>
 </section>
 
 <!-- Restaurants -->
 <section id="restaurants" class="py-12 bg-gray-100">
   <div class="container mx-auto px-4">
-    <div class="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-      <h2 class="text-3xl font-bold ff-secondary text-center">Popular Restaurants</h2>
+    <div
+      class="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between"
+    >
+      <h2 class="text-3xl font-bold ff-secondary text-center">
+        Popular Restaurants
+      </h2>
       <div class="relative w-full md:w-80">
-        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-        <input type="text" placeholder="Search restaurants..." class="pl-10 w-full bg-white rounded-lg py-2 px-4 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        <i
+          class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+        ></i>
+        <input
+          type="text"
+          placeholder="Search restaurants..."
+          class="pl-10 w-full bg-white rounded-lg py-2 px-4 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
       </div>
     </div>
 
     <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-      <div class="group cursor-pointer overflow-hidden bg-white rounded-xl shadow transition-all hover:shadow-xl hover:-translate-y-1">
+      <div
+        *ngFor="let restaurant of restaurants"
+        class="group cursor-pointer overflow-hidden bg-white rounded-xl shadow transition-all hover:shadow-xl hover:-translate-y-1"
+      >
+        <!-- Image Section -->
         <div class="relative h-48 overflow-hidden">
-          <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Pizza Place" class="h-full w-full object-cover transition-transform group-hover:scale-110" />
-          <span class="absolute right-2 top-2 bg-white/90 backdrop-blur-sm text-xs font-medium px-2 py-1 rounded">Italian</span>
-        </div>
-        <div class="p-4">
-          <h3 class="mb-2 text-lg font-semibold roboto-bold">Tony's Pizzeria</h3>
-          <div class="flex items-center justify-between text-sm text-gray-500">
-            <div class="flex items-center gap-1">
-              <i class="fas fa-star text-yellow-500"></i>
-              <span class="font-medium text-gray-800 roboto">4.8</span>
-            </div>
-            <div class="flex items-center gap-1">
-              <i class="far fa-clock"></i>
-              <span>25 min</span>
-            </div>
-          </div>
-        </div>
-      </div>
+          <img
+            src="{{ restaurant.imageUrls[0] }} "
+            alt="{{ restaurant.name }}"
+            class="h-full w-full object-cover transition-transform group-hover:scale-110"
+          />
 
-      <div class="group cursor-pointer overflow-hidden bg-white rounded-xl shadow transition-all hover:shadow-xl hover:-translate-y-1">
-        <div class="relative h-48 overflow-hidden">
-          <img src="https://images.unsplash.com/photo-1552566626-52f8b828add9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Burger Joint" class="h-full w-full object-cover transition-transform group-hover:scale-110" />
-          <span class="absolute right-2 top-2 bg-white/90 backdrop-blur-sm text-xs font-medium px-2 py-1 rounded">American</span>
+          <!-- Favorite Heart -->
+          <button
+            class="absolute top-2 left-2 px-1 py-0.5 rounded-full bg-white/80 backdrop-blur-sm hover:bg-red-100 transition-colors"
+          >
+            <i
+              class="far fa-heart text-gray-700 group-hover:text-red-500  transition-colors"
+            ></i>
+          </button>
         </div>
+
+        <!-- Content Section -->
         <div class="p-4">
-          <h3 class="mb-2 text-lg font-semibold">Burger Barn</h3>
-          <div class="flex items-center justify-between text-sm text-gray-500">
+          <!-- Restaurant Name -->
+          <h3 class="mb-1 text-lg font-semibold roboto-bold truncate">
+            {{ restaurant.name }}
+          </h3>
+
+          <!-- Address -->
+          <p class="text-sm text-gray-600 mb-2 flex items-start">
+            <i
+              class="fas fa-map-marker-alt text-gray-500 mt-0.5 mr-1 flex-shrink-0"
+            ></i>
+            <span class="truncate">{{ restaurant.address }}</span>
+          </p>
+
+          <!-- Description -->
+          <p class="text-sm text-gray-700 mb-3 line-clamp-2">
+            {{ restaurant.description }}
+          </p>
+
+          <!-- Stats Row -->
+          <div class="flex items-center justify-between text-sm">
+            <!-- Rating -->
             <div class="flex items-center gap-1">
               <i class="fas fa-star text-yellow-500"></i>
-              <span class="font-medium text-gray-800">4.6</span>
+              <span class="font-medium text-gray-800 roboto">
+                {{ restaurant.averageRating?.toFixed(1) || "N/A" }}
+              </span>
+              <span class="text-gray-500"
+                >({{ restaurant.totalReviews || 0 }})</span
+              >
             </div>
-            <div class="flex items-center gap-1">
+
+            <!-- Delivery Time -->
+            <div class="flex items-center gap-1 text-gray-600">
               <i class="far fa-clock"></i>
-              <span>20 min</span>
+              <span>{{ restaurant.estimatedDeliveryTime || "30" }} min</span>
+            </div>
+
+            <!-- Minimum Order -->
+            <div class="text-gray-600">
+              <span>Min: {{ restaurant.minimumOrderAmount || 0 }}</span>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-        <div class="mt-12 text-center">
-      <button class="px-8 py-3 bg-white text-red-600 font-semibold roboto-bold rounded-full border-2 border-red-600 hover:bg-red-600 hover:text-white transition-colors duration-300 shadow-sm hover:shadow-md">
+    <div class="mt-12 text-center">
+      <button
+        class="px-8 py-3 bg-white text-red-600 font-semibold roboto-bold rounded-full border-2 border-red-600 hover:bg-red-600 hover:text-white transition-colors duration-300 shadow-sm hover:shadow-md"
+      >
         Explore More
       </button>
     </div>
@@ -233,60 +329,134 @@
 <section class="py-16 bg-white">
   <div class="container mx-auto px-4">
     <div class="text-center mb-12">
-      <h2 class="text-3xl md:text-4xl font-bold ff-secondary text-gray-900 mb-4">Our Services</h2>
+      <h2
+        class="text-3xl md:text-4xl font-bold ff-secondary text-gray-900 mb-4"
+      >
+        Our Services
+      </h2>
       <p class="text-gray-600 max-w-2xl mx-auto roboto">
-        We bring the best food experience to your doorstep with speed, care, and quality.
+        We bring the best food experience to your doorstep with speed, care, and
+        quality.
       </p>
     </div>
 
     <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
       <!-- Service 1: Fast Delivery -->
-      <div class="group bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-        <div class="w-14 h-14 rounded-full bg-blue-50 flex items-center justify-center mb-5 group-hover:bg-blue-100 transition-colors">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+      <div
+        class="group bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+      >
+        <div
+          class="w-14 h-14 rounded-full bg-blue-50 flex items-center justify-center mb-5 group-hover:bg-blue-100 transition-colors"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-7 w-7 text-blue-600"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13 10V3L4 14h7v7l9-11h-7z"
+            />
           </svg>
         </div>
-        <h3 class="text-lg font-semibold text-gray-900 mb-2">Lightning-Fast Delivery</h3>
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">
+          Lightning-Fast Delivery
+        </h3>
         <p class="text-gray-600 text-sm roboto">
-          Get your meals in under 30 minutes with our optimized delivery network.
+          Get your meals in under 30 minutes with our optimized delivery
+          network.
         </p>
       </div>
 
       <!-- Service 2: Top Restaurants -->
-      <div class="group bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-        <div class="w-14 h-14 rounded-full bg-emerald-50 flex items-center justify-center mb-5 group-hover:bg-emerald-100 transition-colors">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+      <div
+        class="group bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+      >
+        <div
+          class="w-14 h-14 rounded-full bg-emerald-50 flex items-center justify-center mb-5 group-hover:bg-emerald-100 transition-colors"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-7 w-7 text-emerald-600"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+            />
           </svg>
         </div>
-        <h3 class="text-lg font-semibold text-gray-900 mb-2">Premium Restaurants</h3>
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">
+          Premium Restaurants
+        </h3>
         <p class="text-gray-600 text-sm roboto">
           Partnered with the city’s top-rated kitchens and hidden gems.
         </p>
       </div>
 
       <!-- Service 3: Real-Time Tracking -->
-      <div class="group bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-        <div class="w-14 h-14 rounded-full bg-amber-50 flex items-center justify-center mb-5 group-hover:bg-amber-100 transition-colors">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+      <div
+        class="group bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+      >
+        <div
+          class="w-14 h-14 rounded-full bg-amber-50 flex items-center justify-center mb-5 group-hover:bg-amber-100 transition-colors"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-7 w-7 text-amber-600"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
+            />
           </svg>
         </div>
-        <h3 class="text-lg font-semibold text-gray-900 mb-2">Live Order Tracking</h3>
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">
+          Live Order Tracking
+        </h3>
         <p class="text-gray-600 text-sm roboto">
           Follow your order in real time—from kitchen to your doorstep.
         </p>
       </div>
 
       <!-- Service 4: 24/7 Support -->
-      <div class="group bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-        <div class="w-14 h-14 rounded-full bg-rose-50 flex items-center justify-center mb-5 group-hover:bg-rose-100 transition-colors">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+      <div
+        class="group bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+      >
+        <div
+          class="w-14 h-14 rounded-full bg-rose-50 flex items-center justify-center mb-5 group-hover:bg-rose-100 transition-colors"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-7 w-7 text-rose-600"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
+            />
           </svg>
         </div>
-        <h3 class="text-lg font-semibold text-gray-900 mb-2">24/7 Customer Care</h3>
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">
+          24/7 Customer Care
+        </h3>
         <p class="text-gray-600 text-sm roboto">
           Help is always a tap away—day or night.
         </p>
@@ -301,51 +471,96 @@
     <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
       <div>
         <div class="mb-4 flex items-center gap-2">
-
-          <span class="text-xl font-bold text-yellow-600 ff-secondary">SWIFT FOOD</span>
+          <span class="text-xl font-bold text-yellow-600 ff-secondary"
+            >SWIFT FOOD</span
+          >
         </div>
         <p class="text-sm text-gray-100">
           Your favorite food delivered fresh and fast, right to your doorstep.
         </p>
         <div class="mt-4 flex gap-3">
-          <a href="#" class="flex h-9 w-9 items-center justify-center rounded-full bg-white hover:bg-blue-600 hover:text-white transition-colors">
+          <a
+            href="#"
+            class="flex h-9 w-9 items-center justify-center rounded-full bg-white hover:bg-blue-600 hover:text-white transition-colors"
+          >
             <i class="fab fa-facebook-f"></i>
           </a>
-          <a href="#" class="flex h-9 w-9 items-center justify-center rounded-full bg-white hover:bg-blue-600 hover:text-white transition-colors">
+          <a
+            href="#"
+            class="flex h-9 w-9 items-center justify-center rounded-full bg-white hover:bg-blue-600 hover:text-white transition-colors"
+          >
             <i class="fab fa-instagram"></i>
           </a>
-          <a href="#" class="flex h-9 w-9 items-center justify-center rounded-full bg-white hover:bg-blue-600 hover:text-white transition-colors">
+          <a
+            href="#"
+            class="flex h-9 w-9 items-center justify-center rounded-full bg-white hover:bg-blue-600 hover:text-white transition-colors"
+          >
             <i class="fab fa-twitter"></i>
           </a>
         </div>
       </div>
 
       <div>
-        <h3 class="mb-4 text-lg font-semibold ff-secondary text-gray-50">Quick Links</h3>
+        <h3 class="mb-4 text-lg font-semibold ff-secondary text-gray-50">
+          Quick Links
+        </h3>
         <ul class="space-y-2 text-sm text-gray-50">
-          <li><a href="#" class="hover:text-blue-100 transition-colors">About Us</a></li>
-          <li><a href="#" class="hover:text-blue-100 transition-colors">Menu</a></li>
-          <li><a href="#" class="hover:text-blue-100 transition-colors">Restaurants</a></li>
-          <li><a href="#" class="hover:text-blue-100 transition-colors">Become a Partner</a></li>
+          <li>
+            <a href="#" class="hover:text-blue-100 transition-colors"
+              >About Us</a
+            >
+          </li>
+          <li>
+            <a href="#" class="hover:text-blue-100 transition-colors">Menu</a>
+          </li>
+          <li>
+            <a href="#" class="hover:text-blue-100 transition-colors"
+              >Restaurants</a
+            >
+          </li>
+          <li>
+            <a href="#" class="hover:text-blue-100 transition-colors"
+              >Become a Partner</a
+            >
+          </li>
         </ul>
       </div>
 
       <div>
-        <h3 class="mb-4 text-lg font-semibold ff-secondary text-gray-50">Support</h3>
+        <h3 class="mb-4 text-lg font-semibold ff-secondary text-gray-50">
+          Support
+        </h3>
         <ul class="space-y-2 text-sm text-gray-100">
-          <li><a href="#" class="hover:text-blue-600 transition-colors">Help Center</a></li>
-          <li><a href="#" class="hover:text-blue-600 transition-colors">Privacy Policy</a></li>
-          <li><a href="#" class="hover:text-blue-600 transition-colors">Terms of Service</a></li>
-          <li><a href="#" class="hover:text-blue-600 transition-colors">FAQs</a></li>
+          <li>
+            <a href="#" class="hover:text-blue-600 transition-colors"
+              >Help Center</a
+            >
+          </li>
+          <li>
+            <a href="#" class="hover:text-blue-600 transition-colors"
+              >Privacy Policy</a
+            >
+          </li>
+          <li>
+            <a href="#" class="hover:text-blue-600 transition-colors"
+              >Terms of Service</a
+            >
+          </li>
+          <li>
+            <a href="#" class="hover:text-blue-600 transition-colors">FAQs</a>
+          </li>
         </ul>
       </div>
 
       <div>
-
-        <h3 class="mb-4 text-lg font-semibold ff-secondary text-gray-50 ">Contact Us</h3>
+        <h3 class="mb-4 text-lg font-semibold ff-secondary text-gray-50">
+          Contact Us
+        </h3>
         <ul class="space-y-3 text-sm text-gray-50">
           <li class="flex items-start gap-2">
-            <i class="fas fa-map-marker-alt text-blue-600 mt-0.5 flex-shrink-0"></i>
+            <i
+              class="fas fa-map-marker-alt text-blue-600 mt-0.5 flex-shrink-0"
+            ></i>
             <span>123 Food Street, Culinary City, FC 12345</span>
           </li>
           <li class="flex items-center gap-2">
@@ -365,10 +580,3 @@
     </div>
   </div>
 </footer>
-
-
-
-
-
-
-

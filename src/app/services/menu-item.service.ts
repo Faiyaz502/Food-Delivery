@@ -25,6 +25,11 @@ export class MenuItemService {
     return this.http.get<MenuItem>(`${this.apiUrl}/${id}`);
   }
 
+    getMenuItemByRestaurant(id: number): Observable<MenuItem[]> {
+    return this.http.get<MenuItem[]>(`${this.apiUrl}/restaurant/${id}`);
+  }
+
+
   createMenuItem(item: MenuItem): Observable<MenuItem> {
     return this.http.post<MenuItem>(this.apiUrl, item);
   }

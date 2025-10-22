@@ -27,4 +27,11 @@ export class MenuCategoryService {
   getCategoryByName(name: string): Observable<MenuCategoryDto> {
     return this.http.get<MenuCategoryDto>(`${this.apiUrl}/${name}`);
   }
+
+  //restaurant menu
+
+    getCategoryByRestaurant(RestaurantId: number): Observable<MenuCategoryDto[]> {
+    return this.http.get<MenuCategoryDto[]>(`${this.apiUrl}/Restaurant/${RestaurantId}`);
+  }
+
 }

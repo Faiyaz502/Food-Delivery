@@ -10,8 +10,8 @@
             <!-- Top-left image -->
             <div class="text-left">
               <img
-                src="https://plus.unsplash.com/premium_photo-1661953124283-76d0a8436b87?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=888"
-                alt="About 1"
+                src="{{ restaurant.imageUrls[0] }}"
+                alt="{{ restaurant.name }}"
                 class="w-full rounded-lg object-cover animate-zoomIn"
               />
             </div>
@@ -19,7 +19,7 @@
             <!-- Top-right image -->
             <div class="text-left">
               <img
-                src="https://images.unsplash.com/photo-1508424757105-b6d5ad9329d0?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=435"
+                src="{{ restaurant.imageUrls[1] }}"
                 alt="About 2"
                 class="w-3/4 object-cover animate-zoomIn mt-[25%]"
               />
@@ -28,7 +28,7 @@
             <!-- Bottom-left image -->
             <div class="text-right">
               <img
-                src="https://images.unsplash.com/photo-1578474846511-04ba529f0b88?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=387"
+                src="{{ restaurant.imageUrls[2] }}"
                 alt="About 3"
                 class="w-3/4 object-cover animate-zoomIn"
               />
@@ -37,7 +37,7 @@
             <!-- Bottom-right image -->
             <div class="text-right">
               <img
-                src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=774"
+                src="{{ restaurant.imageUrls[3] }}"
                 alt="About 4"
                 class="w-full rounded-lg object-cover animate-zoomIn"
               />
@@ -51,7 +51,7 @@
         <div>
           <!-- Restaurant Name (Not sticky, scrolls with content) -->
           <h1 class="text-4xl font-extrabold text-foreground mb-3 ff-secondary">
-            Gourmet Kitchen
+            {{ restaurant.name }}
           </h1>
 
           <!-- Rating and Time -->
@@ -69,8 +69,10 @@
                   d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"
                 />
               </svg>
-              <span class="text-xl font-bold text-foreground">4.8</span>
-              <span class="text-sm">(324 reviews)</span>
+              <span class="text-xl font-bold text-foreground">{{
+                restaurant.rating
+              }}</span>
+              <span class="text-sm">({{ restaurant.totalReviews }})</span>
             </div>
             <div class="flex items-center gap-1 font-semibold">
               <!-- Placeholder for Clock Icon -->
@@ -82,7 +84,9 @@
                 <circle cx="12" cy="12" r="10" />
                 <path d="M12 6v6l4 2" />
               </svg>
-              <span class="text-sm">Delivery: 30-45 min</span>
+              <span class="text-sm"
+                >Delivery: {{ restaurant.estimatedDeliveryTime }}</span
+              >
             </div>
           </div>
         </div>
@@ -107,7 +111,7 @@
             <div>
               <p class="font-semibold text-foreground">Address</p>
               <p class="text-muted-foreground">
-                123 Culinary Street, Food District, FC 12345
+                {{ restaurant.address }}
               </p>
             </div>
           </div>
@@ -126,7 +130,7 @@
             </svg>
             <div>
               <p class="font-semibold text-foreground">Phone</p>
-              <p class="text-muted-foreground">+1 (555) 123-4567</p>
+              <p class="text-muted-foreground">{{ restaurant.phoneNumber }}</p>
             </div>
           </div>
 
@@ -142,7 +146,7 @@
             </svg>
             <div>
               <p class="font-semibold text-foreground">Opening Hours</p>
-              <p class="text-muted-foreground">Mon-Sun: 11:00 AM - 11:00 PM</p>
+              <p class="text-muted-foreground">EveryDay: 11:00 AM - 11:00 PM</p>
             </div>
           </div>
         </div>
@@ -150,10 +154,7 @@
         <!-- Description -->
         <div class="pt-4">
           <p class="text-muted-foreground leading-relaxed italic">
-            "Experience culinary excellence at Gourmet Kitchen, where passion
-            meets perfection. Our menu blends modern techniques with traditional
-            flavors, serving freshly prepared dishes using locally sourced,
-            seasonal ingredients. A true feast for all the senses."
+            {{ restaurant.description }}
           </p>
         </div>
       </div>
@@ -161,94 +162,123 @@
   </section>
 
   <!-- Current Offers Section -->
-<section class="mb-12">
-  <div class="text-center mb-8">
-    <h2 class="text-3xl ff-secondary font-bold text-foreground mb-2">Special Offers</h2>
-    <p class="text-muted-foreground roboto">Limited-time deals you won’t want to miss!</p>
-  </div>
-
-  <!-- Offers Grid -->
-  <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-    <!-- Offer 1 -->
-    <div class="bg-card rounded-xl shadow-card border border-border overflow-hidden group hover:shadow-lg transition-smooth">
-      <div class="relative">
-        <img
-          src="assets/img/offer1.jpg"
-          alt="20% Off All Burgers – Limited Time!"
-          class="w-full h-56 object-cover transition-transform duration-500 group-hover:scale-105"
-        />
-        <div class="absolute top-4 left-4">
-          <span class="px-3 py-1 bg-red-500 text-white text-xs font-bold rounded-full roboto">
-            HOT DEAL
-          </span>
-        </div>
-      </div>
-      <div class="p-5">
-        <h3 class="font-semibold text-lg text-foreground ff-secondary mb-2">20% Off All Burgers</h3>
-        <p class="text-sm text-muted-foreground roboto mb-3">
-          Use code <span class="font-mono font-bold text-emerald-600">BURGER20</span> at checkout.
-        </p>
-        <button class="w-full py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-opacity-90 transition-smooth roboto">
-          Order Now
-        </button>
-      </div>
+  <section class="mb-12">
+    <div class="text-center mb-8">
+      <h2 class="text-3xl ff-secondary font-bold text-foreground mb-2">
+        Special Offers
+      </h2>
+      <p class="text-muted-foreground roboto">
+        Limited-time deals you won’t want to miss!
+      </p>
     </div>
 
-    <!-- Offer 2 -->
-    <div class="bg-card rounded-xl shadow-card border border-border overflow-hidden group hover:shadow-lg transition-smooth">
-      <div class="relative">
-        <img
-          src="assets/img/offer2.jpg"
-          alt="Free Dessert with Any Pasta Order"
-          class="w-full h-56 object-cover transition-transform duration-500 group-hover:scale-105"
-        />
-        <div class="absolute top-4 left-4">
-          <span class="px-3 py-1 bg-amber-500 text-white text-xs font-bold rounded-full roboto">
-            FREE GIFT
-          </span>
+    <!-- Offers Grid -->
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <!-- Offer 1 -->
+      <div
+        class="bg-card rounded-xl shadow-card border border-border overflow-hidden group hover:shadow-lg transition-smooth"
+      >
+        <div class="relative">
+          <img
+            src="assets/img/offer1.jpg"
+            alt="20% Off All Burgers – Limited Time!"
+            class="w-full h-56 object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+          <div class="absolute top-4 left-4">
+            <span
+              class="px-3 py-1 bg-red-500 text-white text-xs font-bold rounded-full roboto"
+            >
+              HOT DEAL
+            </span>
+          </div>
+        </div>
+        <div class="p-5">
+          <h3 class="font-semibold text-lg text-foreground ff-secondary mb-2">
+            20% Off All Burgers
+          </h3>
+          <p class="text-sm text-muted-foreground roboto mb-3">
+            Use code
+            <span class="font-mono font-bold text-emerald-600">BURGER20</span>
+            at checkout.
+          </p>
+          <button
+            class="w-full py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-opacity-90 transition-smooth roboto"
+          >
+            Order Now
+          </button>
         </div>
       </div>
-      <div class="p-5">
-        <h3 class="font-semibold text-lg text-foreground ff-secondary mb-2">Free Dessert</h3>
-        <p class="text-sm text-muted-foreground roboto mb-3">
-          Get a free tiramisu with any pasta order over $15.
-        </p>
-        <button class="w-full py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-opacity-90 transition-smooth roboto">
-          Order Now
-        </button>
-      </div>
-    </div>
 
-    <!-- Offer 3 -->
-    <div class="bg-card rounded-xl shadow-card border border-border overflow-hidden group hover:shadow-lg transition-smooth">
-      <div class="relative">
-        <img
-          src="assets/img/offer3.jpg"
-          alt="Family Meal Deal – 4 Burgers + 2 Sides + 2 Drinks for $35"
-          class="w-full h-56 object-cover transition-transform duration-500 group-hover:scale-105"
-        />
-        <div class="absolute top-4 left-4">
-          <span class="px-3 py-1 bg-blue-500 text-white text-xs font-bold rounded-full roboto">
-            FAMILY DEAL
-          </span>
+      <!-- Offer 2 -->
+      <div
+        class="bg-card rounded-xl shadow-card border border-border overflow-hidden group hover:shadow-lg transition-smooth"
+      >
+        <div class="relative">
+          <img
+            src="assets/img/offer2.jpg"
+            alt="Free Dessert with Any Pasta Order"
+            class="w-full h-56 object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+          <div class="absolute top-4 left-4">
+            <span
+              class="px-3 py-1 bg-amber-500 text-white text-xs font-bold rounded-full roboto"
+            >
+              FREE GIFT
+            </span>
+          </div>
+        </div>
+        <div class="p-5">
+          <h3 class="font-semibold text-lg text-foreground ff-secondary mb-2">
+            Free Dessert
+          </h3>
+          <p class="text-sm text-muted-foreground roboto mb-3">
+            Get a free tiramisu with any pasta order over $15.
+          </p>
+          <button
+            class="w-full py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-opacity-90 transition-smooth roboto"
+          >
+            Order Now
+          </button>
         </div>
       </div>
-      <div class="p-5">
-        <h3 class="font-semibold text-lg text-foreground ff-secondary mb-2">Family Meal Deal</h3>
-        <p class="text-sm text-muted-foreground roboto mb-3">
-          4 burgers, 2 sides, 2 drinks — all for just $35!
-        </p>
-        <button class="w-full py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-opacity-90 transition-smooth roboto">
-          Order Now
-        </button>
+
+      <!-- Offer 3 -->
+      <div
+        class="bg-card rounded-xl shadow-card border border-border overflow-hidden group hover:shadow-lg transition-smooth"
+      >
+        <div class="relative">
+          <img
+            src="assets/img/offer3.jpg"
+            alt="Family Meal Deal – 4 Burgers + 2 Sides + 2 Drinks for $35"
+            class="w-full h-56 object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+          <div class="absolute top-4 left-4">
+            <span
+              class="px-3 py-1 bg-blue-500 text-white text-xs font-bold rounded-full roboto"
+            >
+              FAMILY DEAL
+            </span>
+          </div>
+        </div>
+        <div class="p-5">
+          <h3 class="font-semibold text-lg text-foreground ff-secondary mb-2">
+            Family Meal Deal
+          </h3>
+          <p class="text-sm text-muted-foreground roboto mb-3">
+            4 burgers, 2 sides, 2 drinks — all for just $35!
+          </p>
+          <button
+            class="w-full py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-opacity-90 transition-smooth roboto"
+          >
+            Order Now
+          </button>
+        </div>
       </div>
+
+      <!-- Add more offers as needed... -->
     </div>
+  </section>
 
-    <!-- Add more offers as needed... -->
-  </div>
-</section>
-
-  <!-- Menu Section -->
   <section class="mb-12">
     <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
       <h1 class="section-title ff-secondary text-center text-primary fw-normal">
@@ -261,188 +291,59 @@
       Chef's Recommendations
     </h2>
 
-    <!-- Tabs Structure (Simplified static design using buttons/divs) -->
+    <!-- Tabs -->
     <div class="w-full">
-      <!-- Tabs List -->
       <div
-        class="flex flex-wrap gap-2 p-1 bg-gray-100 rounded-lg mb-8 shadow-inner"
+        class="flex flex-wrap gap-2 p-1 bg-gray-100 rounded-lg mb-6 shadow-inner" *ngFor="let catagory of categories"
       >
-        <!-- Active Tab -->
         <button
-          class="px-5 py-2 text-sm font-semibold rounded-lg shadow-md bg-primary text-white transition-smooth"
+          class="px-4 py-1.5 text-sm font-semibold rounded-lg shadow bg-primary text-white"
         >
-          Burgers & Sandwiches
+          {{catagory.name}}
         </button>
-        <!-- Inactive Tabs -->
-        <button
-          class="px-5 py-2 text-sm font-medium rounded-lg text-muted-foreground hover:bg-white transition-smooth"
-        >
-          Artisan Pasta
-        </button>
-        <button
-          class="px-5 py-2 text-sm font-medium rounded-lg text-muted-foreground hover:bg-white transition-smooth"
-        >
-          Signature Salads
-        </button>
-        <button
-          class="px-5 py-2 text-sm font-medium rounded-lg text-muted-foreground hover:bg-white transition-smooth"
-        >
-          Decadent Desserts
-        </button>
+
+
+
       </div>
 
-      <!-- Tab Content (Static for Burgers) -->
-      <div>
-        <div class="grid md:grid-cols-2 gap-6">
-          <!-- Menu Item Card 1 -->
-          <div
-            class="bg-card rounded-xl p-0 shadow-card border border-border hover:shadow-hover transition-smooth overflow-hidden"
-          >
-            <div class="flex flex-col md:flex-row">
-              <!-- Image -->
-              <div class="md:w-1/3">
-                <img
-                  src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300&q=80"
-                  alt="The Truffle Deluxe"
-                  class="w-full h-full object-cover rounded-t-xl md:rounded-l-xl md:rounded-tr-none"
-                />
-              </div>
-              <!-- Content -->
-              <div class="p-6 flex flex-col justify-between md:w-2/3">
-                <div>
-                  <h3 class="text-lg font-semibold text-foreground mb-1">
-                    The Truffle Deluxe
-                  </h3>
-                  <p class="text-muted-foreground text-sm">
-                    Wagyu patty, Swiss cheese, wild mushrooms, and house-made
-                    truffle aioli.
-                  </p>
-                </div>
-                <div class="mt-4 flex justify-between items-center">
-                  <span class="text-primary text-xl font-extrabold"
-                    >$19.50</span
-                  >
-                  <button
-                    (click)="addToCart('The Truffle Deluxe')"
-                    class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
-                  >
-                    Add to Cart
-                  </button>
-                </div>
-              </div>
+      <!-- Menu Grid -->
+      <div class="grid md:grid-cols-2 gap-5">
+        <!-- Single Menu Card -->
+        <div
+          *ngFor="let menuItem of menuItems"
+          class="bg-card rounded-xl border border-border hover:shadow-md transition-shadow overflow-hidden flex flex-col md:flex-row"
+        >
+          <!-- Image: Compact height -->
+          <div class="md:w-1/3 flex-shrink-0">
+            <div class="h-32 w-full md:h-full">
+              <!-- Reduced from h-48 to h-32 -->
+              <img
+                [src]="menuItem.imageUrl"
+                [alt]="menuItem.name"
+                class="w-full h-[9rem] object-cover rounded-t-lg md:rounded-l-lg md:rounded-tr-none"
+              />
             </div>
           </div>
 
-          <!-- Menu Item Card 2 -->
-          <div
-            class="bg-card rounded-xl p-0 shadow-card border border-border hover:shadow-hover transition-smooth overflow-hidden"
-          >
-            <div class="flex flex-col md:flex-row">
-              <div class="md:w-1/3">
-                <img
-                  src="https://images.unsplash.com/photo-1606755962773-d324e0a13086?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300&q=80"
-                  alt="Blackened Salmon Sandwich"
-                  class="w-full h-full object-cover rounded-t-xl md:rounded-l-xl md:rounded-tr-none"
-                />
-              </div>
-              <div class="p-6 flex flex-col justify-between md:w-2/3">
-                <div>
-                  <h3 class="text-lg font-semibold text-foreground mb-1">
-                    Blackened Salmon Sandwich
-                  </h3>
-                  <p class="text-muted-foreground text-sm">
-                    Cajun-spiced salmon, crisp slaw, and lemon-dill sauce on
-                    toasted brioche.
-                  </p>
-                </div>
-                <div class="mt-4 flex justify-between items-center">
-                  <span class="text-primary text-xl font-extrabold"
-                    >$16.25</span
-                  >
-                  <button
-                    (click)="addToCart('Blackened Salmon Sandwich')"
-                    class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
-                  >
-                    Add to Cart
-                  </button>
-                </div>
-              </div>
+          <!-- Content: Tighter padding -->
+          <div class="p-4 flex flex-col justify-between md:w-2/3">
+            <div>
+              <h3 class="text-base font-semibold text-foreground mb-1">
+                {{ menuItem.name }}
+              </h3>
+              <p class="text-muted-foreground text-sm line-clamp-2">
+                {{ menuItem.description }}
+              </p>
             </div>
-          </div>
-
-          <!-- Menu Item Card 3 -->
-          <div
-            class="bg-card rounded-xl p-0 shadow-card border border-border hover:shadow-hover transition-smooth overflow-hidden"
-          >
-            <div class="flex flex-col md:flex-row">
-              <div class="md:w-1/3">
-                <img
-                  src="https://images.unsplash.com/photo-1558030006-450675393462?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1031"
-                  alt="Smoked BBQ Pulled Pork"
-                  class="w-full h-full object-cover rounded-t-xl md:rounded-l-xl md:rounded-tr-none"
-                />
-              </div>
-              <div class="p-6 flex flex-col justify-between md:w-2/3">
-                <div>
-                  <h3 class="text-lg font-semibold text-foreground mb-1">
-                    Smoked BBQ Pulled
-                  </h3>
-                  <p class="text-muted-foreground text-sm">
-                    Slow-smoked Beef shoulder, tangy BBQ glaze, and pickled red
-                    onions.
-                  </p>
-                </div>
-                <div class="mt-4 flex justify-between items-center">
-                  <span class="roboto-bold text-primary text-xl font-extrabold"
-                    >$14.00</span
-                  >
-                  <button
-                    (click)="addToCart('Smoked BBQ Pulled Pork')"
-                    class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
-                  >
-                    Add to Cart
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Menu Item Card 4 -->
-          <div
-            class="bg-card rounded-xl p-0 shadow-card border border-border hover:shadow-hover transition-smooth overflow-hidden"
-          >
-            <div class="flex flex-col md:flex-row">
-              <div class="md:w-1/3">
-                <img
-                  src="https://images.unsplash.com/photo-1512058564366-18510be2db19?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300&q=80"
-                  alt="The Vegetarian Portobello"
-                  class="w-full h-full object-cover rounded-t-xl md:rounded-l-xl md:rounded-tr-none"
-                />
-              </div>
-              <div class="p-6 flex flex-col justify-between md:w-2/3">
-                <div>
-                  <h3
-                    class="roboto-bold text-lg font-semibold text-foreground mb-1"
-                  >
-                    The Vegetarian Portobello
-                  </h3>
-                  <p class="roboto text-muted-foreground text-sm">
-                    Grilled portobello cap, pesto, roasted red peppers, and
-                    fresh mozzarella.
-                  </p>
-                </div>
-                <div class="mt-4 flex justify-between items-center">
-                  <span class="roboto-bold text-primary text-xl font-extrabold"
-                    >$13.50</span
-                  >
-                  <button
-                    (click)="addToCart('The Vegetarian Portobello')"
-                    class="px-4 py-2 roboto-bold bg-red-600 hover:bg-red-900 text-white text-sm font-medium rounded-lg transition-colors"
-                  >
-                    Add to Cart
-                  </button>
-                </div>
-              </div>
+            <div class="mt-3 flex justify-between items-center">
+              <span class="text-primary font-bold">
+                ${{ menuItem.price }}
+              </span>
+              <button
+                class="px-3 py-1.5 text-xs bg-blue-500 hover:bg-blue-800 text-white font-medium rounded-md transition-colors"
+              >
+                Add to Cart
+              </button>
             </div>
           </div>
         </div>
@@ -451,6 +352,7 @@
   </section>
 
   <!-- Reviews Section - CONVERTED TO CAROUSEL -->
+
   <section class="mb-12">
     <div
       class="flex justify-between items-center mb-6 border-b-2 border-primary/20 pb-2"
@@ -462,11 +364,10 @@
       <!-- Carousel Controls -->
       <div class="flex space-x-2">
         <button
-          id="prev-review"
           class="w-10 h-10 flex items-center justify-center text-primary border border-primary/50 bg-card rounded-full shadow-md hover:bg-primary hover:text-white transition-smooth disabled:opacity-50 disabled:cursor-not-allowed"
-          disabled
+          [disabled]="currentIndex === 0"
+          (click)="prev()"
         >
-          <!-- Left Arrow Icon -->
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="20"
@@ -475,17 +376,15 @@
             fill="none"
             stroke="currentColor"
             stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
           >
             <path d="m15 18-6-6 6-6" />
           </svg>
         </button>
         <button
-          id="next-review"
           class="w-10 h-10 flex items-center justify-center text-primary border border-primary/50 bg-card rounded-full shadow-md hover:bg-primary hover:text-white transition-smooth"
+          [disabled]="currentIndex >= reviews.length - 1"
+          (click)="next()"
         >
-          <!-- Right Arrow Icon -->
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="20"
@@ -494,8 +393,6 @@
             fill="none"
             stroke="currentColor"
             stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
           >
             <path d="m9 18 6-6-6-6" />
           </svg>
@@ -503,305 +400,120 @@
       </div>
     </div>
 
-    <div id="carousel-container" class="carousel-container">
-      <div id="reviews-wrapper" class="reviews-wrapper">
-        <!-- Review Card 1 (Mock Data) -->
-        <div class="review-card pb-6">
+    <!-- Carousel -->
+    <div class="overflow-hidden grid grid-cols-2">
+      <div
+        class="flex transition-transform duration-500 ease-in-out"
+        [style.transform]="'translateX(' + -currentIndex * 100 + '%)'"
+      >
+        <div *ngFor="let review of reviews" class="flex-shrink-0 w-full px-2">
           <div
             class="bg-card rounded-xl shadow-card border border-border h-full"
           >
             <div class="p-6">
-              <div class="flex items-start justify-between mb-3">
+              <!-- Header: User + Ratings -->
+              <div class="flex items-start justify-between mb-4">
                 <div>
-                  <h3 class="font-semibold text-lg text-foreground">
-                    Sarah K.
-                  </h3>
-                  <p class="text-sm text-muted-foreground">
-                    Ordered: Truffle Deluxe
-                  </p>
+                  <div class="flex items-center gap-2 mb-1">
+                    <h3 class="font-semibold text-lg text-foreground">
+                      {{ review.userName }}
+                    </h3>
+                    <span
+                      class="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full"
+                    >
+                      {{ review.restaurantName }}
+                    </span>
+                  </div>
+                  <!-- <p class="text-sm text-muted-foreground">
+                  Ordered: {{ getOrderedItem(review.orderId) }}
+                </p> -->
                 </div>
-                <!-- 5 Stars -->
-                <div class="flex gap-1">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="w-4 h-4 fill-primary text-primary"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"
-                    />
-                  </svg>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="w-4 h-4 fill-primary text-primary"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"
-                    />
-                  </svg>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="w-4 h-4 fill-primary text-primary"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"
-                    />
-                  </svg>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="w-4 h-4 fill-primary text-primary"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"
-                    />
-                  </svg>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="w-4 h-4 fill-primary text-primary"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"
-                    />
-                  </svg>
-                </div>
-              </div>
-              <p class="text-foreground italic mb-2">
-                "A truly exceptional burger! The truffle aioli was divine. Five
-                stars for flavor and presentation. The service was impeccable,
-                and the ambiance made the experience even better."
-              </p>
-              <p class="text-xs text-muted-foreground">
-                Reviewed on: 2 days ago
-              </p>
-            </div>
-          </div>
-        </div>
 
-        <!-- Review Card 2 (Mock Data) -->
-        <div class="review-card pb-6">
-          <div
-            class="bg-card rounded-xl shadow-card border border-border h-full"
-          >
-            <div class="p-6">
-              <div class="flex items-start justify-between mb-3">
-                <div>
-                  <h3 class="font-semibold text-lg text-foreground">Mark T.</h3>
-                  <p class="text-sm text-muted-foreground">
-                    Ordered: Blackened Salmon
-                  </p>
-                </div>
-                <!-- 4 Stars -->
-                <div class="flex gap-1">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="w-4 h-4 fill-primary text-primary"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"
-                    />
-                  </svg>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="w-4 h-4 fill-primary text-primary"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"
-                    />
-                  </svg>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="w-4 h-4 fill-primary text-primary"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"
-                    />
-                  </svg>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="w-4 h-4 fill-primary text-primary"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"
-                    />
-                  </svg>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="w-4 h-4 text-gray-300"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"
-                    />
-                  </svg>
+                <!-- Food Rating Only (Primary Rating) -->
+                <div class="flex gap-0.5">
+                  <ng-container *ngIf="review?.foodRating as rating">
+                    <ng-container *ngFor="let star of [1, 2, 3, 4, 5]">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="w-4 h-4 inline-block"
+                        [ngClass]="{
+                          'fill-primary text-primary': star <= rating,
+                          'fill-gray-300 text-gray-300': star > rating
+                        }"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"
+                        />
+                      </svg>
+                    </ng-container>
+                  </ng-container>
                 </div>
               </div>
-              <p class="text-foreground italic mb-2">
-                "The salmon was fresh, but the bun was a little soggy from the
-                delivery. Otherwise, great flavor and arrived on time. I'd
-                definitely order again but maybe pick it up next time."
-              </p>
-              <p class="text-xs text-muted-foreground">
-                Reviewed on: 5 days ago
-              </p>
-            </div>
-          </div>
-        </div>
 
-        <!-- Review Card 3 (New Mock Data) -->
-        <div class="review-card pb-6">
-          <div
-            class="bg-card rounded-xl shadow-card border border-border h-full"
-          >
-            <div class="p-6">
-              <div class="flex items-start justify-between mb-3">
-                <div>
-                  <h3 class="font-semibold text-lg text-foreground">
-                    Jessica A.
-                  </h3>
-                  <p class="text-sm text-muted-foreground">
-                    Ordered: Vegetarian Portobello
-                  </p>
-                </div>
-                <!-- 5 Stars -->
-                <div class="flex gap-1">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="w-4 h-4 fill-primary text-primary"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"
-                    />
-                  </svg>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="w-4 h-4 fill-primary text-primary"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"
-                    />
-                  </svg>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="w-4 h-4 fill-primary text-primary"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"
-                    />
-                  </svg>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="w-4 h-4 fill-primary text-primary"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"
-                    />
-                  </svg>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="w-4 h-4 fill-primary text-primary"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"
-                    />
-                  </svg>
-                </div>
-              </div>
-              <p class="text-foreground italic mb-2">
-                "Hands down the best veggie burger I've ever had. So flavorful
-                and substantial. A perfect meat-free option that doesn't feel
-                like a compromise."
+              <!-- Comment -->
+              <p class="text-foreground italic mb-3 min-h-[60px]">
+                "{{ review.comment }}"
               </p>
-              <p class="text-xs text-muted-foreground">
-                Reviewed on: 1 week ago
-              </p>
-            </div>
-          </div>
-        </div>
 
-        <!-- Review Card 4 (New Mock Data) -->
-        <div class="review-card pb-6">
-          <div
-            class="bg-card rounded-xl shadow-card border border-border h-full"
-          >
-            <div class="p-6">
-              <div class="flex items-start justify-between mb-3">
-                <div>
-                  <h3 class="font-semibold text-lg text-foreground">
-                    David L.
-                  </h3>
-                  <p class="text-sm text-muted-foreground">
-                    Ordered: Pulled Pork
-                  </p>
+              <!-- Delivery Info -->
+              <div class="grid grid-cols-2 gap-2 text-xs mb-3">
+                <div class="bg-gray-50 p-2 rounded">
+                  <span class="text-muted-foreground">Delivery:</span>
+                  <div class="flex gap-0.5 mt-1">
+                    <ng-container *ngIf="review?.deliveryRating as rating">
+                      <ng-container *ngFor="let star of [1, 2, 3, 4, 5]">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="w-3 h-3 inline-block"
+                          [ngClass]="{
+                            'fill-amber-500 text-amber-500': star <= rating,
+                            'fill-gray-300 text-gray-300': star > rating
+                          }"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"
+                          />
+                        </svg>
+                      </ng-container>
+                    </ng-container>
+                  </div>
                 </div>
-                <!-- 5 Stars -->
-                <div class="flex gap-1">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="w-4 h-4 fill-primary text-primary"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"
-                    />
-                  </svg>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="w-4 h-4 fill-primary text-primary"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"
-                    />
-                  </svg>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="w-4 h-4 fill-primary text-primary"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"
-                    />
-                  </svg>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="w-4 h-4 fill-primary text-primary"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"
-                    />
-                  </svg>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="w-4 h-4 fill-primary text-primary"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"
-                    />
-                  </svg>
+                <div class="bg-gray-50 p-2 rounded">
+                  <span class="text-muted-foreground">Driver:</span>
+                  <div class="flex items-center gap-1 mt-1">
+                    <span class="font-medium">{{
+                      review.deliveryPersonName
+                    }}</span>
+                    <div class="flex gap-0.5">
+                      <ng-container
+                        *ngIf="review?.deliveryPersonRating as rating"
+                      >
+                        <ng-container *ngFor="let star of [1, 2, 3, 4, 5]">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="w-3 h-3 inline-block"
+                            [ngClass]="{
+                              'fill-green-500 text-green-500': star <= rating,
+                              'fill-gray-300 text-gray-300': star > rating
+                            }"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 18.27l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z"
+                            />
+                          </svg>
+                        </ng-container>
+                      </ng-container>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <p class="text-foreground italic mb-2">
-                "Perfectly smoked and tender. The BBQ sauce was incredible—sweet
-                and tangy without overpowering the meat. This is my new favorite
-                lunch spot."
-              </p>
-              <p class="text-xs text-muted-foreground">
-                Reviewed on: 2 weeks ago
+
+              <!-- Date -->
+              <p class="text-xs text-muted-foreground text-right">
+                Reviewed on: {{ review.createdAt | date : "mediumDate" }}
               </p>
             </div>
           </div>
@@ -915,38 +627,47 @@
     >
       Find Us
     </h2>
-    <div class="bg-card rounded-xl shadow-lg border border-border">
-      <div class="p-0">
-        <!-- Map Placeholder -->
-        <div
-          class="w-full h-[400px] bg-gray-200 rounded-xl flex items-center justify-center overflow-hidden"
-        >
-          <div
-            class="text-center space-y-2 p-6 bg-white/70 backdrop-blur-sm rounded-lg border border-border shadow-xl"
+    <div
+      class="bg-card rounded-xl shadow-lg border border-border overflow-hidden"
+    >
+      <div id="map" class="w-full h-[400px]" style="z-index: 1"></div>
+      <div class="p-6 text-center">
+        <div class="space-y-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-8 h-8 text-primary mx-auto"
+            viewBox="0 0 24 24"
           >
-            <!-- MapPin Icon Placeholder -->
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-12 h-12 text-primary mx-auto"
-              viewBox="0 0 24 24"
-            >
-              <path
-                fill="currentColor"
-                d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5a2.5 2.5 0 0 1 0 5z"
-              />
-            </svg>
-            <p class="text-foreground font-semibold text-lg">
-              Gourmet Kitchen Location
-            </p>
-            <p class="text-sm text-muted-foreground">
-              123 Culinary Street, Food District, FC 12345
-            </p>
-            <a
-              href="#"
-              class="inline-block mt-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-full hover:bg-opacity-90 transition-smooth"
-              >Get Directions</a
-            >
-          </div>
+            <path
+              fill="currentColor"
+              d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5a2.5 2.5 0 0 1 0 5z"
+            />
+          </svg>
+
+          <p class="text-foreground font-semibold text-lg">
+            {{ restaurant.name || "Restaurant Location" }}
+          </p>
+          <p class="text-sm text-muted-foreground">
+            {{
+              restaurant.address ||
+                "123 Culinary Street, Food District, FC 12345"
+            }}
+          </p>
+
+          <a
+            href="#"
+            (click)="
+              navigateToGoogleMaps(
+                restaurant.latitude,
+                restaurant.longitude,
+                restaurant.name
+              );
+              $event.preventDefault()
+            "
+            class="inline-block mt-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-full hover:bg-opacity-90 transition-smooth"
+          >
+            Get Directions (Open in Google Maps)
+          </a>
         </div>
       </div>
     </div>
