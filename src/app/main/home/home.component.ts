@@ -2,12 +2,13 @@
 import { fromEvent, Subject, switchMap, takeUntil, tap, timer } from 'rxjs';
 import { Component, OnInit, ElementRef, ViewChild, Renderer2, EventEmitter, Output, HostListener } from '@angular/core';
 import { User } from 'src/app/Models/Users/user.models';
-import { CartService } from 'src/app/services/Orders/order.service';
+
 import { MenuCategoryDto, MenuCategoryService } from 'src/app/services/restaurant/menu-category.service';
 import { Restaurant } from 'src/app/Models/restaurant.model';
 import { RestaurantService } from 'src/app/services/restaurant/restaurant.service';
 import { MenuItemService } from 'src/app/services/menu-item.service';
 import { MenuItem } from 'src/app/Models/MenuItem.model';
+import { Router } from '@angular/router';
 
 // Define the structure for a carousel item
 interface CarouselItem {
@@ -35,7 +36,8 @@ export class HomeComponent implements OnInit {
   constructor(
     private categoryService:MenuCategoryService,
     private restaurantService:RestaurantService,
-    private menuItemsService: MenuItemService
+    private menuItemsService: MenuItemService,
+    private router: Router
 
   ){}
 
@@ -78,10 +80,19 @@ export class HomeComponent implements OnInit {
     })
 
 
-
-
-
   }
+
+      //restaurant
+     goToRestaurant(id: number) {
+    this.router.navigate(['/main/restaurant', id]);
+  }
+
+  toggleFavorite(restaurant: any, event: MouseEvent) {
+    event.stopPropagation(); // 👈 stops the card click event
+    console.log('Favorite toggled:', restaurant);
+    // Add logic to toggle favorite here
+  }
+
 
 
 

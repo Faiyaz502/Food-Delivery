@@ -293,24 +293,26 @@
 
     <!-- Tabs -->
     <div class="w-full">
-      <div
-        class="flex flex-wrap gap-2 p-1 bg-gray-100 rounded-lg mb-6 shadow-inner" *ngFor="let catagory of categories"
-      >
-        <button
-          class="px-4 py-1.5 text-sm font-semibold rounded-lg shadow bg-primary text-white"
-        >
-          {{catagory.name}}
-        </button>
+ <div class="flex flex-wrap gap-2 p-1 bg-gray-100 rounded-lg mb-6 shadow-inner">
+  <button
+    *ngFor="let category of categories"
+    (click)="selectCategory(category.name)"
+    [ngClass]="{
+      'bg-blue-600 text-white shadow': selectedCategory === category.name,
+      'bg-white text-gray-700 hover:bg-gray-200': selectedCategory !== category.name
+    }"
+    class="px-4 py-1.5 text-sm font-semibold rounded-lg transition-colors duration-200"
+  >
+    {{ category.name }}
+  </button>
+</div>
 
-
-
-      </div>
 
       <!-- Menu Grid -->
       <div class="grid md:grid-cols-2 gap-5">
         <!-- Single Menu Card -->
         <div
-          *ngFor="let menuItem of menuItems"
+          *ngFor="let menuItem of fetchMenu"
           class="bg-card rounded-xl border border-border hover:shadow-md transition-shadow overflow-hidden flex flex-col md:flex-row"
         >
           <!-- Image: Compact height -->
@@ -339,7 +341,7 @@
               <span class="text-primary font-bold">
                 ${{ menuItem.price }}
               </span>
-              <button
+              <button (click)="addToCart(menuItem.id!)"
                 class="px-3 py-1.5 text-xs bg-blue-500 hover:bg-blue-800 text-white font-medium rounded-md transition-colors"
               >
                 Add to Cart

@@ -3,16 +3,19 @@ import { Component, HostListener ,AfterViewInit, Input} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MenuItem } from 'src/app/Models/MenuItem.model';
 import { ReviewResponse, RestaurantReviewSummary } from 'src/app/Models/NotificationAndCoupon/review.model';
-import { AddCartItemDTO } from 'src/app/Models/Order/order.models';
+
 import { Restaurant } from 'src/app/Models/restaurant.model';
 import { Review } from 'src/app/Models/review.model';
 import { MenuItemService } from 'src/app/services/menu-item.service';
 
-import { CartService } from 'src/app/services/Orders/order.service';
+
 import { MenuCategoryDto, MenuCategoryService } from 'src/app/services/restaurant/menu-category.service';
 import { RestaurantService } from 'src/app/services/restaurant/restaurant.service';
 import { ReviewService } from 'src/app/services/reviewAndCoupon/review.service';
 import * as L from 'leaflet';
+import { forkJoin } from 'rxjs';
+import { CartService } from 'src/app/services/Cart/cart.service';
+import { CartItemCreateDTO } from 'src/app/Models/cart/cart.models';
 
 
 
@@ -25,15 +28,23 @@ import * as L from 'leaflet';
 
 export class RestauranPageComponent {
 
+  userId = 2;
 
-
-
-
-  restaurantId = 2;
+  restaurantId!:number;
   restaurant!: Restaurant;
    categories!:MenuCategoryDto[];
   menuItems!: MenuItem[];
+
+
+  fetchMenu!:MenuItem[];
    reviews!: ReviewResponse[];
+
+   selectedCategory!:string ;
+
+   CurrentCart: CartItemCreateDTO = {
+  menuItemId: 0,
+  quantity: 1
+};
 
 
 
@@ -43,17 +54,50 @@ export class RestauranPageComponent {
     private restaurantService:RestaurantService,
     private menuItemsService: MenuItemService ,
     private reviewService : ReviewService ,
-    private menucategoryService : MenuCategoryService
+    private menucategoryService : MenuCategoryService,
+    private route: ActivatedRoute ,
+    private cartService:CartService
 
   ){}
 
    ngOnInit(): void {
-    this.getAllCategory();
-    this.getAllRestaurant();
-    this.getAllMenuItems();
-    this.getAllReviewsById();
-    this.getAllCategoryByRestaurant();
+
+           this.restaurantId = Number(this.route.snapshot.paramMap.get('id'));
+    console.log('Restaurant ID:', this.restaurantId);
+
+      this.loadData();
+
+  
+
+  
   }
+
+
+loadData() {
+  // Scroll to top immediately
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Make API calls in parallel and wait for both
+  forkJoin({
+    categories: this.categoryService.getCategoryByRestaurant(this.restaurantId),
+    menuItems: this.menuItemsService.getMenuItemByRestaurant(this.restaurantId)
+  }).subscribe({
+    next: ({ categories, menuItems }) => {
+      this.categories = categories;
+      this.menuItems = menuItems;
+
+      // ✅ Now safely select the first category
+      if (this.categories.length > 0) {
+        this.selectCategory(this.categories[0].name);
+      }
+    },
+    error: (err) => console.error(err)
+  });
+
+  // Load restaurant and reviews separately
+  this.getAllRestaurant();
+  this.getAllReviewsById();
+}
 
 
   getAllCategory(){
@@ -76,29 +120,30 @@ export class RestauranPageComponent {
     })
   }
 
-  getAllCategoryByRestaurant(){
+getAllCategoryByRestaurant() {
+  this.categoryService.getCategoryByRestaurant(this.restaurantId).subscribe((res) => {
+    this.categories = res;
 
-    this.categoryService.getCategoryByRestaurant(this.restaurantId).subscribe((res)=>{
-
-      this.categories = res ;
-
-       console.log(res);
-
-    })
-
-  }
-
+    // ✅ Once categories are loaded, select the first one
+    if (this.categories.length > 0) {
+      this.selectCategory(this.categories[0].name);
+    }
+  });
+}
 
 
 
 
-  getAllMenuItems(){
+getAllMenuItems() {
+  this.menuItemsService.getMenuItemByRestaurant(this.restaurantId).subscribe((res) => {
+    this.menuItems = res;
 
-    this.menuItemsService.getMenuItemByRestaurant(this.restaurantId).subscribe((res)=>{
-
-     this.menuItems = res ;
-
-    })}
+    // ✅ After menuItems are loaded, check if categories are already loaded
+    if (this.categories && this.categories.length > 0 && !this.selectedCategory) {
+      this.selectCategory(this.categories[0].name);
+    }
+  });
+}
 
 
 
@@ -224,6 +269,61 @@ private initMap(): void {
     return `https://www.google.com/maps/search/?api=1&query=${lat},${lon}&query_place_id=${query}`;
     // A simpler alternative is: return `https://maps.google.com/?q=${lat},${lon}`;
   }
+
+  /// Category tab
+  
+  selectCategory(categoryName: string) {
+    this.selectedCategory = categoryName;
+    
+   this.fetchItems();
+  }
+
+
+  //fetch data acording category
+
+
+fetchItems() {
+ // reset the array 
+
+ this.fetchMenu = [];
+
+ //fetch
+  this.fetchMenu = this.menuItems.filter(
+    (item) => item.catagoryName === this.selectedCategory
+  );
+}
+
+
+//Cart Add
+
+addToCart(menuItemId: number) {
+  const newItem: CartItemCreateDTO = {
+    menuItemId: menuItemId,
+    quantity: 1
+  };
+
+  // Step 1: Get or create the user's cart
+  this.cartService.getOrCreateCart(this.userId).subscribe({
+    next: (cart) => {
+      console.log('Cart fetched/created:', cart);
+
+      // Step 2: Add the item to the cart
+      this.cartService.addItemToCart(this.userId, newItem).subscribe({
+        next: (updatedCart) => {
+          console.log('Item added to cart:', updatedCart);
+          alert('Item added to cart successfully!');
+        },
+        error: (err) => {
+          console.error('Error adding item to cart:', err);
+        }
+      });
+    },
+    error: (err) => {
+      console.error('Error fetching/creating cart:', err);
+    }
+  });
+}
+
 
 
 }

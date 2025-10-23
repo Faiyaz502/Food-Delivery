@@ -245,74 +245,63 @@
     </div>
 
     <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-      <div
-        *ngFor="let restaurant of restaurants"
-        class="group cursor-pointer overflow-hidden bg-white rounded-xl shadow transition-all hover:shadow-xl hover:-translate-y-1"
-      >
-        <!-- Image Section -->
-        <div class="relative h-48 overflow-hidden">
-          <img
-            src="{{ restaurant.imageUrls[0] }} "
-            alt="{{ restaurant.name }}"
-            class="h-full w-full object-cover transition-transform group-hover:scale-110"
-          />
+    <div
+  *ngFor="let restaurant of restaurants"
+  class="group cursor-pointer overflow-hidden bg-white rounded-xl shadow transition-all hover:shadow-xl hover:-translate-y-1"
+  (click)="goToRestaurant(restaurant.id!)"
+>
+  <!-- Image Section -->
+  <div class="relative h-48 overflow-hidden">
+    <img
+      [src]="restaurant.imageUrls[0]"
+      [alt]="restaurant.name"
+      class="h-full w-full object-cover transition-transform group-hover:scale-110"
+    />
 
-          <!-- Favorite Heart -->
-          <button
-            class="absolute top-2 left-2 px-1 py-0.5 rounded-full bg-white/80 backdrop-blur-sm hover:bg-red-100 transition-colors"
-          >
-            <i
-              class="far fa-heart text-gray-700 group-hover:text-red-500  transition-colors"
-            ></i>
-          </button>
-        </div>
+    <!-- Favorite Heart (stop click bubbling) -->
+    <button
+      class="absolute top-2 left-2 px-1 py-0.5 rounded-full bg-white/80 backdrop-blur-sm hover:bg-red-100 transition-colors"
+      (click)="toggleFavorite(restaurant, $event)" 
+    >
+      <i
+        class="far fa-heart text-gray-700 group-hover:text-red-500 transition-colors"
+      ></i>
+    </button>
+  </div>
 
-        <!-- Content Section -->
-        <div class="p-4">
-          <!-- Restaurant Name -->
-          <h3 class="mb-1 text-lg font-semibold roboto-bold truncate">
-            {{ restaurant.name }}
-          </h3>
+  <!-- Content Section -->
+  <div class="p-4">
+    <h3 class="mb-1 text-lg font-semibold roboto-bold truncate">
+      {{ restaurant.name }}
+    </h3>
+    <p class="text-sm text-gray-600 mb-2 flex items-start">
+      <i class="fas fa-map-marker-alt text-gray-500 mt-0.5 mr-1"></i>
+      <span class="truncate">{{ restaurant.address }}</span>
+    </p>
+    <p class="text-sm text-gray-700 mb-3 line-clamp-2">
+      {{ restaurant.description }}
+    </p>
 
-          <!-- Address -->
-          <p class="text-sm text-gray-600 mb-2 flex items-start">
-            <i
-              class="fas fa-map-marker-alt text-gray-500 mt-0.5 mr-1 flex-shrink-0"
-            ></i>
-            <span class="truncate">{{ restaurant.address }}</span>
-          </p>
-
-          <!-- Description -->
-          <p class="text-sm text-gray-700 mb-3 line-clamp-2">
-            {{ restaurant.description }}
-          </p>
-
-          <!-- Stats Row -->
-          <div class="flex items-center justify-between text-sm">
-            <!-- Rating -->
-            <div class="flex items-center gap-1">
-              <i class="fas fa-star text-yellow-500"></i>
-              <span class="font-medium text-gray-800 roboto">
-                {{ restaurant.averageRating?.toFixed(1) || "N/A" }}
-              </span>
-              <span class="text-gray-500"
-                >({{ restaurant.totalReviews || 0 }})</span
-              >
-            </div>
-
-            <!-- Delivery Time -->
-            <div class="flex items-center gap-1 text-gray-600">
-              <i class="far fa-clock"></i>
-              <span>{{ restaurant.estimatedDeliveryTime || "30" }} min</span>
-            </div>
-
-            <!-- Minimum Order -->
-            <div class="text-gray-600">
-              <span>Min: {{ restaurant.minimumOrderAmount || 0 }}</span>
-            </div>
-          </div>
-        </div>
+    <!-- Stats Row -->
+    <div class="flex items-center justify-between text-sm">
+      <div class="flex items-center gap-1">
+        <i class="fas fa-star text-yellow-500"></i>
+        <span class="font-medium text-gray-800 roboto">
+          {{ restaurant.averageRating?.toFixed(1) || "N/A" }}
+        </span>
+        <span class="text-gray-500">({{ restaurant.totalReviews || 0 }})</span>
       </div>
+      <div class="flex items-center gap-1 text-gray-600">
+        <i class="far fa-clock"></i>
+        <span>{{ restaurant.estimatedDeliveryTime || "30" }} min</span>
+      </div>
+      <div class="text-gray-600">
+        <span>Min: {{ restaurant.minimumOrderAmount || 0 }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
     </div>
 
     <div class="mt-12 text-center">

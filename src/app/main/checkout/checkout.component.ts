@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { CartResponseDTO, CartSummary, CartItem, CheckoutDTO, OrderResponseDTO } from 'src/app/Models/Order/order.models';
-import { CartService, OrderService } from 'src/app/services/Orders/order.service';
+import { CartItemCreateDTO, CartItemResponseDTO, CartResponseDTO, CartSummaryDTO, CheckoutDTO } from 'src/app/Models/cart/cart.models';
+import {  OrderResponseDTO } from 'src/app/Models/Order/order.models';
+import { CartService } from 'src/app/services/Cart/cart.service';
+import { OrderService } from 'src/app/services/Orders/order.service';
 import { CouponService } from 'src/app/services/reviewAndCoupon/coupon.service';
 
 @Component({
@@ -14,8 +16,8 @@ export class CheckoutComponent {
 
   userId: number = 1; // DEMO USER ID
   currentCart: CartResponseDTO | null = null;
-  cartSummary: Partial<CartSummary & { deliveryFee: number }> = { subtotal: 0, tax: 0, total: 0, deliveryFee: 75 };
-  cartItems: CartItem[] = [];
+  cartSummary: Partial<CartSummaryDTO & { deliveryFee: number }> = { subtotal: 0, tax: 0, total: 0, deliveryFee: 75 };
+  cartItems: CartItemResponseDTO[] = [];
 
   deliveryForm: FormGroup;
   selectedCard: any | null = { id: 1, last4Digits: '4242', cardType: 'Visa', expiryDate: '12/26', holderName: 'John Doe' }; // DEMO

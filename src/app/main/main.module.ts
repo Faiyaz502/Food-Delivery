@@ -17,6 +17,8 @@ import { NavComponent } from './nav/nav.component';
 import { A11yModule } from "@angular/cdk/a11y";
 import { TrackOrderComponent } from './track-order/track-order.component';
 import { SupportComponent } from './support/support.component';
+import { LoginComponent } from './login/login.component';
+import { RegistrationComponent } from './registration/registration.component';
 
 
 @NgModule({
@@ -30,6 +32,8 @@ import { SupportComponent } from './support/support.component';
     NavComponent,
     TrackOrderComponent,
     SupportComponent,
+    LoginComponent,
+    RegistrationComponent,
 
 
   ],
@@ -40,7 +44,8 @@ import { SupportComponent } from './support/support.component';
     FormsModule,
     ReactiveFormsModule,
     NgFor,
-    A11yModule
+    A11yModule,
+    MainRoutingModule  
 ]
 })
 export class MainModule { }

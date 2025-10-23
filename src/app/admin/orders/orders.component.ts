@@ -1,9 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
-import { CartResponseDTO, OrderFilters, OrderResponseDTO, OrderStatistics, OrderStatus, PaymentStatus } from 'src/app/Models/Order/order.models';
+import { CartResponseDTO } from 'src/app/Models/cart/cart.models';
+import { OrderFilters, OrderResponseDTO, OrderStatistics, OrderStatus, PaymentStatus } from 'src/app/Models/Order/order.models';
+import { CartService } from 'src/app/services/Cart/cart.service';
 
-import { CartService, OrderService } from 'src/app/services/Orders/order.service';
+import {  OrderService } from 'src/app/services/Orders/order.service';
 interface OrderStats {
   total: number;
   pending: number;
@@ -368,37 +370,5 @@ export class OrdersComponent implements OnInit {
     console.log('Exporting orders...');
   }
 
-  // ============================================
-  // MOCK DATA (Remove when API is ready)
-  // ============================================
-  private generateMockCarts(): CartResponseDTO[] {
-    const customers = ['John Doe', 'Jane Smith', 'Mike Johnson'];
-    const restaurants = ['Pizza Palace', 'Burger King', 'Sushi House'];
-
-    return Array.from({ length: 10 }, (_, i) => ({
-      id: i + 1,
-      userId: i + 1,
-      userName: customers[Math.floor(Math.random() * customers.length)],
-      userEmail: `user${i}@example.com`,
-      userPhone: `+880 ${Math.floor(Math.random() * 1000000000)}`,
-      items: [
-        {
-          id: i * 10,
-          menuItemId: Math.floor(Math.random() * 100),
-          menuItemName: 'Pizza Margherita',
-          unitPrice: 350,
-          quantity: 2,
-          totalPrice: 700,
-          specialInstructions: 'Extra cheese',
-          restaurantId: i + 1,
-          restaurantName: restaurants[Math.floor(Math.random() * restaurants.length)]
-        }
-      ],
-      subtotal: 700,
-      totalItems: 2,
-      restaurantName: restaurants[Math.floor(Math.random() * restaurants.length)],
-      createdAt: new Date(Date.now() - Math.random() * 3 * 24 * 60 * 60 * 1000).toISOString(),
-      updatedAt: new Date(Date.now() - Math.random() * 1 * 60 * 60 * 1000).toISOString()
-    }));
-  }
+ 
 }

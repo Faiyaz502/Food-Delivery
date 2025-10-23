@@ -151,6 +151,11 @@ openCreateModal() {
         this.loadRestaurants();
         this.closeModal();
 
+        console.log(rest);
+       
+        
+        
+
         if (rest.latitude && rest.longitude) {
     this.map.setView([rest.latitude, rest.longitude], 15);
   }
@@ -169,7 +174,8 @@ openCreateModal() {
     if (!this.selectedRestaurant) return;
 
     this.currentMenuItem.restaurantId = this.selectedRestaurant?.id ?? 0;
-
+    console.log(this.currentMenuItem);
+    
 
     if (this.showEditMenuItem) {
       this.menuService.updateMenu(this.currentMenuItem.id!, this.currentMenuItem).subscribe(() => {
@@ -178,7 +184,10 @@ openCreateModal() {
 
       });
     } else {
-      this.menuService.createMenuItem(this.currentMenuItem).subscribe(() => {
+      this.menuService.createMenuItem(this.currentMenuItem).subscribe((res) => {
+
+          console.log(res);
+          
         this.viewMenuItems(this.selectedRestaurant!);
         this.closeMenuItemModal();
       });
@@ -188,6 +197,9 @@ openCreateModal() {
 closeModal() {
   this.showCreateModal = false;
   this.showEditModal = false;
+
+  console.log(this.currentRestaurant);
+  
 
   this.currentRestaurant = {
     name: '',

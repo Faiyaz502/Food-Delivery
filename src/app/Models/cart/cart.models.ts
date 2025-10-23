@@ -10,6 +10,7 @@ export interface CartItemResponseDTO {
   specialInstructions: string | null;
   restaurantId: number;
   restaurantName: string;
+  imageUrl:string
 }
 
 export interface CartResponseDTO {
@@ -29,18 +30,27 @@ export interface CartItemCreateDTO {
   specialInstructions?: string;     // Optional
 }
 
-export interface CartCheckoutDTO {
-  deliveryAddress: string;
-  deliveryLatitude?: number;
-  deliveryLongitude?: number;
-  deliveryType: 'STANDARD' | 'EXPRESS' |'PICKUP'; // Replace with your DeliveryType enum values
-  specialInstructions?: string;
-  deliveryFee?: number;             // BigDecimal → number
-}
+
 
 export interface CartSummaryDTO {
   totalItems: number;   // Integer → number
   subtotal: number;     // BigDecimal → number
   tax: number;          // BigDecimal → number
   total: number;        // BigDecimal → number
+}
+
+export interface AddCartItemDTO {
+  menuItemId: number | undefined;
+  quantity: number;
+  specialInstructions?: string;
+}
+
+export interface CheckoutDTO {
+  deliveryAddress: string;
+  deliveryLatitude?: number;
+  deliveryLongitude?: number;
+  deliveryType: 'STANDARD' | 'EXPRESS' | 'SCHEDULED' | 'PICKUP';
+  specialInstructions?: string;
+  deliveryFee: number;
+  priorityLevel: number;
 }

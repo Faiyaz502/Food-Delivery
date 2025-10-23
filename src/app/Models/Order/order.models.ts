@@ -93,51 +93,41 @@ export interface OrderFilters {
 // 2. CART MODELS (models/cart.model.ts)
 // ============================================
 
-export interface CartItem {
-  id: number;
-  menuItemId: number;
-  menuItemName: string;
-  unitPrice: number;
-  quantity: number;
-  totalPrice: number;
-  specialInstructions?: string;
-  restaurantId: number;
-  restaurantName: string;
-}
 
-export interface AddCartItemDTO {
-  menuItemId: number | undefined;
-  quantity: number;
-  specialInstructions?: string;
-}
 
-export interface CartResponseDTO {
-  id: number;
-  userId: number;
-  userName: string;
-  userEmail?: string;
-  userPhone?: string;
-  items: CartItem[];
-  subtotal: number;
-  totalItems: number;
-  restaurantName?: string;
-  createdAt: string;
-  updatedAt: string;
-}
+// export interface AddCartItemDTO {
+//   menuItemId: number | undefined;
+//   quantity: number;
+//   specialInstructions?: string;
+// }
 
-export interface CartSummary {
-  totalItems: number;
-  subtotal: number;
-  tax: number;
-  total: number;
-}
+// export interface CartResponseDTO {
+//   id: number;
+//   userId: number;
+//   userName: string;
+//   userEmail?: string;
+//   userPhone?: string;
+//   items: CartItem[];
+//   subtotal: number;
+//   totalItems: number;
+//   restaurantName?: string;
+//   createdAt: string;
+//   updatedAt: string;
+// }
 
-export interface CheckoutDTO {
-  deliveryAddress: string;
-  deliveryLatitude?: number;
-  deliveryLongitude?: number;
-  deliveryType: 'STANDARD' | 'EXPRESS' | 'SCHEDULED' | 'PICKUP';
-  specialInstructions?: string;
-  deliveryFee: number;
-  priorityLevel: number;
-}
+// export interface CartSummary {
+//   totalItems: number;
+//   subtotal: number;
+//   tax: number;
+//   total: number;
+// }
+
+// export interface CheckoutDTO {
+//   deliveryAddress: string;
+//   deliveryLatitude?: number;
+//   deliveryLongitude?: number;
+//   deliveryType: 'STANDARD' | 'EXPRESS' | 'SCHEDULED' | 'PICKUP';
+//   specialInstructions?: string;
+//   deliveryFee: number;
+//   priorityLevel: number;
+// }
