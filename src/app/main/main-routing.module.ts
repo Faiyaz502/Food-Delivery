@@ -6,6 +6,8 @@ import { MainComponent } from './main.component';
 import { CheckoutComponent } from './checkout/checkout.component';
 import { TrackOrderComponent } from './track-order/track-order.component';
 import { SupportComponent } from './support/support.component';
+import { RestaurantListComponent } from './restaurant-list/restaurant-list.component';
+import { LoginComponent } from './login/login.component';
 // ✅ Enable scroll position restoration
 const routerOptions: ExtraOptions = {
   scrollPositionRestoration: 'enabled', // scroll to top on navigation
@@ -18,6 +20,8 @@ const routes: Routes = [
   { path: 'checkout', component: CheckoutComponent },
   { path: 'trackOrder', component: TrackOrderComponent },
   { path: 'support', component: SupportComponent },
+  { path: 'restaurantList', component: RestaurantListComponent },
+  { path: 'login', component: LoginComponent },
 
 
 

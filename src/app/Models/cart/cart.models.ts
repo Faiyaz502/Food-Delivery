@@ -22,6 +22,7 @@ export interface CartResponseDTO {
   totalItems: number;
   createdAt: string;           // LocalDateTime → ISO string
   updatedAt: string;
+  
 }
 
 export interface CartItemCreateDTO {

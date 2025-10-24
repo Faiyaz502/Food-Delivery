@@ -16,7 +16,9 @@ export class CartSideBarComponent {
 
   cart: CartResponseDTO | null = null;
   // DEMO DATA - Replace with actual user/auth service subscription
-  userId: number = 2;
+  // userId: number = 2; // TSP
+  userId: number = 5; // HOme
+
 
   constructor(private cartService: CartService, private router: Router) {}
 
@@ -27,11 +29,13 @@ export class CartSideBarComponent {
     // Subscribe to currentCart$ for real-time updates
     this.cartService.currentCart$.subscribe(cart => {
       this.cart = cart;
-       
+      
+
+
     });
 
-   
-    
+
+
   }
 
   closeCart() {

@@ -19,6 +19,7 @@ import { TrackOrderComponent } from './track-order/track-order.component';
 import { SupportComponent } from './support/support.component';
 import { LoginComponent } from './login/login.component';
 import { RegistrationComponent } from './registration/registration.component';
+import { RestaurantListComponent } from './restaurant-list/restaurant-list.component';
 
 
 @NgModule({
@@ -34,6 +35,7 @@ import { RegistrationComponent } from './registration/registration.component';
     SupportComponent,
     LoginComponent,
     RegistrationComponent,
+    RestaurantListComponent,
 
 
   ],

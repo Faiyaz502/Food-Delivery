@@ -19,12 +19,14 @@
     <div class="flex-1 overflow-y-auto">
       <div class="p-6 text-center border-b">
         <img
-          src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80"
+          src="{{user.profilePictureUrl}}"
           alt="User"
           class="w-20 h-20 rounded-full mx-auto mb-4 object-cover border-2 border-blue-100"
         />
-        <h3 class="font-semibold text-lg roboto-bold ">Alex Johnson</h3>
-        <p class="text-sm text-gray-500 ">alex@example.com</p>
+        <h3 class="font-semibold text-lg roboto-bold ">{{user.firstName+" "+user.lastName}}</h3>
+        <p class="text-sm text-gray-500 ">{{user.email}}</p>
+        <p class="text-sm text-gray-500 ">{{user.phoneNumber}}</p>
+
       </div>
 
       <nav class="p-4">
@@ -60,7 +62,7 @@
         <div class="flex justify-between items-start mb-4">
           <div>
             <p class="text-xs opacity-80 roboto-bold">Card Holder</p>
-            <p class="font-medium roboto">ALEX JOHNSON</p>
+            <p class="font-medium roboto">{{user.firstName+" "+user.lastName}}</p>
           </div>
           <i class="fab fa-cc-visa text-3xl"></i>
         </div>

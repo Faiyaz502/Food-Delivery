@@ -28,7 +28,8 @@ import { CartItemCreateDTO } from 'src/app/Models/cart/cart.models';
 
 export class RestauranPageComponent {
 
-  userId = 2;
+  // userId = 2; // TSP
+  userId = 5; // home
 
   restaurantId!:number;
   restaurant!: Restaurant;
@@ -67,9 +68,10 @@ export class RestauranPageComponent {
 
       this.loadData();
 
-  
 
-  
+
+
+
   }
 
 
@@ -83,6 +85,9 @@ loadData() {
     menuItems: this.menuItemsService.getMenuItemByRestaurant(this.restaurantId)
   }).subscribe({
     next: ({ categories, menuItems }) => {
+
+
+
       this.categories = categories;
       this.menuItems = menuItems;
 
@@ -271,10 +276,10 @@ private initMap(): void {
   }
 
   /// Category tab
-  
+
   selectCategory(categoryName: string) {
     this.selectedCategory = categoryName;
-    
+
    this.fetchItems();
   }
 
@@ -283,7 +288,7 @@ private initMap(): void {
 
 
 fetchItems() {
- // reset the array 
+ // reset the array
 
  this.fetchMenu = [];
 

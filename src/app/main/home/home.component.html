@@ -4,7 +4,7 @@
     class="absolute inset-0 opacity-100 translate-x-0 transition-all duration-700"
   >
     <img
-      src="assets/img/hero1.jpg"
+      src="assets/img/hero2.jpg"
       alt="Hero Slide"
       class="h-full w-full object-cover"
     />
@@ -261,7 +261,7 @@
     <!-- Favorite Heart (stop click bubbling) -->
     <button
       class="absolute top-2 left-2 px-1 py-0.5 rounded-full bg-white/80 backdrop-blur-sm hover:bg-red-100 transition-colors"
-      (click)="toggleFavorite(restaurant, $event)" 
+      (click)="toggleFavorite(restaurant, $event)"
     >
       <i
         class="far fa-heart text-gray-700 group-hover:text-red-500 transition-colors"
@@ -304,11 +304,74 @@
 
     </div>
 
-    <div class="mt-12 text-center">
-      <button
+    <div class="mt-12 text-center" >
+      <button (click)="goToRestaurants()"
         class="px-8 py-3 bg-white text-red-600 font-semibold roboto-bold rounded-full border-2 border-red-600 hover:bg-red-600 hover:text-white transition-colors duration-300 shadow-sm hover:shadow-md"
       >
         Explore More
+      </button>
+    </div>
+  </div>
+</section>
+
+<section class="py-12 bg-gray-50">
+  <div class="container mx-auto px-4">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl md:text-4xl font-bold ff-secondary text-gray-900 mb-4">
+        We Deliver To
+      </h2>
+      <p class="text-gray-600 max-w-2xl mx-auto roboto">
+        Fresh meals delivered across the city and beyond. Check if we serve your area!
+      </p>
+    </div>
+
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+      <!-- Delivery Area Card with Image -->
+      <div
+        *ngFor="let area of deliveryAreas"
+        class="group flex flex-col bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md hover:-translate-y-1 transition-all duration-300"
+      >
+        <!-- Image Section -->
+        <div class="h-28 overflow-hidden">
+          <img
+            [src]="area.imageUrl || 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80'"
+            [alt]="area.name"
+            class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          />
+        </div>
+
+        <!-- Content -->
+        <div class="p-3 text-center">
+          <div class="flex justify-center mb-2">
+            <i class="fas fa-location-dot text-blue-600 text-lg"></i>
+          </div>
+          <span class="text-sm font-medium text-gray-800 roboto line-clamp-1">
+            {{ area.name }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Check Area Button -->
+    <div class="mt-8 text-center">
+      <button
+        class="px-6 py-2.5 text-blue-600 font-semibold roboto rounded-lg border border-blue-600 hover:bg-blue-600 hover:text-white transition-colors duration-300 inline-flex items-center"
+      >
+        <span>Check Your Area</span>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-4 w-4 ml-1"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9 5l7 7-7 7"
+          />
+        </svg>
       </button>
     </div>
   </div>
@@ -453,6 +516,9 @@
     </div>
   </div>
 </section>
+
+
+<!-- We Deliver To -->
 
 <!-- Footer -->
 <footer id="contact" class="border-t bg-gray-950">

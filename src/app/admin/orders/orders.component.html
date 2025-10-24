@@ -328,11 +328,12 @@
               </td>
               <td class="px-6 py-4">
                 <div class="text-sm text-gray-900">{{ cart.userName }}</div>
-                <div class="text-xs text-gray-500">{{ cart.userEmail }}</div>
-                <div class="text-xs text-gray-500">{{ cart.userPhone }}</div>
+              </td>
+              <td class="px-6 py-4">
+                <div class="text-sm text-gray-900">{{ cart.items }}</div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                {{ cart.restaurantName }}
+                {{ cart }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="text-sm font-medium text-gray-900">{{ cart.totalItems }} items</div>
@@ -612,13 +613,13 @@
                 <p class="text-xs text-gray-500">Name</p>
                 <p class="text-sm font-medium">{{ selectedCart.userName }}</p>
               </div>
-              <div *ngIf="selectedCart.userEmail">
+              <div *ngIf="selectedtUser">
                 <p class="text-xs text-gray-500">Email</p>
-                <p class="text-sm">{{ selectedCart.userEmail }}</p>
+                <p class="text-sm">{{ selectedtUser.email }}</p>
               </div>
-              <div *ngIf="selectedCart.userPhone">
+              <div *ngIf="selectedtUser?.phoneNumber">
                 <p class="text-xs text-gray-500">Phone</p>
-                <p class="text-sm">{{ selectedCart.userPhone }}</p>
+                <p class="text-sm">{{ selectedtUser?.phoneNumber }}</p>
               </div>
               <div>
                 <p class="text-xs text-gray-500">User ID</p>

@@ -9,7 +9,7 @@
   >
     <!-- Header -->
     <div class="p-4 border-b flex justify-between items-center flex-shrink-0">
-      <h2 class="font-bold text-lg roboto-bold">Your Cart (3)</h2>
+      <h2 class="font-bold text-lg roboto-bold">Your Cart ({{cart?.items?.length}})</h2>
       <button (click)="closeCart()" class="text-gray-500 hover:text-gray-700">
         <i class="fas fa-times"></i>
       </button>
@@ -34,7 +34,7 @@
         </button>
       </div>
 
-    
+
       <!-- Totals -->
       <div class="border-t pt-4" >
         <div class="flex justify-between text-sm">

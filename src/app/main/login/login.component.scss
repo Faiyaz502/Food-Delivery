@@ -1,0 +1,288 @@
+/* Import Poppins Font */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+ @import url('https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css'); 
+    :host {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        /* Use the original red/yellow gradient theme */
+        background: linear-gradient(135deg, #FF416C, #FFC371);
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+        text-decoration: none;
+        list-style: none;
+    }
+
+    /* Main Container for the Sliding Effect - Increased size */
+    .container {
+        position: relative;
+        width: 100vw;
+        max-width: 1000px; /* Increased from 900px */
+        height: 100vh;
+        max-height: 850px; /* Increased from 750px */
+        background: #fff;
+        margin: 20px;
+        border-radius: 30px;
+        box-shadow: 0 0 30px rgba(0, 0, 0, .2);
+        overflow: hidden;
+    }
+
+    .container h1 {
+        font-size: 36px;
+        color: #333; /* Dark text for form titles */
+    }
+
+    .container p {
+        font-size: 14.5px;
+        margin: 10px 0; /* Slightly reduced margin for forms */
+        color: #555; /* Slightly lighter text */
+    }
+
+    form { width: 100%; }
+
+    /* Form Boxes (Login and Register) - Adjusted padding */
+    .form-box {
+        position: absolute;
+        right: 0;
+        width: 50%;
+        height: 100%;
+        background: #fff;
+        display: flex;
+        flex-direction: column; /* Added for better vertical alignment on registration form */
+        justify-content: center;
+        align-items: center;
+        color: #333;
+        text-align: center;
+        padding: 30px 40px; /* Adjusted padding to save space */
+        z-index: 1;
+        /* Animation timings for sliding the form content */
+        transition: right .6s ease-in-out 1.2s, visibility 0s 1s;
+    }
+
+    .container.active .form-box { right: 50%; }
+
+    .form-box.register {
+        visibility: hidden;
+    }
+    .container.active .form-box.register {
+        visibility: visible;
+    }
+
+    /* Icon Styling (Tailwind-compatible) */
+    .input-box {
+        position: relative;
+        margin-bottom: 0.725rem; /* Fine-tuned spacing */
+    }
+    /* Increased general input padding in Tailwind, but keeping the fixed CSS right padding for the icon */
+    .input-box input, .input-box textarea {
+        padding-right: 3rem !important; /* Make room for the icon */
+        transition: all 0.3s ease-in-out;
+        font-size: 1rem;
+        padding: 10px; /* text-base for better consistency with p-4 */
+    }
+    .input-box i {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #9ca3af; /* Gray-400 */
+        transition: color 0.3s ease-in-out;
+        pointer-events: none; /* Ignore pointer events on icon */
+        font-size: 18px; /* Boxicon default size */
+    }
+    .input-box input:focus + i,
+    .input-box textarea:focus + i {
+        color: #FBBF24; /* Yellow-400 on focus */
+    }
+
+    /* Specific style fixes for date and textarea */
+    .input-box input[type="date"] {
+        padding-right: 1rem !important;
+    }
+    .input-box input[type="date"] + i {
+        right: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+    .input-box textarea + i {
+        top: 1rem;
+        transform: translateY(0);
+    }
+
+    .forgot-link {
+        margin: -5px 0 15px;
+        text-align: right;
+    }
+    .forgot-link a {
+        font-size: 14px;
+        color: #555;
+        transition: color 0.3s;
+    }
+    .forgot-link a:hover {
+        color: #FF416C; /* Red theme highlight */
+    }
+
+    /* Buttons */
+    .btn {
+        width: 100%;
+        height: 44px; /* Slightly reduced button height */
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        color: #fff;
+        font-weight: 600;
+        transition: all 0.3s ease-in-out;
+    }
+    /* Custom gradient for submit buttons inside the form boxes */
+    .form-box .btn {
+        background: linear-gradient(90deg, #FF416C, #FFC371);
+        box-shadow: 0 4px 15px rgba(255, 65, 108, 0.4);
+        margin-top: 1.5rem; /* Add specific top margin for submission buttons */
+    }
+    .form-box .btn:hover {
+        transform: scale(1.01);
+        opacity: 0.95;
+    }
+
+
+    /* Toggle Box and Panel Styles */
+    .toggle-box {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+    }
+
+    .toggle-box::before {
+        content: '';
+        position: absolute;
+        left: -250%;
+        width: 300%;
+        height: 100%;
+        /* Themed background for the sliding panel */
+        background: linear-gradient(135deg, #FF416C, #FFC371);
+        border-radius: 150px;
+        z-index: 2;
+        transition: 1.8s ease-in-out;
+    }
+
+    .container.active .toggle-box::before { left: 50%; }
+
+    .toggle-panel {
+        position: absolute;
+        width: 50%;
+        height: 100%;
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 2;
+        text-align: center;
+        padding: 20px;
+        transition: .6s ease-in-out;
+    }
+
+    .toggle-panel.toggle-left {
+        left: 0;
+        transition-delay: 1.2s;
+    }
+    .container.active .toggle-panel.toggle-left {
+        left: -50%;
+        transition-delay: .6s;
+    }
+
+    .toggle-panel.toggle-right {
+        right: -50%;
+        transition-delay: .6s;
+    }
+    .container.active .toggle-panel.toggle-right {
+        right: 0;
+        transition-delay: 1.2s;
+    }
+
+    .toggle-panel p { color: #fff; margin-bottom: 20px; }
+
+    /* Themed transparent buttons for toggle panels */
+    .toggle-panel .btn {
+        width: 160px;
+        height: 46px;
+        background: transparent;
+        border: 2px solid #fff;
+        box-shadow: none;
+        text-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    .toggle-panel .btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Responsive Adjustments for Mobile */
+    @media screen and (max-width: 960px) {
+        .container {
+            max-width: 400px;
+            height: 90vh;
+            max-height: none;
+        }
+        .form-box, .toggle-panel {
+            width: 100%;
+        }
+        .form-box {
+            padding: 30px 20px;
+            height: 70%;
+            top: 30%;
+            right: 0;
+            transition: top .6s ease-in-out 1.2s, visibility 0s 1s;
+        }
+        .form-box.register {
+            top: 0;
+            transition: top .6s ease-in-out 1.2s, visibility 0s 1s;
+        }
+        .container.active .form-box { right: 0; }
+        .container.active .form-box.login { top: 70%; }
+        .container.active .form-box.register { top: 0; }
+
+        .toggle-box::before {
+            left: 0;
+            top: -270%;
+            width: 100%;
+            height: 300%;
+            border-radius: 20vw;
+        }
+        .container.active .toggle-box::before {
+            left: 0;
+            top: 30%;
+        }
+
+        .toggle-panel {
+            height: 30%;
+            width: 100%;
+            top: 0;
+            right: 0;
+            transition: top .6s ease-in-out;
+        }
+        .toggle-panel.toggle-left {
+            transition-delay: 1.2s;
+        }
+        .container.active .toggle-panel.toggle-left {
+            top: 70%;
+            transition-delay: .6s;
+        }
+
+        .toggle-panel.toggle-right {
+            top: 70%;
+            transition-delay: .6s;
+        }
+        .container.active .toggle-panel.toggle-right {
+            top: 0;
+            transition-delay: 1.2s;
+        }
+
+        .form-box h1 { font-size: 30px; }
+    }

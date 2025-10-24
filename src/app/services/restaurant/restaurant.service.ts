@@ -22,13 +22,18 @@ export class RestaurantService {
     getRestaurantById(id: number): Observable<Restaurant> {
       return this.http.get<Restaurant>(`${this.apiUrl}/restaurants/${id}`);
     }
+    getRestaurantBycategoryName(name: string): Observable<Restaurant[]> {
+      return this.http.get<Restaurant[]>(`${this.apiUrl}/restaurants/category/${name}`);
+    }
 
     createRestaurant(restaurant: Omit<Restaurant, 'id'>): Observable<Restaurant> {
       return this.http.post<Restaurant>(`${this.apiUrl}/restaurants`, restaurant);
     }
 
     updateRestaurant(id: number, restaurant: Partial<Restaurant>): Observable<Restaurant> {
+
       return this.http.put<Restaurant>(`${this.apiUrl}/restaurants/${id}`, restaurant);
+
     }
 
     deleteRestaurant(id: number): Observable<void> {

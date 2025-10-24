@@ -31,6 +31,7 @@ export class HomeComponent implements OnInit {
   categories!:MenuCategoryDto[];
   restaurants!: Restaurant[];
   menuItems!: MenuItem[];
+  isLogin = false ;
 
 
   constructor(
@@ -86,6 +87,10 @@ export class HomeComponent implements OnInit {
      goToRestaurant(id: number) {
     this.router.navigate(['/main/restaurant', id]);
   }
+      //restaurants
+     goToRestaurants() {
+    this.router.navigate(['/main/restaurantList']);
+  }
 
   toggleFavorite(restaurant: any, event: MouseEvent) {
     event.stopPropagation(); // 👈 stops the card click event
@@ -93,6 +98,35 @@ export class HomeComponent implements OnInit {
     // Add logic to toggle favorite here
   }
 
+
+  //delivery Area
+  deliveryAreas = [
+  {
+    name: 'Dhaka',
+    imageUrl: 'https://images.unsplash.com/photo-1706640254398-3b04782e8c76?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=774'
+  },
+  {
+    name: 'Chittagong',
+    imageUrl: 'https://plus.unsplash.com/premium_photo-1661900538689-e2c25124aa35?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=995'
+  },
+  {
+    name: 'Sylhet',
+    imageUrl: 'https://images.unsplash.com/photo-1637424505771-aaa974a70a3d?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=393'
+  },
+  {
+    name: 'Tangail',
+    imageUrl: 'https://images.unsplash.com/photo-1708542536156-79afbf85ed69?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1032'
+  },
+  {
+    name: 'Rajshahi',
+    imageUrl: 'https://plus.unsplash.com/premium_photo-1694475439235-0a0306a7477b?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=894'
+  },
+  {
+    name: 'Khulna',
+    imageUrl: 'https://plus.unsplash.com/premium_photo-1676487748067-4da1e9afa701?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=870'
+  },
+
+];
 
 
 

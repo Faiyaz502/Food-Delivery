@@ -3,9 +3,11 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { CartResponseDTO } from 'src/app/Models/cart/cart.models';
 import { OrderFilters, OrderResponseDTO, OrderStatistics, OrderStatus, PaymentStatus } from 'src/app/Models/Order/order.models';
+import { User } from 'src/app/Models/Users/user.models';
 import { CartService } from 'src/app/services/Cart/cart.service';
 
 import {  OrderService } from 'src/app/services/Orders/order.service';
+import { UserServiceService } from 'src/app/services/UserServices/user.service.service';
 interface OrderStats {
   total: number;
   pending: number;
@@ -26,6 +28,7 @@ export class OrdersComponent implements OnInit {
   orders: OrderResponseDTO[] = [];
   filteredOrders: OrderResponseDTO[] = [];
   carts: CartResponseDTO[] = [];
+  selectedtUser:User | null  = null;
   selectedOrder: OrderResponseDTO | null = null;
   selectedCart: CartResponseDTO | null = null;
   stats: OrderStatistics = {
@@ -73,7 +76,8 @@ export class OrdersComponent implements OnInit {
 
   constructor(
     private orderService: OrderService,
-    private cartService: CartService
+    private cartService: CartService ,
+    private userService:UserServiceService
   ) {}
 
   ngOnInit(): void {
@@ -128,12 +132,19 @@ export class OrdersComponent implements OnInit {
   loadCarts(): void {
     this.cartService.getAllActiveCarts().subscribe({
     next: (data) => {
+
+      console.log(data);
+
       this.carts = data;
+
+
+
+
     },
     error: (err) => {
       console.error('Failed to load carts:', err);
     }
-  }); 
+  });
 
   }
 
@@ -272,6 +283,19 @@ export class OrdersComponent implements OnInit {
   viewCartDetails(cart: CartResponseDTO): void {
     this.selectedCart = cart;
     this.showCartModal = true;
+
+    this.userService.getUserById(cart.userId).subscribe((res)=>{
+
+
+        this.selectedtUser = res ;
+
+    })
+
+
+
+
+
+
   }
 
   clearCart(userId: number): void {
@@ -370,5 +394,5 @@ export class OrdersComponent implements OnInit {
     console.log('Exporting orders...');
   }
 
- 
+
 }

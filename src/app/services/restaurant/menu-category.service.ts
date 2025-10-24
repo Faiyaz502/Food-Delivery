@@ -8,6 +8,7 @@ export interface MenuCategoryDto {
   name: string;
   description?: string;
   imgUrl?: string;
+  icon:string
 }
 @Injectable({
   providedIn: 'root'
