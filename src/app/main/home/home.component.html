@@ -40,11 +40,11 @@
       Browse by Category
     </h2>
     <div class="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
-      <div
+      <div 
         *ngFor="let categore of categories"
-        class="group flex min-w-[120px] flex-col items-center gap-3 rounded-2xl bg-white p-4 shadow hover:shadow-lg hover:-translate-y-1 transition-all"
+        class="group cursor-pointer flex min-w-[120px] flex-col items-center gap-3 rounded-2xl bg-white p-4 shadow hover:shadow-lg hover:-translate-y-1 transition-all"
       >
-        <div
+        <div (click)="goToRestaurants(categore.name)"
           class="h-20 w-20 overflow-hidden rounded-full bg-gray-200 transition-transform group-hover:scale-110"
         >
           <img
@@ -83,7 +83,7 @@
         *ngFor="let menuItem of menuItems"
       >
         <!-- Image Section -->
-        <div class="relative h-48 overflow-hidden">
+        <div class="relative h-48 overflow-hidden" (click)="goToRestaurant(menuItem.restaurantId)">
           <img
             [src]="
               menuItem.imageUrl ||
@@ -232,16 +232,7 @@
       <h2 class="text-3xl font-bold ff-secondary text-center">
         Popular Restaurants
       </h2>
-      <div class="relative w-full md:w-80">
-        <i
-          class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-        ></i>
-        <input
-          type="text"
-          placeholder="Search restaurants..."
-          class="pl-10 w-full bg-white rounded-lg py-2 px-4 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
+
     </div>
 
     <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -305,7 +296,7 @@
     </div>
 
     <div class="mt-12 text-center" >
-      <button (click)="goToRestaurants()"
+      <button (click)="goToRestaurants('All')"
         class="px-8 py-3 bg-white text-red-600 font-semibold roboto-bold rounded-full border-2 border-red-600 hover:bg-red-600 hover:text-white transition-colors duration-300 shadow-sm hover:shadow-md"
       >
         Explore More

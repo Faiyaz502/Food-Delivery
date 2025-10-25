@@ -12,16 +12,19 @@ import { UserServiceService } from 'src/app/services/UserServices/user.service.s
 })
 export class LoginComponent {
 
-// Inject services and FormBuilder
+  // Inject services and FormBuilder
 
-constructor(private fb:FormBuilder, private userService:UserServiceService,private userProfileService:UserProfileService){
+  constructor(private fb: FormBuilder, private userService: UserServiceService, private userProfileService: UserProfileService) {
 
-  this.initForm();
-}
+    this.initForm();
+  }
 
   customerProfile = {
     dateOfBirth: '',
-    profileImageUrl: ''
+    profileImageUrl: '',
+    latitude: 0,
+    longitude: 0
+
   };
 
   registerForm!: FormGroup;
@@ -65,14 +68,19 @@ constructor(private fb:FormBuilder, private userService:UserServiceService,priva
 
     // Construct the payload for the service
     const newUser = {
-        ...this.registerForm.value,
-        primaryRole: UserRole.CUSTOMER // Fixed role as requested
+      ...this.registerForm.value,
+      primaryRole: UserRole.CUSTOMER // Fixed role as requested
     };
 
     // Prepare profile data based on form values
     this.customerProfile = {
-        dateOfBirth: newUser.dateOfBirth,
-        profileImageUrl: '' // Not collected in this form
+      dateOfBirth: newUser.dateOfBirth,
+      profileImageUrl: '',// Not collected in this form
+      latitude: 0,
+      longitude: 0
+
+
+
     };
 
     // Start user creation process
@@ -98,28 +106,28 @@ constructor(private fb:FormBuilder, private userService:UserServiceService,priva
   createRoleProfile(user: User): void {
     // Check if profile data exists to be saved
     if (user.primaryRole === UserRole.CUSTOMER) {
-        if (this.customerProfile.dateOfBirth || this.customerProfile.profileImageUrl) {
-            this.userProfileService.createUserProfile(user.id, this.customerProfile).subscribe({
-                next: (s) => {
-                    console.log('Profile creation success:', s);
-                    this.successMessage = 'User and profile created successfully!';
-                    this.completeUserCreation();
-                },
-                error: (error) => {
-                    console.error('Profile creation error:', error);
-                    // Handle profile failure but user success
-                    this.successMessage = 'User created, but profile creation failed (Try updating your profile later).';
-                    this.completeUserCreation();
-                }
-            });
-        } else {
-            // No profile data to save, complete registration
-            this.successMessage = 'User created successfully! (No optional profile data was submitted)';
+      if (this.customerProfile.dateOfBirth || this.customerProfile.profileImageUrl) {
+        this.userProfileService.createUserProfile(user.id, this.customerProfile).subscribe({
+          next: (s) => {
+            console.log('Profile creation success:', s);
+            this.successMessage = 'User and profile created successfully!';
             this.completeUserCreation();
-        }
+          },
+          error: (error) => {
+            console.error('Profile creation error:', error);
+            // Handle profile failure but user success
+            this.successMessage = 'User created, but profile creation failed (Try updating your profile later).';
+            this.completeUserCreation();
+          }
+        });
+      } else {
+        // No profile data to save, complete registration
+        this.successMessage = 'User created successfully! (No optional profile data was submitted)';
+        this.completeUserCreation();
+      }
     } else {
-         this.errorMessage = `Unsupported user role: ${user.primaryRole}. Cannot complete registration.`;
-         this.isLoading = false;
+      this.errorMessage = `Unsupported user role: ${user.primaryRole}. Cannot complete registration.`;
+      this.isLoading = false;
     }
   }
 

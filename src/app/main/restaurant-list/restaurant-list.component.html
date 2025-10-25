@@ -1,91 +1,103 @@
 <div class="flex">
 
-    <!-- Sidebar: Categories -->
-<!-- Sidebar: Categories -->
-<aside class="w-64 bg-white border-r border-gray-200 p-6 h-[calc(100vh-4rem)] sticky top-16 overflow-y-auto">
-  <h2 class="text-lg font-semibold mb-6 text-gray-900">Categories</h2>
-  <nav class="space-y-2">
-     <button
-
-      (click)="selectCategory('All')"
-      class="w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all"
-      [ngClass]="{
+  <!-- Sidebar: Categories -->
+  <!-- Sidebar: Categories -->
+  <aside class="w-64 bg-white border-r border-gray-200 p-6 h-[calc(100vh-4rem)] sticky top-16 overflow-y-auto">
+    <h2 class="text-lg font-semibold mb-6 text-gray-900">Categories</h2>
+    <nav class="space-y-2">
+      <button (click)="selectCategory('All')"
+        class="w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all" [ngClass]="{
         'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md': selectedCategory === 'All',
         'text-gray-500 hover:bg-gray-100 hover:text-gray-900 hover:translate-x-1': selectedCategory !== 'All'
-      }"
-    >
-      <i [class]="'fas ' + 'fa-utensils'+ ' w-5 h-5'"></i>
-      <span>All</span>
-    </button>
+      }">
+        <i [class]="'fas ' + 'fa-utensils'+ ' w-5 h-5'"></i>
+        <span>All</span>
+      </button>
 
 
-    <button
-      *ngFor="let category of categories"
-      (click)="selectCategory(category.name)"
-      class="w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all"
-      [ngClass]="{
+      <button *ngFor="let category of categories" (click)="selectCategory(category.name)"
+        class="w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all" [ngClass]="{
         'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md': selectedCategory === category.name,
         'text-gray-500 hover:bg-gray-100 hover:text-gray-900 hover:translate-x-1': selectedCategory !== category.name
-      }"
-    >
-      <i [class]="'fas ' + category.icon + ' w-5 h-5'"></i>
-      <span>{{ category.name }}</span>
-    </button>
-  </nav>
-</aside>
+      }">
+        <i [class]="'fas ' + category.icon + ' w-5 h-5'"></i>
+        <span>{{ category.name }}</span>
+      </button>
+    </nav>
+  </aside>
 
-    <!-- Main Content -->
-    <main class="flex-1 p-6">
-      <div class="mb-6">
-        <h2 class="text-2xl font-bold text-gray-900 mb-2">
-          All Restaurants
-        </h2>
-        <p class="text-gray-500">
-          8 restaurants found
-        </p>
+  <!-- Main Content -->
+  <main class="flex-1 p-6">
+    <div class="mb-6 flex justify-between">
+
+      <div class="">
+  <h2 class="text-2xl font-bold text-gray-900 mb-2">
+        {{selectedCategory}} Restaurants
+      </h2>
+      <p class="text-gray-500">
+        {{restaurants.length}} restaurants found
+      </p>
+
+
       </div>
 
-      <!-- Restaurant Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" >
+    
+      <div class="relative w-full md:w-80 mb-4">
+        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+        <input type="text" placeholder="Search restaurants..."
+                [(ngModel)]="filter.name"
+            (ngModelChange)="onFilterChange()"
+          class="pl-10 w-full bg-white rounded-lg py-2 px-4 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      </div>
 
-        <!-- Restaurant Card 1 -->
-        <div *ngFor="let restaurant of restaurants" class="group cursor-pointer overflow-hidden bg-white rounded-xl border border-gray-200 card-hover transition-all duration-300">
-          <div class="relative h-48 overflow-hidden">
-            <img
-              src="{{restaurant.imageUrls[0]}}"
-              alt="{{restaurant.name}}"
-              class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-            />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded flex items-center">
-              <i class="fas fa-star text-xs mr-1"></i>
-             {{restaurant.averageRating}}
-            </div>
+
+    </div>
+
+
+    <!-- Restaurant Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      <!-- Restaurant Card 1 -->
+      <div *ngFor="let restaurant of restaurants"
+        class="group cursor-pointer overflow-hidden bg-white rounded-xl border border-gray-200 card-hover transition-all duration-300">
+        <div class="relative h-48 overflow-hidden">
+          <img src="{{restaurant.imageUrls[0]}}" alt="{{restaurant.name}}"
+            class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+          <div
+            class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           </div>
-          <div class="p-4">
-            <h3 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
-             {{restaurant.name}}
-            </h3>
-            <!-- <p class="text-sm text-gray-500 mb-3">{{restaurant.totalOrders}}</p> // will add tags -->
-
-            <div class="flex items-center justify-between text-sm text-gray-500">
-              <div class="flex items-center gap-1"><i class="fas fa-clock mr-1"></i> {{restaurant.estimatedDeliveryTime}}</div>
-              <div class="flex items-center gap-1"><i class="fas fa-dollar-sign mr-1"></i> $${{restaurant.minimumOrderAmount}}</div>
-              <div class="flex items-center gap-1"><i class="fas fa-map-marker-alt mr-1"></i> 1.2 mi</div>
-            </div>
+          <div
+            class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded flex items-center">
+            <i class="fas fa-star text-xs mr-1"></i>
+            {{restaurant.averageRating}}
           </div>
         </div>
+        <div class="p-4">
+          <h3 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+            {{restaurant.name}}
+          </h3>
+          <!-- <p class="text-sm text-gray-500 mb-3">{{restaurant.totalOrders}}</p> // will add tags -->
 
-
-
-
+          <div class="flex items-center justify-between text-sm text-gray-500">
+            <div class="flex items-center gap-1"><i class="fas fa-clock mr-1"></i> {{restaurant.estimatedDeliveryTime}}
+            </div>
+            <div class="flex items-center gap-1"><i class="fas fa-dollar-sign mr-1"></i>
+              $${{restaurant.minimumOrderAmount}}</div>
+            <div class="flex items-center gap-1"><i class="fas fa-map-marker-alt mr-1"></i> 1.2 mi</div>
+          </div>
+        </div>
       </div>
 
 
-      <div class="text-center py-16" *ngIf="restaurants.length == 0">
-        <p class="text-xl text-gray-500">No restaurants found</p>
-        <p class="text-sm text-gray-500 mt-2">Try adjusting your filters or search query</p>
-      </div>
 
 
-    </main>
+    </div>
+
+
+    <div class="text-center py-16" *ngIf="restaurants.length == 0">
+      <p class="text-xl text-gray-500">No restaurants found</p>
+      <p class="text-sm text-gray-500 mt-2">Try adjusting your filters or search query</p>
+    </div>
+
+
+  </main>

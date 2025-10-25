@@ -31,8 +31,8 @@ isCartOpen = false;
 
     cart: CartResponseDTO | null = null;
 
-    // userId: number = 2; // TSP
-    userId: number = 5; // HOme
+    userId: number = 2; // TSP
+    // userId: number = 5; // Home
 
 
     constructor(private cartService: CartService,private router: Router) {}
@@ -54,7 +54,7 @@ isCartOpen = false;
 
           //restaurants
      goToRestaurants() {
-    this.router.navigate(['/main/restaurantList']);
+    this.router.navigate(['/main/restaurantList/All']);
   }
 
 

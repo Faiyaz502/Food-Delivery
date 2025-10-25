@@ -20,7 +20,7 @@ const routes: Routes = [
   { path: 'checkout', component: CheckoutComponent },
   { path: 'trackOrder', component: TrackOrderComponent },
   { path: 'support', component: SupportComponent },
-  { path: 'restaurantList', component: RestaurantListComponent },
+  { path: 'restaurantList/:category', component: RestaurantListComponent },
   { path: 'login', component: LoginComponent },
 
 

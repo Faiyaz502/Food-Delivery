@@ -28,8 +28,8 @@ import { CartItemCreateDTO } from 'src/app/Models/cart/cart.models';
 
 export class RestauranPageComponent {
 
-  // userId = 2; // TSP
-  userId = 5; // home
+  userId = 2; // TSP
+  // userId = 5; // home
 
   restaurantId!:number;
   restaurant!: Restaurant;

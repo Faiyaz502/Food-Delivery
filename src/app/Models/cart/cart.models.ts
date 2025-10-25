@@ -54,4 +54,5 @@ export interface CheckoutDTO {
   specialInstructions?: string;
   deliveryFee: number;
   priorityLevel: number;
+  totalAmount : number 
 }

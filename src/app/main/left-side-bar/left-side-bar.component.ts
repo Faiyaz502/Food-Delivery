@@ -13,8 +13,8 @@ export class LeftSideBarComponent {
 @Input() isOpen: boolean = false;
   @Output() closeSidebarEvent = new EventEmitter<void>();
 
-  UserId:number = 5 ; // home
-  // UserId:number = 2 ; //Tsp
+  // UserId:number = 5 ; // home
+  UserId:number = 2 ; //Tsp
 
 
 

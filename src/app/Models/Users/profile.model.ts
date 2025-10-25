@@ -11,6 +11,8 @@ export interface UserProfile {
   averageOrderValue: number;
   loyaltyPoints: number;
   customerTier: CustomerTier;
+  latitude:number ;
+  longitude : number ;
   createdAt: string;
   updatedAt: string;
 }
@@ -18,6 +20,8 @@ export interface UserProfile {
 export interface UserProfileCreateDTO {
   dateOfBirth?: string;
   profileImageUrl?: string;
+  latitude:number ;
+  longitude : number ;
 }
 
 export interface DeliveryPersonProfile {

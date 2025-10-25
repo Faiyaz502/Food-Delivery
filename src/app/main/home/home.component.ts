@@ -88,9 +88,10 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['/main/restaurant', id]);
   }
       //restaurants
-     goToRestaurants() {
-    this.router.navigate(['/main/restaurantList']);
+     goToRestaurants(category:string) {
+    this.router.navigate(['/main/restaurantList/',category]);
   }
+
 
   toggleFavorite(restaurant: any, event: MouseEvent) {
     event.stopPropagation(); // 👈 stops the card click event

@@ -79,7 +79,10 @@ export class UsersComponent {
 
   customerProfile = {
     dateOfBirth: '',
-    profileImageUrl: ''
+    profileImageUrl: '',
+    latitude:0 ,
+     longitude : 0 
+    
   };
 
   deliveryPersonProfile = {
@@ -261,7 +264,10 @@ export class UsersComponent {
   resetProfileForms(): void {
     this.customerProfile = {
       dateOfBirth: '',
-      profileImageUrl: ''
+      profileImageUrl: '',
+      latitude:0 ,
+     longitude : 0 
+    
     };
     this.deliveryPersonProfile = {
       vehicleType: VehicleType.BIKE,
