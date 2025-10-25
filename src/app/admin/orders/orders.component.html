@@ -538,6 +538,10 @@
               <span class="text-gray-600">Tax (10%)</span>
               <span class="font-medium">{{ formatCurrency(selectedOrder.taxAmount) }}</span>
             </div>
+            <div class="flex justify-between py-2">
+              <span class="text-gray-600">Discount </span>
+              <span class="font-medium">-{{ formatCurrency(selectedOrder.discount) }}</span>
+            </div>
             <div class="flex justify-between py-3 border-t-2 border-gray-300 mt-2">
               <span class="text-lg font-semibold">Total Amount</span>
               <span class="text-xl font-bold text-blue-600">{{ formatCurrency(selectedOrder.totalAmount) }}</span>

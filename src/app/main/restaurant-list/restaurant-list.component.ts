@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Restaurant } from 'src/app/Models/restaurant.model';
 import { MenuCategoryDto, MenuCategoryService } from 'src/app/services/restaurant/menu-category.service';
 import { RestaurantService } from 'src/app/services/restaurant/restaurant.service';
@@ -34,7 +34,11 @@ export class RestaurantListComponent implements OnInit {
 
 
 
-  constructor(private categoryService: MenuCategoryService, private restaurantService: RestaurantService, private route: ActivatedRoute) { }
+  constructor(private categoryService: MenuCategoryService,
+    private restaurantService: RestaurantService,
+    private route: ActivatedRoute ,
+   private router: Router
+  ) { }
   ngOnInit(): void {
 
 
@@ -48,7 +52,7 @@ export class RestaurantListComponent implements OnInit {
 
     this.getRestauratnByCategory();
 
-    
+
 
 
   }
@@ -117,6 +121,11 @@ clearFilters(): void {
   this.filter.name = '';
   this.applyFilters();
 }
+
+
+     goToRestaurant(id: number) {
+    this.router.navigate(['/main/restaurant', id]);
+  }
 
 
 

@@ -49,7 +49,7 @@
             <label for="card" class="font-medium text-gray-800 roboto-bold">Card ending in **{{ selectedCard.last4Digits }}** ({{ selectedCard.cardType }})</label>
           </div>
           <div class="border p-4 rounded-lg cursor-pointer">
-            <input type="radio" id="cod" name="paymentMethod" [checked]="!selectedCard" class="mr-2 text-red-600 focus:ring-red-500">
+            <input type="radio" id="cod" name="paymentMethod" formControlName="cashOnDelivery" [checked]="!selectedCard" class="mr-2 text-red-600 focus:ring-red-500">
             <label for="cod" class="font-medium text-gray-800 roboto-bold">Cash on Delivery (COD)</label>
           </div>
           <button class="text-red-600 font-medium hover:underline">
@@ -141,3 +141,5 @@
     <button class="btn btn-secondary" (click)="denyLocation()">Deny</button>
   </div>
 </div>
+
+

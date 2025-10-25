@@ -13,9 +13,9 @@ import { MenuCategoryDto, MenuCategoryService } from 'src/app/services/restauran
 import { RestaurantService } from 'src/app/services/restaurant/restaurant.service';
 import { ReviewService } from 'src/app/services/reviewAndCoupon/review.service';
 import * as L from 'leaflet';
-import { forkJoin } from 'rxjs';
+import { forkJoin, lastValueFrom, switchMap, tap } from 'rxjs';
 import { CartService } from 'src/app/services/Cart/cart.service';
-import { CartItemCreateDTO } from 'src/app/Models/cart/cart.models';
+import { CartItemCreateDTO, CartResponseDTO } from 'src/app/Models/cart/cart.models';
 
 
 
@@ -28,8 +28,10 @@ import { CartItemCreateDTO } from 'src/app/Models/cart/cart.models';
 
 export class RestauranPageComponent {
 
-  userId = 2; // TSP
-  // userId = 5; // home
+  // userId = 2; // TSP
+  userId = 5; // home
+
+    showClearCartOption: boolean = false;
 
   restaurantId!:number;
   restaurant!: Restaurant;
@@ -67,6 +69,8 @@ export class RestauranPageComponent {
     console.log('Restaurant ID:', this.restaurantId);
 
       this.loadData();
+
+
 
 
 
@@ -301,34 +305,99 @@ fetchItems() {
 
 //Cart Add
 
-addToCart(menuItemId: number) {
-  const newItem: CartItemCreateDTO = {
-    menuItemId: menuItemId,
-    quantity: 1
-  };
+async addToCart(menuItemId: number): Promise<void> {
+  // 1. Store the item the user is attempting to add
+  this.CurrentCart.menuItemId = menuItemId;
+  this.CurrentCart.quantity = 1;
 
-  // Step 1: Get or create the user's cart
-  this.cartService.getOrCreateCart(this.userId).subscribe({
-    next: (cart) => {
-      console.log('Cart fetched/created:', cart);
+  // 2. Begin the check/add process
+  await this.checkAndAddToCart(menuItemId);
+}
 
-      // Step 2: Add the item to the cart
-      this.cartService.addItemToCart(this.userId, newItem).subscribe({
-        next: (updatedCart) => {
-          console.log('Item added to cart:', updatedCart);
-          alert('Item added to cart successfully!');
-        },
-        error: (err) => {
-          console.error('Error adding item to cart:', err);
-        }
-      });
-    },
-    error: (err) => {
-      console.error('Error fetching/creating cart:', err);
-    }
-  });
+/**
+ * Checks if the new item's restaurant matches the cart's existing items.
+ * If not, shows the conflict modal.
+ */
+private async checkAndAddToCart(menuItemId: number): Promise<void> {
+  try {
+    // 💡 Get cart data using lastValueFrom for async/await pattern
+    const cart: CartResponseDTO = await lastValueFrom(this.cartService.getOrCreateCart(this.userId));
+
+    if (cart && cart.items && cart.items.length > 0) {
+      // Find the full details of the menu item being added
+      const newItemDetails = this.menuItems.find(item => item.id === menuItemId);
+
+      if (!newItemDetails) {
+        console.error('New menu item details not found.');
+        alert('Error: Item not found in the menu.');
+        return;
+      }
+
+      // Get the restaurant ID of the first item in the cart
+      // Assuming all items in a valid cart have the same restaurant ID
+      const existingRestId = cart.items[0].restaurantId;
+
+      // Check for mismatch
+      if (existingRestId !== newItemDetails.restaurantId) {
+        // Mismatch detected! Show the warning modal.
+        this.showClearCartOption = true;
+        return; // Stop the function here, wait for user action on the modal
+      }
+    }
+
+    // If cart is empty OR restaurant IDs match, proceed to add the item.
+    this.proceedToAddItem(this.CurrentCart);
+
+  } catch (error) {
+    console.error('Error checking cart before adding item:', error);
+    // Fallback: If cart check fails, proceed to add optimistically
+    this.proceedToAddItem(this.CurrentCart);
+  }
 }
 
 
+private proceedToAddItem(item: CartItemCreateDTO): void {
+    // Get or create cart, then switch to adding the item
+    this.cartService.getOrCreateCart(this.userId).pipe(
+      switchMap(() => this.cartService.addItemToCart(this.userId, item)),
+      tap({
+        next: (updatedCart) => {
+          console.log('Item added to cart:', updatedCart);
+          alert('Item added to cart successfully!');
+        },
+        error: (err) => {
+          console.error('Error adding item to cart:', err);
+          alert('Error adding item to cart. Please try again.');
+        }
+      })
+    ).subscribe();
+  }
+
+
+clearCartForMultiRestaurant(): void {
+    // 1. Call the service to clear the user's cart
+    this.cartService.clearCart(this.userId).pipe(
+      tap({
+        next: () => {
+          // 2. Hide the modal on success
+          this.showClearCartOption = false;
+
+          // 3. Re-attempt to add the stored item
+          alert(`Cart cleared successfully! Now adding the new item.`);
+          this.proceedToAddItem(this.CurrentCart);
+        },
+        error: (err) => {
+          console.error('Error clearing cart:', err);
+          alert('Could not clear the cart. Please try again.');
+          // Keep the modal open so the user can see the error or try again
+        }
+      })
+    ).subscribe();
+  }
+
+
+
 
 }
+
+

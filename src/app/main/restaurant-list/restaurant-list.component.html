@@ -1,6 +1,6 @@
 <div class="flex">
 
-  <!-- Sidebar: Categories -->
+
   <!-- Sidebar: Categories -->
   <aside class="w-64 bg-white border-r border-gray-200 p-6 h-[calc(100vh-4rem)] sticky top-16 overflow-y-auto">
     <h2 class="text-lg font-semibold mb-6 text-gray-900">Categories</h2>
@@ -41,7 +41,7 @@
 
       </div>
 
-    
+
       <div class="relative w-full md:w-80 mb-4">
         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
         <input type="text" placeholder="Search restaurants..."
@@ -58,7 +58,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
       <!-- Restaurant Card 1 -->
-      <div *ngFor="let restaurant of restaurants"
+      <div *ngFor="let restaurant of restaurants"  (click)="goToRestaurant(restaurant.id!)"
         class="group cursor-pointer overflow-hidden bg-white rounded-xl border border-gray-200 card-hover transition-all duration-300">
         <div class="relative h-48 overflow-hidden">
           <img src="{{restaurant.imageUrls[0]}}" alt="{{restaurant.name}}"

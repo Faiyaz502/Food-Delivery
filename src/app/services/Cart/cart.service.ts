@@ -42,13 +42,12 @@ export class CartService {
     );
   }
 
-  updateCartItemQuantity(userId: number, cartItemId: number, quantity: number): Observable<CartResponseDTO> {
-    let params = new HttpParams().set('quantity', quantity.toString());
-
-    return this.http.put<CartResponseDTO>(`${this.apiUrl}/user/${userId}/items/${cartItemId}`, null, { params }).pipe(
-      tap(cart => this.currentCartSubject.next(cart))
-    );
-  }
+updateCartItemQuantity(userId: number, cartItemId: number, quantity: number) {
+  return this.http.put<CartResponseDTO>(
+    `${this.apiUrl}/user/${userId}/items/${cartItemId}?quantity=${quantity}`,
+    {}
+  );
+}
 
   removeItemFromCart(userId: number, cartItemId: number): Observable<CartResponseDTO> {
     return this.http.delete<CartResponseDTO>(`${this.apiUrl}/user/${userId}/items/${cartItemId}`).pipe(

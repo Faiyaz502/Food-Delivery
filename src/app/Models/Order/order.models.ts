@@ -39,6 +39,7 @@ export interface OrderResponseDTO {
   deliveryLongitude?: number;
   subtotal: number;
   deliveryFee: number;
+  discount:number;
   taxAmount: number;
   totalAmount: number;
   orderStatus: OrderStatus;

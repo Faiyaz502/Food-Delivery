@@ -22,7 +22,7 @@ export interface CartResponseDTO {
   totalItems: number;
   createdAt: string;           // LocalDateTime → ISO string
   updatedAt: string;
-  
+
 }
 
 export interface CartItemCreateDTO {
@@ -53,6 +53,7 @@ export interface CheckoutDTO {
   deliveryType: 'STANDARD' | 'EXPRESS' | 'SCHEDULED' | 'PICKUP';
   specialInstructions?: string;
   deliveryFee: number;
+  discount:number;
   priorityLevel: number;
-  totalAmount : number 
+  totalAmount : number
 }

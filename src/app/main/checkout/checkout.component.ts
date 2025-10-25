@@ -19,7 +19,9 @@ import { UserProfileService } from 'src/app/services/UserServices/user-profile.s
 export class CheckoutComponent {
 
   showLocationPrompt: boolean = false;
-  userId: number = 3; // TODO: Replace with real authenticated user ID
+
+  // userId: number = 3; // tsp
+  userId:number = 5 ; //home
   user!: UserProfile;
   currentCart: CartResponseDTO | null = null;
   cartSummary: Partial<CartSummaryDTO & { deliveryFee: number }> = { subtotal: 0, tax: 0, total: 0, deliveryFee: 50 };
@@ -68,7 +70,7 @@ export class CheckoutComponent {
       deliveryType: ['STANDARD', Validators.required],
       specialInstructions: [''],
       deliveryFee: [50] ,
-      totalAmount : this.finalTotal
+      discount : this.couponDiscount
     });
   }
 
@@ -86,6 +88,7 @@ export class CheckoutComponent {
           total: cart.subtotal + tax,
           deliveryFee: this.deliveryForm.value.deliveryFee
         };
+
       }
     });
 
@@ -98,6 +101,12 @@ export class CheckoutComponent {
     this.userService.getUserProfileById(this.userId).subscribe({
       next: (res) => {
         this.user = res;
+        console.log(res);
+
+            if (!this.user.latitude || !this.user.longitude) {
+      this.showLocationPrompt = true;
+    }
+
         this.initModalMap();
       },
       error: () => {
@@ -106,12 +115,11 @@ export class CheckoutComponent {
       }
     });
 
+    console.log(this.user.latitude,this.user.longitude);
+
+
     //if have location on userprofile
-    if(this.user.latitude && this.user.longitude == null || 0){
 
-      this.showLocationPrompt = true;
-
-    }
 
 
   }
@@ -130,7 +138,11 @@ export class CheckoutComponent {
         this.couponDiscount = response.discountAmount;
         this.couponCode = response.couponCode;
 
-       
+              this.deliveryForm.patchValue({
+        discount: this.couponDiscount
+      });
+
+
 
       },
       error: () => {
@@ -154,8 +166,8 @@ export class CheckoutComponent {
     this.isLoading = true;
     this.orderError = '';
 
-    
-      
+
+
     this.updateUserProfile();
 
     const checkoutData: CheckoutDTO = {
@@ -164,12 +176,19 @@ export class CheckoutComponent {
       priorityLevel: this.deliveryForm.value.deliveryType === 'EXPRESS' ? 10 : 5
     };
 
+    console.log(checkoutData);
+
+
     this.cartService.checkout(this.userId, checkoutData).subscribe({
       next: (order: OrderResponseDTO) => {
         this.isLoading = false;
         console.log(order);
-        
-        this.router.navigate(['/orders', order.orderNumber]);
+
+        this.navigateToTrack();
+
+
+
+
       },
       error: () => {
         this.isLoading = false;
@@ -219,7 +238,7 @@ export class CheckoutComponent {
       this.updateProfile.latitude = lat;
         this.updateProfile.longitude = lng;
 
-     
+
 
 
     });
@@ -227,7 +246,7 @@ export class CheckoutComponent {
     setTimeout(() => this.modalMap?.invalidateSize(), 0);
   }
 
-//  Allow location access 
+//  Allow location access
 allowLocation() {
   this.showLocationPrompt = false;
 
@@ -263,7 +282,7 @@ allowLocation() {
           deliveryLongitude: preciseLng
         });
 
-        
+
 
 
       },
@@ -293,6 +312,16 @@ allowLocation() {
         });
 
   }
+
+    navigateToTrack() {
+
+    this.router.navigate(['main/trackOrder']);
+  }
+
+
+
+
+
 
 
 }

@@ -31,8 +31,8 @@ isCartOpen = false;
 
     cart: CartResponseDTO | null = null;
 
-    userId: number = 2; // TSP
-    // userId: number = 5; // Home
+    // userId: number = 2; // TSP
+    userId: number = 5; // Home
 
 
     constructor(private cartService: CartService,private router: Router) {}

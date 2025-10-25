@@ -22,7 +22,7 @@
           <p class="mb-6 text-lg roboto">
             Order your favorite meals from top restaurants near you.
           </p>
-          <button
+          <button (click)="goToRestaurants('All')"
             class="bg-blue-600 hover:bg-blue-700 roboto text-white px-6 py-3 rounded-lg font-medium shadow-lg"
           >
             Order Now
@@ -40,7 +40,7 @@
       Browse by Category
     </h2>
     <div class="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
-      <div 
+      <div
         *ngFor="let categore of categories"
         class="group cursor-pointer flex min-w-[120px] flex-col items-center gap-3 rounded-2xl bg-white p-4 shadow hover:shadow-lg hover:-translate-y-1 transition-all"
       >
