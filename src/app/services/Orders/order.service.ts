@@ -103,6 +103,24 @@ getOrdersByCustomermain(customerId: number, page: number, size: number): Observa
     );
   }
 
+    //  Get all orders for a rider
+  getOrdersByRider(riderId: number): Observable<OrderResponseDTO[]> {
+    return this.http.get<OrderResponseDTO[]>(`${this.apiUrl}/rider/${riderId}`);
+  }
+
+  //  Get orders of a rider filtered by status
+  getOrdersByRiderAndStatus(riderId: number, status: string): Observable<OrderResponseDTO[]> {
+    return this.http.get<OrderResponseDTO[]>(`${this.apiUrl}/rider/${riderId}/status/${status}`);
+  }
+
+  //restaurant pannel
+
+    getOrdersByRestaurantAndStatus(restaurantId: number, status: string): Observable<OrderResponseDTO[]> {
+    return this.http.get<OrderResponseDTO[]>(`${this.apiUrl}/${restaurantId}/status/${status}`);
+  }
+
+
+
   getOrdersByStatus(status: OrderStatus, page: number = 0, size: number = 10): Observable<OrderResponseDTO[]> {
     let params = new HttpParams()
       .set('page', page.toString())

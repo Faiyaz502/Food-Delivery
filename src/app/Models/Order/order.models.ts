@@ -71,7 +71,8 @@ export type OrderStatus =
   | 'READY_FOR_PICKUP'
   | 'OUT_FOR_DELIVERY'
   | 'DELIVERED'
-  | 'CANCELLED';
+  | 'CANCELLED'
+  'ASSIGNED_TO_RIDER';
 
 export type PaymentStatus =
   | 'PENDING'

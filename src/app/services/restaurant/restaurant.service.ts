@@ -35,8 +35,12 @@ export class RestaurantService {
       return this.http.put<Restaurant>(`${this.apiUrl}/restaurants/${id}`, restaurant);
 
     }
+      getRestaurantsByOwner(ownerId: number): Observable<Restaurant[]> {
+    return this.http.get<Restaurant[]>(`${this.apiUrl}/restaurants/owner/${ownerId}`);
+  }
 
     deleteRestaurant(id: number): Observable<void> {
       return this.http.delete<void>(`${this.apiUrl}/restaurants/${id}`);
     }
+
 }

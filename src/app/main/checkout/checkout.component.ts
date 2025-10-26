@@ -22,7 +22,7 @@ export class CheckoutComponent {
   showLocationPrompt: boolean = false;
 
 
-  userId:number = 3; //home 5
+  userId:number = environment.userId; //home 5
   user!: UserProfile;
   currentCart: CartResponseDTO | null = null;
   cartSummary: Partial<CartSummaryDTO & { deliveryFee: number }> = { subtotal: 0, tax: 0, total: 0, deliveryFee: 50 };
@@ -120,7 +120,7 @@ export class CheckoutComponent {
     console.log(this.user.latitude,this.user.longitude);
 
 
-    
+
 
 
 
@@ -185,6 +185,8 @@ export class CheckoutComponent {
       next: (order: OrderResponseDTO) => {
         this.isLoading = false;
         console.log(order);
+
+       
 
         this.navigateToTrack(order.id);
 
