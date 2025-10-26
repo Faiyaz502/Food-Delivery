@@ -15,6 +15,7 @@ export interface CreateOrderDTO {
   deliveryAddress: string;
   deliveryLatitude?: number;
   deliveryLongitude?: number;
+  paymentMethod : string;
   deliveryType: 'STANDARD' | 'EXPRESS' | 'SCHEDULED' | 'PICKUP';
   specialInstructions?: string;
   deliveryFee: number;
@@ -38,6 +39,7 @@ export interface OrderResponseDTO {
   deliveryLatitude?: number;
   deliveryLongitude?: number;
   subtotal: number;
+  paymentMethod : string;
   deliveryFee: number;
   discount:number;
   taxAmount: number;

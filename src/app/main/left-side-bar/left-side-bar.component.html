@@ -36,15 +36,15 @@
           >Profile</a
         >
         <a
-          routerLink="trackOrder" (click)="closeSidebar()"
+          routerLink="trackOrder" (click)="closeSidebar()" (click)="trackOrder()" 
           class="block thirdff px-4 py-3 text-gray-700 hover:bg-gray-100 hover:text-blue-600 rounded mb-2"
           >Track Order</a
         >
 
         <a
-          href="#"
+         routerLink="orderList" (click)="closeSidebar()"
           class="block px-4 py-3 thirdff text-gray-700 hover:bg-gray-100 hover:text-blue-600 rounded mb-2"
-          >Payment</a
+          >My Orders</a
         >
         <a
          routerLink="support" (click)="closeSidebar()"

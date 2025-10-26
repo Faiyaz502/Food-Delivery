@@ -22,6 +22,7 @@ export interface CartResponseDTO {
   totalItems: number;
   createdAt: string;           // LocalDateTime → ISO string
   updatedAt: string;
+ paymentMethod : string;
 
 }
 
@@ -54,6 +55,7 @@ export interface CheckoutDTO {
   specialInstructions?: string;
   deliveryFee: number;
   discount:number;
+  paymentMethod : string;
   priorityLevel: number;
   totalAmount : number
 }

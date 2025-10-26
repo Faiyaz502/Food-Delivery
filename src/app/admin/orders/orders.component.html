@@ -466,6 +466,10 @@
                 <p class="text-sm font-medium">{{ selectedOrder.deliveryType }}</p>
               </div>
               <div>
+                <p class="text-xs text-gray-500">Payment Method</p>
+                <p class="text-sm font-medium">{{ selectedOrder.paymentMethod }}</p>
+              </div>
+              <div>
                 <p class="text-xs text-gray-500">Priority Level</p>
                 <div class="flex items-center gap-1">
                   <div *ngFor="let i of [1,2,3,4,5]"

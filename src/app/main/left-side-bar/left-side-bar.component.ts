@@ -1,6 +1,9 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
-import { User } from 'src/app/Models/Users/user.models';
+import { environment } from 'src/app/Envirment/environment';
+import { OrderResponseDTO } from 'src/app/Models/Order/order.models';
+import { PaginatedResponse, User } from 'src/app/Models/Users/user.models';
+import { OrderService } from 'src/app/services/Orders/order.service';
 import { PaymentService } from 'src/app/services/payment/payment.service';
 import { UserServiceService } from 'src/app/services/UserServices/user.service.service';
 
@@ -13,8 +16,15 @@ export class LeftSideBarComponent {
 @Input() isOpen: boolean = false;
   @Output() closeSidebarEvent = new EventEmitter<void>();
 
-  UserId:number = 5 ; // home
-  // UserId:number = 2 ; //Tsp
+    recentOrder: OrderResponseDTO | null = null;
+
+    currentPage: number = 0; // 0-indexed
+  pageSize: number = 4;
+  totalPages: number = 0;
+  totalElements: number = 0;
+
+
+  UserId:number =  environment.userId ; //Tsp
 
 
 
@@ -22,7 +32,10 @@ export class LeftSideBarComponent {
   user!: User  ;
   // debitCards: DebitCard[] = [];
 
-  constructor(private paymentService: PaymentService, private router: Router,private userService:UserServiceService) {}
+  constructor(private paymentService: PaymentService, private router: Router,
+    private userService:UserServiceService,
+    private orderService:OrderService
+  ) {}
 
   ngOnInit(): void {
     // Load debit cards for the user
@@ -35,6 +48,16 @@ export class LeftSideBarComponent {
       this.user = res ;
 
     })
+
+    this.fetchMostRecentOrder();
+
+   
+    
+
+
+
+
+    
 
 
 
@@ -49,4 +72,37 @@ export class LeftSideBarComponent {
   navigateTo(route: string) {
     this.router.navigate([route]);
   }
+
+  trackOrder(): void {
+    this.router.navigate(['main/trackOrder', this.recentOrder?.id]);
+  }
+
+
+  
+  
+
+
+  fetchMostRecentOrder(): void {
+
+
+
+    // Fetch page 0 with size 1 → gets the most recent order
+    this.orderService.getOrdersByCustomermain(this.UserId,0, 1)
+      .subscribe((response)=>{
+
+          console.log(response);
+          
+        this.recentOrder = response.content.length > 0 ? response.content[0] : null
+
+        console.log(this.recentOrder);
+        
+      }
+          
+
+      
+
+       );
+  }
+
+    
 }

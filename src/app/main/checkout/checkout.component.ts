@@ -10,6 +10,7 @@ import * as L from 'leaflet';
 import { CouponApplyRequest } from 'src/app/Models/NotificationAndCoupon/coupon.model';
 import { UserProfile } from 'src/app/Models/Users/profile.model';
 import { UserProfileService } from 'src/app/services/UserServices/user-profile.service';
+import { environment } from 'src/app/Envirment/environment';
 
 @Component({
   selector: 'app-checkout',
@@ -20,8 +21,8 @@ export class CheckoutComponent {
 
   showLocationPrompt: boolean = false;
 
-  // userId: number = 3; // tsp
-  userId:number = 5 ; //home
+
+  userId:number = 3; //home 5
   user!: UserProfile;
   currentCart: CartResponseDTO | null = null;
   cartSummary: Partial<CartSummaryDTO & { deliveryFee: number }> = { subtotal: 0, tax: 0, total: 0, deliveryFee: 50 };
@@ -70,7 +71,8 @@ export class CheckoutComponent {
       deliveryType: ['STANDARD', Validators.required],
       specialInstructions: [''],
       deliveryFee: [50] ,
-      discount : this.couponDiscount
+      discount : this.couponDiscount ,
+      paymentMethod: [this.selectedCard ? 'CARD' : 'CASH_ON_DELIVERY', Validators.required]
     });
   }
 
@@ -118,7 +120,7 @@ export class CheckoutComponent {
     console.log(this.user.latitude,this.user.longitude);
 
 
-    //if have location on userprofile
+    
 
 
 
@@ -184,7 +186,7 @@ export class CheckoutComponent {
         this.isLoading = false;
         console.log(order);
 
-        this.navigateToTrack();
+        this.navigateToTrack(order.id);
 
 
 
@@ -313,9 +315,9 @@ allowLocation() {
 
   }
 
-    navigateToTrack() {
+    navigateToTrack(id : number) {
 
-    this.router.navigate(['main/trackOrder']);
+    this.router.navigate(['main/trackOrder',id]);
   }
 
 

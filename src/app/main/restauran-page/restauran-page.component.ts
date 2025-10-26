@@ -16,6 +16,7 @@ import * as L from 'leaflet';
 import { forkJoin, lastValueFrom, switchMap, tap } from 'rxjs';
 import { CartService } from 'src/app/services/Cart/cart.service';
 import { CartItemCreateDTO, CartResponseDTO } from 'src/app/Models/cart/cart.models';
+import { environment } from 'src/app/Envirment/environment';
 
 
 
@@ -28,8 +29,8 @@ import { CartItemCreateDTO, CartResponseDTO } from 'src/app/Models/cart/cart.mod
 
 export class RestauranPageComponent {
 
-  // userId = 2; // TSP
-  userId = 5; // home
+ 
+  userId = environment.userId; // home
 
     showClearCartOption: boolean = false;
 

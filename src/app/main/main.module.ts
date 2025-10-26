@@ -20,6 +20,7 @@ import { SupportComponent } from './support/support.component';
 import { LoginComponent } from './login/login.component';
 import { RegistrationComponent } from './registration/registration.component';
 import { RestaurantListComponent } from './restaurant-list/restaurant-list.component';
+import { OrderListComponent } from './order-list/order-list.component';
 
 
 @NgModule({
@@ -36,6 +37,7 @@ import { RestaurantListComponent } from './restaurant-list/restaurant-list.compo
     LoginComponent,
     RegistrationComponent,
     RestaurantListComponent,
+    OrderListComponent,
 
 
   ],

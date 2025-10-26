@@ -1,14 +1,16 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, Observable, tap } from 'rxjs';
+import { environment } from 'src/app/Envirment/environment';
 import { OrderResponseDTO, OrderStatistics, CreateOrderDTO, OrderStatus, PaymentStatus, OrderFilters } from 'src/app/Models/Order/order.models';
+import { PaginatedResponse } from 'src/app/Models/rider.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OrderService {
 
-  private apiUrl = 'http://localhost:8080/api/orders'; // Change to your API URL
+  private apiUrl = `${environment.apiUrl}/api/orders`; // Change to your API URL
 
   // State management
   private ordersSubject = new BehaviorSubject<OrderResponseDTO[]>([]);
@@ -82,6 +84,14 @@ export class OrderService {
       map(response => response.content || response)
     );
   }
+
+  // Customer order list
+getOrdersByCustomermain(customerId: number, page: number, size: number): Observable<PaginatedResponse<OrderResponseDTO>> {
+  return this.http.get<PaginatedResponse<OrderResponseDTO>>(
+    `${this.apiUrl}/customer/${customerId}`,
+    { params: { page, size } }
+  );
+}
 
   getOrdersByRestaurant(restaurantId: number, page: number = 0, size: number = 10): Observable<OrderResponseDTO[]> {
     let params = new HttpParams()

@@ -2,6 +2,7 @@ import { Router } from '@angular/router';
 import { Component, HostListener } from '@angular/core';
 import { CartService } from '../services/Cart/cart.service';
 import { CartResponseDTO } from '../Models/cart/cart.models';
+import { environment } from '../Envirment/environment';
 
 @Component({
   selector: 'app-main',
@@ -31,8 +32,8 @@ isCartOpen = false;
 
     cart: CartResponseDTO | null = null;
 
-    // userId: number = 2; // TSP
-    userId: number = 5; // Home
+    userId: number = environment.userId; // TSP
+    // userId: number = 5; // Home
 
 
     constructor(private cartService: CartService,private router: Router) {}

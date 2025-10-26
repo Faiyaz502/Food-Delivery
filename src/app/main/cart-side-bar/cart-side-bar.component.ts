@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
+import { environment } from 'src/app/Envirment/environment';
 import { CartResponseDTO } from 'src/app/Models/cart/cart.models';
 
 import { CartService } from 'src/app/services/Cart/cart.service';
@@ -16,8 +17,8 @@ export class CartSideBarComponent {
 
   cart: CartResponseDTO | null = null;
   // DEMO DATA - Replace with actual user/auth service subscription
-  // userId: number = 2; // TSP
-  userId: number = 5; // HOme
+
+  userId: number = environment.userId; // HOme
 
 
   constructor(private cartService: CartService, private router: Router) {}
