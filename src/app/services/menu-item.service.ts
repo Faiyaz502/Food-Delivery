@@ -21,6 +21,13 @@ export class MenuItemService {
     return this.http.get<MenuItem[]>(this.apiUrl);
   }
 
+ // ✅ Upload menu item image
+  uploadMenuItemImage(menuItemId: number, formData: FormData): Observable<MenuItem> {
+    return this.http.post<MenuItem>(
+      `http://localhost:8080/api/menu-items/${menuItemId}/image`,
+      formData
+    );
+  }
   getMenuItemById(id: number): Observable<MenuItem> {
     return this.http.get<MenuItem>(`${this.apiUrl}/${id}`);
   }

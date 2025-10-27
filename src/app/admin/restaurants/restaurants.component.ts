@@ -43,19 +43,207 @@ currentRestaurant: any = {
   longitude: 0,
   deliveryFee: 40,
   minimumOrderAmount: 0,
-  imageUrls: [''] // support multiple images
+
 };
 
 
+  // ✅ New: for file uploads
+  selectedRestaurantImageFiles: File[] = [];
+  previewRestaurantImageUrls: string[] = [];
+
+    // Menu item image upload
+  selectedMenuItemImageFile: File | null = null;
+  previewMenuItemImageUrl: string | null = null;
+
+ onRestaurantImagesSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.selectedRestaurantImageFiles = Array.from(input.files);
+      this.previewRestaurantImageUrls = [];
+      this.selectedRestaurantImageFiles.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+          this.previewRestaurantImageUrls.push(e.target.result);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+  }
+
+  removeRestaurantImage(index: number): void {
+    this.selectedRestaurantImageFiles.splice(index, 1);
+    this.previewRestaurantImageUrls.splice(index, 1);
+  }
+
+  private async uploadRestaurantImages(restaurantId: number): Promise<void> {
+    if (this.selectedRestaurantImageFiles.length === 0) return;
+
+    const formData = new FormData();
+    this.selectedRestaurantImageFiles.forEach(file => {
+      formData.append('files', file);
+    });
+
+    try {
+      await this.apiService.uploadRestaurantImages(restaurantId, formData).toPromise();
+    } catch (error) {
+      console.error('Restaurant image upload failed', error);
+      alert('Failed to upload restaurant images');
+    }
+  }
+
+  // === MENU ITEM IMAGE HANDLERS ===
 
 
-addImage() {
-  this.currentRestaurant.imageUrls.push('');
+onMenuItemImageSelected(event: Event): void {
+  const input = event.target as HTMLInputElement;
+  if (input.files && input.files.length > 0) {
+    this.selectedMenuItemImageFile = input.files[0];
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      this.previewMenuItemImageUrl = e.target.result;
+    };
+    reader.readAsDataURL(this.selectedMenuItemImageFile);
+  }
 }
 
-removeImage(index: number) {
-  this.currentRestaurant.imageUrls.splice(index, 1);
+// ✅ FIXED: Corrected method call and error handling
+private async uploadMenuItemImage(menuItemId: number): Promise<void> {
+  if (!this.selectedMenuItemImageFile) {
+    console.log('No menu item image selected');
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('file', this.selectedMenuItemImageFile);
+
+  try {
+    console.log(`Uploading image for menu item ${menuItemId}...`);
+    // ✅ FIXED: Use correct method name from MenuItemService
+    await this.menuService.uploadMenuItemImage(menuItemId, formData).toPromise();
+    console.log('Menu item image uploaded successfully');
+  } catch (error) {
+    console.error('Menu item image upload failed:', error);
+    alert('Failed to upload menu item image. Please try again.');
+    throw error; // Re-throw to handle in calling function
+  }
 }
+
+// ✅ IMPROVED: Better error handling and flow
+async saveMenuItem() {
+  if (!this.selectedRestaurant) {
+    alert('No restaurant selected');
+    return;
+  }
+
+  this.currentMenuItem.restaurantId = this.selectedRestaurant.id ?? 0;
+
+  try {
+    if (this.showEditMenuItem) {
+      // Update existing menu item
+      await this.menuService.updateMenu(this.currentMenuItem.id!, this.currentMenuItem).toPromise();
+      console.log('Menu item updated');
+
+      // Upload image if selected
+      if (this.selectedMenuItemImageFile) {
+        await this.uploadMenuItemImage(this.currentMenuItem.id!);
+      }
+
+      this.viewMenuItems(this.selectedRestaurant!);
+      this.closeMenuItemModal();
+    } else {
+      // Create new menu item
+      const res = await this.menuService.createMenuItem(this.currentMenuItem).toPromise();
+      console.log('Menu item created:', res);
+
+      // Upload image if selected
+      if (res && res.id && this.selectedMenuItemImageFile) {
+        await this.uploadMenuItemImage(res.id);
+      }
+
+      this.viewMenuItems(this.selectedRestaurant!);
+      this.closeMenuItemModal();
+    }
+  } catch (error) {
+    console.error('Error saving menu item:', error);
+    alert('Failed to save menu item. Please check console for details.');
+  }
+}
+
+closeMenuItemModal() {
+  this.showAddMenuItem = false;
+  this.showEditMenuItem = false;
+  this.currentMenuItem = {
+    name: '',
+    price: 0,
+    description: '',
+    imageUrl: '',
+    isSpicy: false,
+    spiceLevel: 0,
+    preparationTime: 30,
+    isAvailable: true,
+    restaurantId: 0,
+    catagoryName: ''
+  };
+  // ✅ Clear image selection
+  this.selectedMenuItemImageFile = null;
+  this.previewMenuItemImageUrl = null;
+}
+  // === SAVE METHODS ===
+  saveRestaurant() {
+    if (this.showEditModal) {
+      this.apiService.updateRestaurant(this.currentRestaurant.id, this.currentRestaurant).subscribe(async (rest) => {
+        await this.uploadRestaurantImages(rest.id!);
+        this.loadRestaurants();
+        this.closeModal();
+        if (rest.latitude && rest.longitude) {
+          this.map.setView([rest.latitude, rest.longitude], 15);
+        }
+      });
+    } else {
+      this.apiService.createRestaurant(this.currentRestaurant).subscribe(async (rest) => {
+        await this.uploadRestaurantImages(rest.id!);
+        this.loadRestaurants();
+        this.closeModal();
+      });
+    }
+  }
+
+
+
+  // === MODAL HANDLERS ===
+  closeModal() {
+    this.showCreateModal = false;
+    this.showEditModal = false;
+    this.currentRestaurant = {
+      name: '',
+      address: '',
+      description: '',
+      averageRating: 0,
+      phoneNumber: '',
+      email: '',
+      ownerId: 1,
+      latitude: 0,
+      longitude: 0,
+      deliveryFee: 40,
+      minimumOrderAmount: 0,
+      estimatedDeliveryTime: 0,
+      droneDeliveryEnabled: false,
+      maxDroneDeliveryWeight: 3,
+    };
+    this.selectedRestaurantImageFiles = [];
+    this.previewRestaurantImageUrls = [];
+    // ... map cleanup (keep your existing logic)
+
+     if (this.modalMarker) {
+    this.modalMap?.removeLayer(this.modalMarker);
+    this.modalMarker = null;
+  }
+
+  if (this.modalMap) {
+    this.modalMap.remove(); // Properly destroy Leaflet map
+    this.modalMap = undefined;
+  }
+  }
 
 
  currentMenuItem: MenuItem = {
@@ -145,88 +333,8 @@ openCreateModal() {
     }
   }
 
-  saveRestaurant() {
-    if (this.showEditModal) {
-      this.apiService.updateRestaurant(this.currentRestaurant.id, this.currentRestaurant).subscribe((rest) => {
-        this.loadRestaurants();
-        this.closeModal();
-
-        console.log(rest);
-       
-        
-        
-
-        if (rest.latitude && rest.longitude) {
-    this.map.setView([rest.latitude, rest.longitude], 15);
-  }
 
 
-      });
-    } else {
-      this.apiService.createRestaurant(this.currentRestaurant).subscribe(() => {
-        this.loadRestaurants();
-        this.closeModal();
-      });
-    }
-  }
-
-  saveMenuItem() {
-    if (!this.selectedRestaurant) return;
-
-    this.currentMenuItem.restaurantId = this.selectedRestaurant?.id ?? 0;
-    console.log(this.currentMenuItem);
-    
-
-    if (this.showEditMenuItem) {
-      this.menuService.updateMenu(this.currentMenuItem.id!, this.currentMenuItem).subscribe(() => {
-        this.viewMenuItems(this.selectedRestaurant!);
-        this.closeMenuItemModal();
-
-      });
-    } else {
-      this.menuService.createMenuItem(this.currentMenuItem).subscribe((res) => {
-
-          console.log(res);
-          
-        this.viewMenuItems(this.selectedRestaurant!);
-        this.closeMenuItemModal();
-      });
-    }
-  }
-
-closeModal() {
-  this.showCreateModal = false;
-  this.showEditModal = false;
-
-  console.log(this.currentRestaurant);
-  
-
-  this.currentRestaurant = {
-    name: '',
-    address: '',
-    rating: 0,
-    owner_id: 0,
-    latitude: 0,
-    longitude: 0,
-    deliveryFee: 0,
-    minimumOrderAmount: 0,
-    estimatedDeliveryTime: 0,
-    droneDeliveryEnabled: false,
-    maxDroneDeliveryWeight: 3,
-    imageUrls: ['']
-  };
-
-  // Clean up map
-  if (this.modalMarker) {
-    this.modalMap?.removeLayer(this.modalMarker);
-    this.modalMarker = null;
-  }
-
-  if (this.modalMap) {
-    this.modalMap.remove(); // Properly destroy Leaflet map
-    this.modalMap = undefined;
-  }
-}
 
   //fetch Category Data
 
@@ -259,24 +367,7 @@ closeModal() {
     this.menuItems = [];
   }
 
-  closeMenuItemModal() {
-    this.showAddMenuItem = false;
-    this.showEditMenuItem = false;
 
-
-    this.currentMenuItem = {
-     name: '',
-  price: 0,
-  description: '',
-  imageUrl: '',
-  isSpicy: false,
-  spiceLevel: 0,
-  preparationTime: 30,
-  isAvailable: true,
-  restaurantId: 0,
-  catagoryName: ''
-    };
-  }
 
   //map
 

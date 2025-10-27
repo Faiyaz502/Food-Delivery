@@ -62,6 +62,10 @@ export class ApiService {
     return this.http.delete<void>(`http://localhost:8080/api/restaurants/${id}`);
   }
 
+uploadRestaurantImages(restaurantId: number, formData: FormData): Observable<Restaurant> {
+  return this.http.post<Restaurant>(`${this.baseUrl}restaurants/${restaurantId}/images`, formData);
+}
+
   // Menu Items
   getMenuItems(): Observable<MenuItem[]> {
     return this.http.get<MenuItem[]>(`${this.baseUrl}/menuItems`);
