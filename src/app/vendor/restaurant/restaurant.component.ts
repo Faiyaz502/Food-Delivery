@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject, takeUntil, interval } from 'rxjs';
+import { environment } from 'src/app/Envirment/environment';
 import { OrderResponseDTO } from 'src/app/Models/Order/order.models';
 import { Restaurant } from 'src/app/Models/restaurant.model';
 import { OrderService } from 'src/app/services/Orders/order.service';
@@ -19,7 +20,7 @@ export class RestaurantComponent {
   preparingOrders: OrderResponseDTO[] = [];
   readyOrders: OrderResponseDTO[] = [];
 
-  ownerId: number = 7; // Get from auth service
+  ownerId: number = environment.ownerId; // Get from auth service 
   loading: boolean = false;
   error: string = '';
 
@@ -84,8 +85,12 @@ export class RestaurantComponent {
     this.orderService.getOrdersByRestaurantAndStatus(restaurantId, 'PREPARING')
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (orders) => this.preparingOrders = orders,
-        error: (err) => console.error('Error loading preparing orders:', err)
+        next: (orders) => {this.preparingOrders = orders
+          console.log(orders);
+          
+        },
+        
+        error: (err) => {console.error('Error loading preparing orders:', err)}
       });
 
     this.orderService.getOrdersByRestaurantAndStatus(restaurantId, 'READY_FOR_PICKUP')

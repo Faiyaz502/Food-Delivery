@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
+import { forkJoin, Subject, takeUntil } from 'rxjs';
+import { environment } from 'src/app/Envirment/environment';
 import { OrderResponseDTO, OrderStatus } from 'src/app/Models/Order/order.models';
 import { OrderService } from 'src/app/services/Orders/order.service';
 
@@ -14,7 +15,7 @@ order: OrderResponseDTO | null = null;
 incomingOrders:OrderResponseDTO[] |null = null ;
   currentPhase: 'pickup' | 'delivery' = 'pickup';
   deliveryOtp: string = '';
-  riderId: number = 15; // Get from auth service
+  riderId: number = environment.riderId; // Get from auth service
   loading: boolean = false;
   error: string = '';
 
@@ -29,22 +30,26 @@ incomingOrders:OrderResponseDTO[] |null = null ;
   ngOnInit(): void {
 
 
-    this.orderService.getOrdersByRiderAndStatus(this.riderId,"CONFIRMED").subscribe((res)=>{
+forkJoin([
+    this.orderService.getOrdersByRiderAndStatus(this.riderId, "PREPARING"),
+    this.orderService.getOrdersByRiderAndStatus(this.riderId, "OUT_FOR_DELIVERY"),
+    this.orderService.getOrdersByRiderAndStatus(this.riderId, "READY_FOR_PICKUP")
+  ]).subscribe(([confirmed, outForDelivery, ready]) => {
 
-        this.incomingOrders = res ;
-        console.log(res);
+    // Merge in order
+    this.incomingOrders = [
+      ...confirmed,
+      ...outForDelivery,
+      ...ready
+    ];
 
+    console.log(this.incomingOrders);
 
-        this.order = this.incomingOrders[0];
-
-
-        if (this.order.id) {
+    if (this.incomingOrders.length > 0) {
+      this.order = this.incomingOrders[0];
       this.loadOrder(this.order.id);
     }
-
-
-
-    })
+  });
 
 
 
@@ -108,34 +113,34 @@ incomingOrders:OrderResponseDTO[] |null = null ;
       });
   }
 
-  onDeliveryComplete(): void {
-    if (!this.order) return;
+ onDeliveryComplete(): void {
+  if (!this.order) return;
 
-    // Validate OTP if required
-    if (!this.deliveryOtp || this.deliveryOtp.length !== 4) {
-      alert('Please enter a valid 4-digit OTP');
-      return;
-    }
-
-    this.loading = true;
-    this.orderService.updateOrderStatus(this.order.id, 'DELIVERED')
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (updatedOrder) => {
-          this.order = updatedOrder;
-          this.loading = false;
-          alert('✅ Delivery completed successfully!\n\nOrder ' + updatedOrder.orderNumber + ' has been delivered.');
-          // Navigate back to dashboard or orders list
-          this.router.navigate(['/rider/dashboard']);
-        },
-        error: (err) => {
-          this.error = 'Failed to complete delivery';
-          this.loading = false;
-          console.error('Error completing delivery:', err);
-        }
-      });
+  // Validate OTP
+  if (!this.deliveryOtp || this.deliveryOtp.length !== 4) {
+    alert('Please enter a valid 4-digit OTP');
+    return;
   }
 
+  this.loading = true;
+
+  this.orderService.confirmDelivery(this.order.id, this.deliveryOtp)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (responseMessage) => {
+        this.loading = false;
+        alert('✅ Delivery confirmed successfully!\n\n' + responseMessage);
+
+        // Navigate back to dashboard or refresh
+        this.ngOnInit();
+      },
+      error: (err) => {
+        this.loading = false;
+        alert('❌ ' + (err.error?.message || 'Invalid OTP or request failed'));
+        console.error('OTP Verification Error:', err);
+      }
+    });
+}
   callRestaurant(): void {
     // Implement call functionality - you'll need restaurant phone from backend
     alert('Calling restaurant...');

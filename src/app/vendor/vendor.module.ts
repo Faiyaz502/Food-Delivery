@@ -5,6 +5,7 @@ import { VendorRoutingModule } from './vendor-routing.module';
 import { VendorComponent } from './vendor.component';
 import { RiderComponent } from './rider/rider.component';
 import { RestaurantComponent } from './restaurant/restaurant.component';
+import { FormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -15,7 +16,9 @@ import { RestaurantComponent } from './restaurant/restaurant.component';
   ],
   imports: [
     CommonModule,
-    VendorRoutingModule
+    VendorRoutingModule,
+    FormsModule 
+
   ]
 })
 export class VendorModule { }

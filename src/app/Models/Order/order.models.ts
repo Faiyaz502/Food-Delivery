@@ -64,6 +64,11 @@ export interface OrderStatistics {
   cancelledOrders?: number;
 }
 
+export interface DeliveryOTP {
+  deliveryOtp: string;
+  otpExpiryTime: string; // 
+}
+
 export type OrderStatus =
   | 'PLACED'
   | 'CONFIRMED'

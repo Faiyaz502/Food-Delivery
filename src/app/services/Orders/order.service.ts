@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { environment } from 'src/app/Envirment/environment';
-import { OrderResponseDTO, OrderStatistics, CreateOrderDTO, OrderStatus, PaymentStatus, OrderFilters } from 'src/app/Models/Order/order.models';
+import { OrderResponseDTO, OrderStatistics, CreateOrderDTO, OrderStatus, PaymentStatus, OrderFilters, DeliveryOTP } from 'src/app/Models/Order/order.models';
 import { PaginatedResponse } from 'src/app/Models/rider.model';
 
 @Injectable({
@@ -85,6 +85,13 @@ export class OrderService {
     );
   }
 
+  //OTP
+
+  
+  getOrderOTP(orderId: number): Observable<DeliveryOTP> {
+    return this.http.get<DeliveryOTP>(`${this.apiUrl}/${orderId}/otp`);
+  }
+
   // Customer order list
 getOrdersByCustomermain(customerId: number, page: number, size: number): Observable<PaginatedResponse<OrderResponseDTO>> {
   return this.http.get<PaginatedResponse<OrderResponseDTO>>(
@@ -112,6 +119,18 @@ getOrdersByCustomermain(customerId: number, page: number, size: number): Observa
   getOrdersByRiderAndStatus(riderId: number, status: string): Observable<OrderResponseDTO[]> {
     return this.http.get<OrderResponseDTO[]>(`${this.apiUrl}/rider/${riderId}/status/${status}`);
   }
+  getOrdersByRiderAndStatuses(riderId: number, statuses: string[]): Observable<OrderResponseDTO[]> {
+  const params = statuses.map(s => `status=${s}`).join('&');
+  return this.http.get<OrderResponseDTO[]>(`${this.apiUrl}/rider/${riderId}/status?${params}`);
+}
+
+confirmDelivery(orderId: number, otp: string): Observable<string> {
+  return this.http.post(
+    `${this.apiUrl}/confirm-delivery?orderId=${orderId}&otp=${otp}`,
+    null,
+    { responseType: 'text' } // ✅ Important change
+  );
+}
 
   //restaurant pannel
 

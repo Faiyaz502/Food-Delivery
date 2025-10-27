@@ -2,7 +2,9 @@ export const environment = {
 production: false,
   apiUrl: 'http://localhost:8080',
   wsUrl: 'ws://localhost:8080/ws-chat',
-  userId:5, // home 5 tsp 3
+  userId:3, // home 5 tsp 3
+  ownerId:2, // tsp2 , home 7
+  riderId : 5, // home 15 , tsp4
   endpoints: {
     orders: '/api/orders',
     carts: '/api/carts'

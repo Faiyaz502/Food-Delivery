@@ -37,11 +37,9 @@ export class DeliveryService {
   /**
    * Get all pending orders (PLACED status, not assigned)
    */
-  getPendingOrders(): Observable<PendingOrder[]> {
-    const params = new HttpParams().set('status', 'PLACED');
-    return this.http.get<PendingOrder[]>(`${this.orderApiUrl}/pending`, { params });
-  }
-
+getPendingOrders(): Observable<PendingOrder[]> {
+  return this.http.get<PendingOrder[]>(`${this.orderApiUrl}/pending`);
+}
   /**
    * Get delivery by order ID
    */

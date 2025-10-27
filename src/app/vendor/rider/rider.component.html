@@ -307,7 +307,8 @@
           </p>
         </div>
 
-        <!-- <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
+                        <div  *ngIf="order.orderStatus == 'OUT_FOR_DELIVERY'"
+                 class="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
 
 <label class="text-sm font-semibold mb-3 block text-gray-700">Enter Delivery OTP</label>
 
@@ -323,7 +324,10 @@ maxlength="4"
 
 class="w-full text-center text-2xl font-mono font-bold py-4 border-2 border-gray-300 rounded-xl focus:border-indigo-500 focus:outline-none transition">
 
-</div> -->
+</div>
+
+
+
 
         <div class="p-6 border-t border-gray-100">
           <h4
@@ -359,6 +363,10 @@ class="w-full text-center text-2xl font-mono font-bold py-4 border-2 border-gray
             </button>
           </div>
         </div>
+
+
+
+
       </div>
     </div>
   </div>
@@ -371,6 +379,7 @@ class="w-full text-center text-2xl font-mono font-bold py-4 border-2 border-gray
       <button
         (click)="onArrivedAtRestaurant()"
         [disabled]="loading"
+        *ngIf="order.orderStatus == 'PREPARING'"
         class="w-full bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-extrabold py-4 rounded-xl transition shadow-lg shadow-yellow-500/40 flex items-center justify-center gap-3 text-lg disabled:opacity-60 disabled:cursor-not-allowed"
       >
         <i class="fas fa-map-marker-alt text-2xl"></i>
@@ -378,6 +387,7 @@ class="w-full text-center text-2xl font-mono font-bold py-4 border-2 border-gray
       </button>
       <button
         (click)="onPickupComplete()"
+        *ngIf="order.orderStatus == 'READY_FOR_PICKUP'"
         [disabled]="loading"
         class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold py-4 rounded-xl transition shadow-lg shadow-indigo-600/40 flex items-center justify-center gap-3 text-lg disabled:opacity-60 disabled:cursor-not-allowed"
       >

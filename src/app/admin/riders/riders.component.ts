@@ -116,14 +116,26 @@ export class RidersComponent {
 
   loadPendingOrders(): void {
     this.deliveryService.getPendingOrders().subscribe({
-      next: (orders) => {
-        this.pendingOrders = orders;
-      },
-      error: (err) => {
-        this.toastr.error('Failed to load pending orders');
-        console.error(err);
-      }
-    });
+    next: (orders) => {
+      // Map backend DTO to PendingOrder if needed
+      this.pendingOrders = orders.map(o => ({
+        id: o.id,
+        orderNumber: o.orderNumber,
+        customerName: o.customerName,
+        deliveryAddress: o.deliveryAddress,
+        totalAmount: Number(o.totalAmount),
+        orderDate: o.orderDate,
+        orderStatus: o.orderStatus,
+        customerPhone: o.customerPhone
+      }));
+
+      console.log('Pending orders:', this.pendingOrders);
+    },
+    error: (err) => {
+      this.toastr.error('Failed to load pending orders');
+      console.error('Error loading pending orders:', err);
+    }
+  });
   }
 
   applyFiltersAndSort(): void {

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { OrderResponseDTO, OrderStatus } from 'src/app/Models/Order/order.models';
+import { DeliveryOTP, OrderResponseDTO, OrderStatus } from 'src/app/Models/Order/order.models';
 import { OrderService } from 'src/app/services/Orders/order.service';
 
 @Component({
@@ -14,6 +14,7 @@ export class TrackOrderComponent {
   orderId!: number;
   order!: OrderResponseDTO;
   isLoading = true;
+  orderOTP:DeliveryOTP | null  = null 
   error: string | null = null;
 
   private subscription: Subscription = new Subscription();
@@ -29,6 +30,14 @@ export class TrackOrderComponent {
     if (idParam) {
       this.orderId = +idParam;
       this.loadOrder();
+
+   
+
+        this.getOTP(this.orderId);
+
+  
+  
+
     } else {
       this.error = 'Order ID is missing';
       this.isLoading = false;
@@ -40,6 +49,23 @@ export class TrackOrderComponent {
      this.router.navigate(['main/orderList']);
 
 }
+
+  getOTP(orderId:number){
+
+
+    this.orderService.getOrderOTP(orderId).subscribe((res)=>{
+
+      this.orderOTP = res ;
+
+      console.log(res);
+      
+
+
+    })
+
+
+  }
+
 
   loadOrder(): void {
     this.isLoading = true;
