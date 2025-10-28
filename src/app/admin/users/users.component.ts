@@ -409,7 +409,7 @@ export class UsersComponent {
       firstName: user.firstName,
       lastName: user.lastName,
       phoneNumber: user.phoneNumber ,
-      profilePictureUrl : user.profilePictureUrl || ''
+      profilePictureUrl : user.imageUrl || ''
     };
     this.showUserModal = true;
     this.errorMessage = '';

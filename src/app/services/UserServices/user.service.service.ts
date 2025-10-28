@@ -61,6 +61,9 @@ export class UserServiceService {
     const params = new HttpParams().set('status', status);
     return this.http.patch<User>(`${this.apiUrl}/${id}/status`, null, { params });
   }
+  uploadProfileImage(userId: number, file: FormData): Observable<User> {
+  return this.http.post<User>(`${this.apiUrl}/${userId}/profile-image`, file);
+}
 
   verifyUser(id: number): Observable<User> {
     return this.http.patch<User>(`${this.apiUrl}/${id}/verify`, null);

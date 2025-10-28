@@ -17,17 +17,32 @@
 
     <!-- Content -->
     <div class="flex-1 overflow-y-auto">
-      <div class="p-6 text-center border-b">
-        <img
-          src="{{user.profilePictureUrl}}"
-          alt="User"
-          class="w-20 h-20 rounded-full mx-auto mb-4 object-cover border-2 border-blue-100"
-        />
-        <h3 class="font-semibold text-lg roboto-bold ">{{user.firstName+" "+user.lastName}}</h3>
-        <p class="text-sm text-gray-500 ">{{user.email}}</p>
-        <p class="text-sm text-gray-500 ">{{user.phoneNumber}}</p>
+<div class="p-6 text-center border-b">
+  <!-- Clickable profile image wrapper -->
+  <div class="relative inline-block cursor-pointer" (click)="triggerFileInput()">
+    <img
+      [src]="user.imageUrl || 'assets/img/default-avatar.png'"
+      alt="User"
+      class="w-20 h-20 rounded-full mx-auto mb-4 object-cover border-2 border-blue-100 hover:border-blue-400 transition"
+    />
+    <div class="absolute mb-4 inset-0 flex items-center justify-center rounded-full  bg-black bg-opacity-30 opacity-0 hover:opacity-100 transition">
+      <i class="fas fa-camera text-white text-xs"></i>
+    </div>
+  </div>
 
-      </div>
+  <!-- Hidden file input -->
+  <input
+    #profileImageInput
+    type="file"
+    accept="image/*"
+    (change)="onProfileImageSelected($event)"
+    class="hidden"
+  />
+
+  <h3 class="font-semibold text-lg roboto-bold">{{user.firstName + " " + user.lastName}}</h3>
+  <p class="text-sm text-gray-500">{{user.email}}</p>
+  <p class="text-sm text-gray-500">{{user.phoneNumber}}</p>
+</div>
 
       <nav class="p-4">
         <a

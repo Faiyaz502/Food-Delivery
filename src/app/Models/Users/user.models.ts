@@ -11,7 +11,7 @@ export interface User {
   status: UserStatus;
   isVerified: boolean;
   verificationStatus: VerificationStatus;
-  profilePictureUrl?: string;
+  imageUrl?: string;
   createdAt: string;
   updatedAt: string;
   lastLoginAt?: string;

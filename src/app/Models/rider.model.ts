@@ -31,6 +31,7 @@ export interface Rider {
   currentLongitude: number;
   availabilityStatus: AvailabilityStatus;
   avgRating: number;
+  phoneNumber:number ;
   totalDeliveries: number;
   successfulDeliveries: number;
   earningsToday: number;

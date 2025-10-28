@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { environment } from 'src/app/Envirment/environment';
 import { OrderResponseDTO } from 'src/app/Models/Order/order.models';
@@ -104,5 +104,63 @@ export class LeftSideBarComponent {
        );
   }
 
+
+  //upload image
+
+  @ViewChild('profileImageInput', { static: false }) profileImageInput!: ElementRef;
+
+// Trigger file input click
+triggerFileInput(): void {
+  this.profileImageInput.nativeElement.click();
+}
+
+// Handle image selection
+onProfileImageSelected(event: Event): void {
+  const input = event.target as HTMLInputElement;
+  if (input.files && input.files.length > 0) {
+    const file = input.files[0];
+
+    // Optional: Validate file
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file (JPG, PNG, etc.)');
+      return;
+    }
+
+    // Preview immediately
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      this.user.imageUrl = e.target.result; // Update preview
+    };
+    reader.readAsDataURL(file);
+
+    // Upload to backend
+    this.uploadProfileImage(file);
+  }
+
+  // Reset input to allow re-selecting same file
+  input.value = '';
+}
+
+// Upload to API
+private uploadProfileImage(file: File): void {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  this.userService.uploadProfileImage(this.user.id, formData).subscribe({
+    next: (updatedUser: User) => {
+      // Optional: Update full user object if backend returns it
+      this.user = { ...this.user, ...updatedUser };
+      console.log('Profile image uploaded successfully');
+    },
+    error: (err) => {
+      console.error('Profile image upload failed', err);
+      alert('Failed to upload profile picture. Please try again.');
+      // Revert to previous image if needed
+    }
+  });
+
     
+}
+
+
 }

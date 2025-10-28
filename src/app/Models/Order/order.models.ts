@@ -41,6 +41,7 @@ export interface OrderResponseDTO {
   subtotal: number;
   paymentMethod : string;
   deliveryFee: number;
+  riderId:number ;
   discount:number;
   taxAmount: number;
   totalAmount: number;

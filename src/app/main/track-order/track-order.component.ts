@@ -1,8 +1,12 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { catchError, of, Subscription } from 'rxjs';
 import { DeliveryOTP, OrderResponseDTO, OrderStatus } from 'src/app/Models/Order/order.models';
+import { Restaurant } from 'src/app/Models/restaurant.model';
+import { Rider } from 'src/app/Models/rider.model';
 import { OrderService } from 'src/app/services/Orders/order.service';
+import { RestaurantService } from 'src/app/services/restaurant/restaurant.service';
+import { RiderService } from 'src/app/services/Rider/rider.service';
 
 @Component({
   selector: 'app-track-order',
@@ -14,6 +18,8 @@ export class TrackOrderComponent {
   orderId!: number;
   order!: OrderResponseDTO;
   isLoading = true;
+  rider!:Rider;
+  restuarant!:Restaurant;
   orderOTP:DeliveryOTP | null  = null 
   error: string | null = null;
 
@@ -22,7 +28,9 @@ export class TrackOrderComponent {
   constructor(
     private route: ActivatedRoute,
     private orderService: OrderService ,
-    private router : Router
+    private router : Router ,
+    private riderService:RiderService ,
+    private restaurantService:RestaurantService
   ) {}
 
   ngOnInit(): void {
@@ -31,9 +39,12 @@ export class TrackOrderComponent {
       this.orderId = +idParam;
       this.loadOrder();
 
-   
 
-        this.getOTP(this.orderId);
+
+      
+
+
+ this.getOTP(this.orderId);
 
   
   
@@ -75,8 +86,9 @@ export class TrackOrderComponent {
       next: (order) => {
         this.order = order;
         console.log(order);
-        console.log(this.order);
-        
+       
+        this.getRiderById(this.order.riderId);
+        this.getRestaurantById(this.order.restaurantId)
         
         this.isLoading = false;
       },
@@ -201,4 +213,63 @@ export class TrackOrderComponent {
   }
 
 
-}
+  //rider and restuarant
+
+    loading: boolean = false;
+  errorMessage: string = '';
+
+  getRiderById(id: number): void {
+    this.loading = true;
+    this.errorMessage = '';
+
+    this.riderService.getRiderById(id)
+      .pipe(
+        catchError(error => {
+          console.error('Error fetching rider:', error);
+          this.errorMessage = 'Failed to load rider data. Please try again later.';
+          this.loading = false;
+          return of(null); // return empty observable to continue safely
+        })
+      )
+      .subscribe(res => {
+        this.loading = false;
+        if (res) {
+          this.rider = res;
+          console.log('Rider data:', res);
+        }
+      });
+  }
+
+  getRestaurantById(id: number): void {
+    this.loading = true;
+    this.errorMessage = '';
+
+    this.restaurantService.getRestaurantById(id)
+      .pipe(
+        catchError(error => {
+          console.error('Error fetching restaurant:', error);
+          this.errorMessage = 'Failed to load restaurant data. Please try again later.';
+          this.loading = false;
+          return of(null);
+        })
+      )
+      .subscribe(res => {
+        this.loading = false;
+        if (res) {
+          this.restuarant = res;
+          console.log('Restaurant data:', res);
+        }
+      });
+  }
+
+
+ 
+
+  }
+
+
+
+
+
+
+
