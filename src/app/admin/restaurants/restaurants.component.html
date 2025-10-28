@@ -8,7 +8,7 @@
     <!-- Stats cards (unchanged) -->
     <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-4 text-white shadow-md transform transition-all duration-200 hover:scale-105">
       <p class="text-blue-100 text-xs font-medium">Total Restaurants</p>
-      <p class="text-2xl font-bold">24</p>
+      <p class="text-2xl font-bold">{{allRestaurants.length}}</p>
       <p class="text-blue-100 text-[10px] mt-1 flex items-center">
         <i class="fas fa-arrow-up mr-1 text-[10px]"></i>12% from last month
       </p>
@@ -30,7 +30,7 @@
 
     <div class="bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl p-4 text-white shadow-md transform transition-all duration-200 hover:scale-105">
       <p class="text-purple-100 text-xs font-medium">Total Menu Items</p>
-      <p class="text-2xl font-bold">128</p>
+      <p class="text-2xl font-bold">10</p>
       <p class="text-purple-100 text-[10px] mt-1 flex items-center">
         <i class="fas fa-utensils mr-1 text-[10px]"></i>Diverse offerings
       </p>
@@ -81,21 +81,13 @@
         <div class="flex items-center space-x-3">
           <div class="relative">
             <input type="text" placeholder="Search..."
+                  [(ngModel)]="filter.name"
+            (ngModelChange)="onFilterChange()"
               class="w-56 pl-8 pr-3 py-1.5 border border-gray-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
             <i class="fas fa-search absolute left-2.5 top-2 text-gray-400 text-sm"></i>
           </div>
 
-          <div class="relative">
-            <select
-              class="appearance-none bg-white border border-gray-300 rounded-lg px-3 py-1.5 pr-6 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-              <option>All</option>
-              <option>High Rated</option>
-              <option>Medium Rated</option>
-              <option>Low Rated</option>
-            </select>
-          </div>
-
-          <button (click)="showCreateModal = true"
+           <button (click)="showCreateModal = true"
             class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-sky-700 hover:to-sky-500 text-white font-semibold py-2.5 p-4 rounded-full transition-transform duration-300 transform hover:scale-105 shadow-md text-sm flex items-center space-x-1.5">
             <i class="fas fa-plus"></i><span>Add Restaurant</span>
           </button>
@@ -105,53 +97,131 @@
   </div>
 
   <div class="flex items-center justify-between mb-6">
-    <div class="flex items-center space-x-4">
-      <span class="text-gray-700 font-medium">View:</span>
-      <div class="bg-white rounded-lg p-1 shadow-sm border border-gray-200">
-        <button class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium">Grid</button>
-        <button class="text-gray-600 hover:text-gray-800 px-4 py-2 rounded-md text-sm font-medium">List</button>
-        <button class="text-gray-600 hover:text-gray-800 px-4 py-2 rounded-md text-sm font-medium">Map</button>
-      </div>
-    </div>
-    <div class="text-sm text-gray-500">Showing 8 of 24 restaurants</div>
-  </div>
-
-  <!-- Restaurant Cards -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-    <div *ngFor="let restaurant of restaurants; let i = index"
-      class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow group">
-      <!-- ✅ FIXED: Local fallback image -->
-      <img [src]="restaurant.imageUrls && restaurant.imageUrls.length ? restaurant.imageUrls[0] : 'assets/images/restaurant-placeholder.png'"
-        [alt]="restaurant.name"
-        class="w-full h-24 object-cover rounded-lg border border-gray-200 shadow-sm hover:scale-105 transition-transform duration-300" />
-
-      <div class="p-5">
-        <div class="flex items-start justify-between mb-3">
-          <h3 class="text-sm font-semibold text-gray-900 line-clamp-1">{{ restaurant.name }}</h3>
-          <span class="inline-flex items-center rounded-full text-xs font-medium bg-amber-100 text-amber-800">
-            ⭐ {{ restaurant.averageRating }}
-          </span>
-        </div>
-
-        <p class="text-gray-600 text-sm mb-4 line-clamp-2">{{ restaurant.address }}</p>
-
-        <div class="flex gap-2 pt-3 border-t border-gray-100">
-          <button (click)="viewMenuItems(restaurant)"
-            class="flex-1 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-md transition-colors text-center">
-            Menu
-          </button>
-          <button (click)="editRestaurant(restaurant)"
-            class="px-3 py-1.5 bg-gray-600 hover:bg-gray-700 text-white text-xs font-medium rounded-md transition-colors">
-            Edit
-          </button>
-          <button (click)="deleteRestaurant(restaurant.id!)"
-            class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-md transition-colors">
-            Delete
-          </button>
-        </div>
-      </div>
+<div class="flex items-center justify-between mb-6">
+  <div class="flex items-center space-x-4">
+    <span class="text-gray-700 font-medium">View:</span>
+    <div class="bg-white rounded-lg p-1 shadow-sm border border-gray-200">
+      <button
+        (click)="viewMode = 'grid'"
+        [class.bg-indigo-600]="viewMode === 'grid'"
+        [class.text-white]="viewMode === 'grid'"
+        [class.text-gray-600]="viewMode !== 'grid'"
+        class="px-4 py-2 rounded-md text-sm font-medium">
+        Grid
+      </button>
+      <button
+        (click)="viewMode = 'list'"
+        [class.bg-indigo-600]="viewMode === 'list'"
+        [class.text-white]="viewMode === 'list'"
+        [class.text-gray-600]="viewMode !== 'list'"
+        class="px-4 py-2 rounded-md text-sm font-medium">
+        List
+      </button>
     </div>
   </div>
+  <div class="text-sm text-gray-500 mx-4">Showing {{ restaurants.length }} restaurants</div>
+</div>
+
+  </div>
+
+<!-- GRID VIEW -->
+<div *ngIf="viewMode === 'grid'" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+  <div *ngFor="let restaurant of restaurants; let i = index"
+    class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow group">
+
+    <img [src]="restaurant.imageUrls?.[0] || 'assets/images/restaurant-placeholder.png'"
+      [alt]="restaurant.name"
+      class="w-full h-24 object-cover rounded-lg border border-gray-200 shadow-sm hover:scale-105 transition-transform duration-300" />
+
+    <div class="p-5">
+      <div class="flex items-start justify-between mb-3">
+        <h3 class="text-sm font-semibold text-gray-900 line-clamp-1">{{ restaurant.name }}</h3>
+        <span class="inline-flex items-center rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+          ⭐ {{ restaurant.averageRating }}
+        </span>
+      </div>
+
+      <p class="text-gray-600 text-sm mb-4 line-clamp-2">{{ restaurant.address }}</p>
+
+      <div class="flex gap-2 pt-3 border-t border-gray-100">
+        <button (click)="viewMenuItems(restaurant)"
+          class="flex-1 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-md transition-colors text-center">
+          Menu
+        </button>
+        <button (click)="editRestaurant(restaurant)"
+          class="px-3 py-1.5 bg-gray-600 hover:bg-gray-700 text-white text-xs font-medium rounded-md transition-colors">
+          Edit
+        </button>
+        </div>
+    </div>
+  </div>
+</div>
+
+<!-- LIST VIEW -->
+<div *ngIf="viewMode === 'list'">
+  <div *ngIf="restaurants.length === 0" class="text-center py-8 text-gray-500">
+    No restaurants found.
+  </div>
+
+  <div *ngFor="let restaurant of restaurants" class="bg-white rounded-lg border border-gray-200 mb-4 shadow-sm hover:shadow-md transition-shadow">
+    <div class="flex flex-col sm:flex-row p-4 gap-4">
+      <!-- Image -->
+      <div class="flex-shrink-0 w-full sm:w-32 h-24">
+        <img [src]="restaurant.imageUrls?.[0] || 'assets/images/restaurant-placeholder.png'"
+          [alt]="restaurant.name"
+          class="w-full h-full object-cover rounded-md border" />
+      </div>
+
+      <!-- Info -->
+      <div class="flex-grow">
+        <div class="flex flex-wrap justify-between items-start gap-2">
+          <h3 class="text-lg font-semibold text-gray-900">{{ restaurant.name }}</h3>
+          <div class="flex items-center gap-2">
+            <span class="inline-flex items-center rounded-full text-xs font-medium bg-amber-100 text-amber-800 px-2 py-1">
+              ⭐ {{ restaurant.averageRating }}
+            </span>
+            <span class="inline-flex items-center rounded-full text-[10px] font-medium px-2 py-1
+              {{ getStatusClass(restaurant.status!) }}">
+              {{ restaurant.status | titlecase }}
+            </span>
+          </div>
+        </div>
+
+        <p class="text-gray-600 mt-1 text-sm">{{ restaurant.address }}</p>
+        <p class="text-gray-500 text-sm mt-1 line-clamp-2">{{ restaurant.description }}</p>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex flex-col gap-2 justify-start sm:justify-end sm:min-w-[180px]">
+        <button (click)="viewMenuItems(restaurant)"
+          class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-md w-full">
+          View Menu
+        </button>
+        <button (click)="editRestaurant(restaurant)"
+          class="px-3 py-1.5 bg-gray-600 hover:bg-gray-700 text-white text-xs font-medium rounded-md w-full">
+          Edit
+        </button>
+        <button (click)="verifyRestaurant(restaurant.id!, 'ACTIVE')"
+          [disabled]="restaurant.status === 'ACTIVE'"
+          class="px-3 py-1.5 bg-green-600 hover:bg-green-700 disabled:bg-green-300 text-white text-xs font-medium rounded-md w-full">
+          {{ restaurant.status === 'ACTIVE' ? 'Verified' : 'Verify' }}
+        </button>
+        <button (click)="deleteRestaurant(restaurant.id!)"
+          class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-md w-full">
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="viewMode === 'list'">
+  <div *ngIf="restaurants.length === 0" class="text-center py-8 text-gray-500">
+    No restaurants found.
+  </div>
+
+
+</div>
 
   <!-- Empty State -->
   <div *ngIf="!restaurants || restaurants.length === 0" class="text-center py-12">

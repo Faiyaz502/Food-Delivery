@@ -25,6 +25,7 @@ export class RestaurantsComponent {
   showMenuModal = false;
   showAddMenuItem = false;
   showEditMenuItem = false;
+   viewMode: 'grid' | 'list' | 'map' = 'grid';
   private restaurantMarkers: L.Marker[] = [];
 
 
@@ -283,7 +284,9 @@ openCreateModal() {
 
   loadRestaurants() {
     this.apiService.getRestaurants().subscribe(restaurants => {
-      this.restaurants = restaurants;
+           this.allRestaurants = restaurants; // Keep original data
+      this.restaurants = [...this.allRestaurants]; // Copy for filtering
+      this.applyFilters();
 
         this.refreshMarkers();
 
@@ -366,6 +369,43 @@ openCreateModal() {
     this.selectedRestaurant = null;
     this.menuItems = [];
   }
+
+  //varify
+
+
+
+  verifyRestaurant(id: number, status: string) {
+  if (!confirm(`Are you sure you want to mark this restaurant as ${status.toLowerCase()}?`)) {
+    return;
+  }
+
+  this.apiService.verifyRestaurant(id, status).subscribe({
+    next: (updatedRestaurant) => {
+      // Update the local restaurant list with the new status
+      const index = this.restaurants.findIndex(r => r.id === id);
+      if (index !== -1) {
+        this.restaurants[index] = updatedRestaurant;
+      }
+      alert('Restaurant status updated successfully!');
+    },
+    error: (err) => {
+      console.error('Verification failed', err);
+      alert('Failed to update restaurant status. Please try again.');
+    }
+  });
+}
+
+getStatusClass(status: string): string {
+  switch (status) {
+    case 'ACTIVE': return 'bg-green-100 text-green-800';
+    case 'PENDING_APPROVAL': return 'bg-yellow-100 text-yellow-800';
+    case 'SUSPENDED': return 'bg-red-100 text-red-800';
+    case 'REJECTED': return 'bg-gray-100 text-gray-800';
+    case 'INACTIVE': return 'bg-blue-100 text-blue-800';
+    case 'CLOSED': return 'bg-black text-white';
+    default: return 'bg-gray-100 text-gray-800';
+  }
+}
 
 
 
@@ -480,6 +520,37 @@ private refreshMarkers() {
   });
 }
 
+//apply filter
+
+  allRestaurants!:Restaurant[];
+  fitreRestaurant!: Restaurant[];
+
+  filter = {
+    name: ''
+  }
+
+  onFilterChange(): void {
+    this.applyFilters();
+  }
+
+
+
+applyFilters(): void {
+  let filtered = [...this.allRestaurants]; // Always filter from original
+
+  if (this.filter.name) {
+    const query = this.filter.name.toLowerCase();
+    filtered = filtered.filter(o =>
+      o.name.toLowerCase().includes(query)
+    );
+  }
+
+  this.restaurants = filtered;
+}
+clearFilters(): void {
+  this.filter.name = '';
+  this.applyFilters();
+}
 
 
 

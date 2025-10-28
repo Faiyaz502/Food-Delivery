@@ -29,7 +29,7 @@ import { environment } from 'src/app/Envirment/environment';
 
 export class RestauranPageComponent {
 
- 
+
   userId = environment.userId; // home
 
     showClearCartOption: boolean = false;
@@ -91,6 +91,7 @@ loadData() {
   }).subscribe({
     next: ({ categories, menuItems }) => {
 
+        console.log(categories,menuItems);
 
 
       this.categories = categories;

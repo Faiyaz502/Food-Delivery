@@ -66,6 +66,11 @@ uploadRestaurantImages(restaurantId: number, formData: FormData): Observable<Res
   return this.http.post<Restaurant>(`${this.baseUrl}restaurants/${restaurantId}/images`, formData);
 }
 
+  verifyRestaurant(id: number, status: string): Observable<Restaurant> {
+    const url = `${this.baseUrl}restaurants/${id}/verify?status=${status}`;
+    return this.http.put<Restaurant>(url, {}); // body empty since only status changes
+  }
+
   // Menu Items
   getMenuItems(): Observable<MenuItem[]> {
     return this.http.get<MenuItem[]>(`${this.baseUrl}/menuItems`);
