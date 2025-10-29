@@ -26,29 +26,38 @@
         </button>
       </div>
 
-      <div
-        class="absolute w-full max-w-4xl left-1/2 -translate-x-1/2 -bottom-6 px-6"
-      >
-        <div
-          class="flex items-center gap-4 p-4 bg-white rounded-xl shadow-xl border border-gray-200"
+ <div class="absolute w-full max-w-4xl left-1/2 -translate-x-1/2 -bottom-6 px-6">
+  <div class="flex items-center gap-4 p-4 bg-white rounded-xl shadow-xl border border-gray-200">
+    <div class="p-3 bg-green-500/10 rounded-lg">
+      <i
+        class="fas fa-power-off text-xl"
+        [class.text-green-600]="isOnline"
+        [class.text-gray-400]="!isOnline">
+      </i>
+    </div>
+    <div class="flex-1">
+      <p class="text-xs text-gray-500 uppercase font-semibold mb-1">
+        Status
+      </p>
+      <div class="flex gap-2">
+        <button
+          (click)="toggleStatus()"
+          [disabled]="isToggling"
+          [class.bg-green-600]="isOnline"
+          [class.bg-gray-400]="!isOnline"
+          [class.text-white]="isOnline"
+          [class.text-gray-700]="!isOnline"
+          class="px-3 py-1.5 rounded-lg font-bold text-sm shadow-md transition-all duration-200 flex items-center gap-1.5"
         >
-          <div class="p-3 bg-green-500/10 rounded-lg">
-            <i class="fas fa-power-off text-green-600 text-xl"></i>
-          </div>
-          <div class="flex-1">
-            <p class="text-xs text-gray-500 uppercase font-semibold mb-1">
-              Status
-            </p>
-            <div class="flex gap-2">
-              <button
-                class="px-3 py-1.5 bg-green-600 text-white rounded-lg font-bold text-sm shadow-md shadow-green-500/30"
-              >
-                Active
-              </button>
-            </div>
-          </div>
-        </div>
+          <span *ngIf="isToggling" class="fas fa-spinner fa-spin"></span>
+          <span *ngIf="!isToggling">
+            {{ isOnline ? 'Online' : 'Offline' }}
+          </span>
+        </button>
       </div>
+    </div>
+  </div>
+</div>
     </div>
   </div>
 
@@ -170,10 +179,7 @@
                 <h3 class="text-xl font-bold text-gray-900 mb-2">
                   {{ order.restaurantName }}
                 </h3>
-                <p class="text-sm text-gray-600 flex items-start gap-2 mb-4">
-                  <i class="fas fa-map-marker-alt text-green-500 mt-1"></i>
-                  <span>Restaurant Address (Add to backend)</span>
-                </p>
+
                 <button
                   (click)="callRestaurant()"
                   class="inline-flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold text-sm transition shadow-md shadow-green-500/30"
@@ -242,7 +248,7 @@
                   Est. Time
                 </p>
                 <p class="font-bold text-gray-900 text-2xl">
-                  {{ getEstimatedTime() }}
+                 {{ getEstimatedTime() | date: 'hh:mm a' }}
                 </p>
               </div>
             </div>
@@ -307,27 +313,22 @@
           </p>
         </div>
 
-                        <div  *ngIf="order.orderStatus == 'OUT_FOR_DELIVERY'"
-                 class="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
+        <div
+          *ngIf="order.orderStatus == 'OUT_FOR_DELIVERY'"
+          class="bg-white rounded-xl p-4 shadow-sm border border-gray-200"
+        >
+          <label class="text-sm font-semibold mb-3 block text-gray-700"
+            >Enter Delivery OTP</label
+          >
 
-<label class="text-sm font-semibold mb-3 block text-gray-700">Enter Delivery OTP</label>
-
-<input
-
-type="text"
-
-placeholder="Enter 4-digit OTP"
-
-maxlength="4"
-
-[(ngModel)]="deliveryOtp"
-
-class="w-full text-center text-2xl font-mono font-bold py-4 border-2 border-gray-300 rounded-xl focus:border-indigo-500 focus:outline-none transition">
-
-</div>
-
-
-
+          <input
+            type="text"
+            placeholder="Enter 4-digit OTP"
+            maxlength="4"
+            [(ngModel)]="deliveryOtp"
+            class="w-full text-center text-2xl font-mono font-bold py-4 border-2 border-gray-300 rounded-xl focus:border-indigo-500 focus:outline-none transition"
+          />
+        </div>
 
         <div class="p-6 border-t border-gray-100">
           <h4
@@ -363,10 +364,6 @@ class="w-full text-center text-2xl font-mono font-bold py-4 border-2 border-gray
             </button>
           </div>
         </div>
-
-
-
-
       </div>
     </div>
   </div>
@@ -433,4 +430,10 @@ class="w-full text-center text-2xl font-mono font-bold py-4 border-2 border-gray
       </button>
     </div>
   </div>
+</div>
+
+<div
+  *ngIf="toastMessage"
+  class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg animate-fadeIn">
+  {{ toastMessage }}
 </div>

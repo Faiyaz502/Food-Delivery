@@ -101,7 +101,19 @@
         </p>
 
         <div *ngIf="showCoupons" class="mt-4 border-t pt-4">
-            <!-- <app-coupon-list [coupons]="availableCoupons" (selectCouponEvent)="selectCoupon($event)"></app-coupon-list> -->
+            <div *ngFor="let coupon of availableCoupons"
+       class="border border-gray-200 rounded-lg p-3 mb-2 flex justify-between items-center hover:bg-gray-50 transition cursor-pointer"
+       (click)="selectCoupon(coupon)">
+
+    <div>
+      <p class="text-gray-800 font-semibold">{{ coupon.code }}</p>
+      <p class="text-sm text-gray-500">{{ coupon.description }}</p>
+    </div>
+
+    <button
+      class="bg-red-700 text-white text-sm px-4 py-2 rounded-md hover:bg-red-950"
+      (click)="selectCoupon(coupon); $event.stopPropagation()">Apply</button>
+  </div>
         </div>
       </div>
     </div>

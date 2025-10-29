@@ -1,9 +1,13 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin, Subject, takeUntil } from 'rxjs';
+import { catchError, forkJoin, of, Subject, Subscription, takeUntil } from 'rxjs';
 import { environment } from 'src/app/Envirment/environment';
 import { OrderResponseDTO, OrderStatus } from 'src/app/Models/Order/order.models';
+import { Restaurant } from 'src/app/Models/restaurant.model';
+import { LocationUpdate, Rider } from 'src/app/Models/rider.model';
 import { OrderService } from 'src/app/services/Orders/order.service';
+import { RestaurantService } from 'src/app/services/restaurant/restaurant.service';
+import { RiderService } from 'src/app/services/Rider/rider.service';
 
 @Component({
   selector: 'app-rider',
@@ -12,22 +16,31 @@ import { OrderService } from 'src/app/services/Orders/order.service';
 })
 export class RiderComponent {
 order: OrderResponseDTO | null = null;
+orderRestaurant:Restaurant | null = null ;
 incomingOrders:OrderResponseDTO[] |null = null ;
   currentPhase: 'pickup' | 'delivery' = 'pickup';
   deliveryOtp: string = '';
   riderId: number = environment.riderId; // Get from auth service
   loading: boolean = false;
   error: string = '';
+    isOnline = false;
+  isToggling = false;
 
   private destroy$ = new Subject<void>();
 
   constructor(
     private orderService: OrderService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private riderService:RiderService,
+    private restaurantService:RestaurantService
   ) {}
 
-  ngOnInit(): void {
+  ngOnInit(
+  ): void {
+
+      this.startLocationTracking();
+      this.loadRiderStatus();
 
 
 forkJoin([
@@ -59,6 +72,8 @@ forkJoin([
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+
+     this.stopLocationTracking();
   }
 
   loadOrder(orderId: number): void {
@@ -132,7 +147,7 @@ forkJoin([
         alert('✅ Delivery confirmed successfully!\n\n' + responseMessage);
 
         // Navigate back to dashboard or refresh
-        this.ngOnInit();
+           window.location.reload();
       },
       error: (err) => {
         this.loading = false;
@@ -154,14 +169,59 @@ forkJoin([
     }
   }
 
-  openNavigation(): void {
-    if (this.order?.deliveryLatitude && this.order?.deliveryLongitude) {
-      const url = `https://www.google.com/maps/dir/?api=1&destination=${this.order.deliveryLatitude},${this.order.deliveryLongitude}`;
-      window.open(url, '_blank');
-    } else {
-      alert('Location coordinates not available');
+
+toastMessage: string | null = null;
+private toastTimeout: any = null;
+
+private showToast(message: string): void {
+  // Clear previous toast
+  if (this.toastTimeout) clearTimeout(this.toastTimeout);
+
+  this.toastMessage = message;
+
+  // Auto-hide after 4 seconds
+  this.toastTimeout = setTimeout(() => {
+    this.toastMessage = null;
+  }, 4000);
+}
+
+openNavigation(): void {
+  let destinationLat: number | undefined = undefined;
+  let destinationLng: number | undefined = undefined;
+  let destinationName = '';
+
+  if (this.order?.orderStatus === 'OUT_FOR_DELIVERY') {
+    destinationLat = this.order.deliveryLatitude;
+    destinationLng = this.order.deliveryLongitude;
+    destinationName = 'Customer';
+  } else {
+    const restaurant = this.orderRestaurant
+    if (restaurant?.latitude != null && restaurant?.longitude != null) {
+      destinationLat = restaurant.latitude;
+      destinationLng = restaurant.longitude;
+      destinationName = restaurant.name || 'Restaurant';
     }
   }
+
+  // 🔥 CRITICAL: Check that both are REAL NUMBERS
+  if (
+    destinationLat == null ||
+    destinationLng == null ||
+    isNaN(destinationLat) ||
+    isNaN(destinationLng)
+  ) {
+    this.showToast(`Location not available for ${destinationName.toLowerCase()}.`);
+    return;
+  }
+
+  // ✅ Now safe to use in URL
+  const url = `https://www.google.com/maps/dir/?api=1&destination=${destinationLat},${destinationLng}&travelmode=driving`;
+
+  const newWindow = window.open(url, '_blank');
+  if (!newWindow) {
+    this.showToast('Popup blocked. Please allow popups to open navigation.');
+  }
+}
 
   getTotalItems(): number {
     if (!this.order?.orderItems) return 0;
@@ -171,5 +231,158 @@ forkJoin([
   getEstimatedTime(): string {
     return this.order?.estimatedDeliveryTime || '15-20 min';
   }
+
+
+  //Rider location Track
+
+   showLocationPermissionBanner = false;
+  private locationWatchId: number | null = null;
+  private locationSendSubscription: Subscription | null = null;
+
+  // ================================
+  // LOCATION TRACKING LOGIC
+  // ================================
+
+  private startLocationTracking(): void {
+    if (!navigator.geolocation) {
+      console.error('Geolocation is not supported by this browser.');
+      return;
+    }
+
+    // First, get current position to verify permission
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        // ✅ Permission granted — send initial location and start watching
+        this.sendLocationToServer(position.coords.latitude, position.coords.longitude);
+        this.startWatchingLocation();
+      },
+      (error) => {
+        this.handleGeolocationError(error);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 30000
+      }
+    );
+  }
+
+  private startWatchingLocation(): void {
+    if (this.locationWatchId !== null) return;
+
+    this.locationWatchId = navigator.geolocation.watchPosition(
+      (position) => {
+        this.sendLocationToServer(position.coords.latitude, position.coords.longitude);
+      },
+      (error) => {
+        console.warn('Location watch error:', error);
+        // Optional: retry or show banner
+      },
+      {
+        enableHighAccuracy: true,   // Use GPS if available
+        timeout: 10000,             // Wait max 10s for position
+        maximumAge: 5000            // Accept cached position up to 5s old
+        // Note: Browser controls actual frequency (typically every 5-30s)
+      }
+    );
+  }
+
+private sendLocationToServer(lat: number, lng: number): void {
+  if (!this.riderId) return;
+
+  const locationUpdate: LocationUpdate = { latitude: lat, longitude: lng };
+
+  this.riderService.updateRiderLocation(this.riderId, locationUpdate).pipe(
+    catchError(error => {
+      console.warn('Location send failed (safe to ignore):', error.status, error.message);
+
+      return of(null); // 👈 Silent failure — no UX disruption
+    })
+  ).subscribe();
 }
+
+  private stopLocationTracking(): void {
+    if (this.locationWatchId !== null) {
+      navigator.geolocation.clearWatch(this.locationWatchId);
+      this.locationWatchId = null;
+    }
+
+    if (this.locationSendSubscription) {
+      this.locationSendSubscription.unsubscribe();
+      this.locationSendSubscription = null;
+    }
+  }
+
+  private handleGeolocationError(error: GeolocationPositionError): void {
+    console.error('Geolocation error:', error);
+
+    switch (error.code) {
+      case error.PERMISSION_DENIED:
+        this.showLocationPermissionBanner = true;
+        break;
+      case error.POSITION_UNAVAILABLE:
+        console.warn('Location information is unavailable.');
+        break;
+      case error.TIMEOUT:
+        console.warn('The request to get user location timed out.');
+        break;
+      default:
+        console.warn('An unknown error occurred.');
+        break;
+    }
+  }
+
+
+  //toggle offline/online
+
+    private loadRiderStatus(): void {
+
+      this.riderService.getRiderById(this.riderId).subscribe((res)=>{
+
+         const status = res.availabilityStatus;
+
+         if(status == "AVAILABLE"){this.isOnline = true}
+         if(status == "OFFLINE"){this.isOnline = false}
+
+
+
+      })
+
+   // or false — adjust based on your logic
+  }
+
+  toggleStatus(): void {
+    if (this.isToggling) return; // prevent double-click
+
+    this.isToggling = true;
+
+    const toggle$ = this.isOnline
+      ? this.riderService.goOffline(this.riderId)
+      : this.riderService.goOnline(this.riderId);
+
+    toggle$.subscribe({
+      next: (updatedRider: Rider) => {
+        this.isOnline = !this.isOnline;
+        this.isToggling = false;
+        // Optional: show success toast
+        // this.showToast(`You are now ${this.isOnline ? 'online' : 'offline'}`);
+      },
+      error: (err) => {
+        console.error('Failed to update status:', err);
+        this.isToggling = false;
+        // Show error toast
+        // this.showToast('Failed to update status. Please try again.');
+      }
+    });
+  }
+
+
+
+}
+
+
+
+
+
+
 

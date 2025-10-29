@@ -1,8 +1,34 @@
+import { lastValueFrom, Subject, takeUntil } from 'rxjs';
 import { Router } from '@angular/router';
 import { Component, HostListener } from '@angular/core';
 import { CartService } from '../services/Cart/cart.service';
 import { CartResponseDTO } from '../Models/cart/cart.models';
 import { environment } from '../Envirment/environment';
+import { NotificationResponseDTO, NotificationService} from '../services/notificationAndcoupon/notification.service';
+
+export interface Page<T> {
+  content: T[];
+  pageable: {
+    sort: {
+      empty: boolean;
+      sorted: boolean;
+      unsorted: boolean;
+    };
+    offset: number;
+    pageNumber: number;
+    pageSize: number;
+    paged: boolean;
+    unpaged: boolean;
+  };
+  totalPages: number;
+  totalElements: number;
+  last: boolean;
+  first: boolean;
+  size: number;
+  number: number;
+  numberOfElements: number;
+  empty: boolean;
+}
 
 @Component({
   selector: 'app-main',
@@ -13,6 +39,8 @@ export class MainComponent {
 isCartOpen = false;
   isProfileOpen = false;
   isLogin = false;
+
+   private destroy$ = new Subject<void>();
 
   toggleCart() {
     this.isCartOpen = !this.isCartOpen;
@@ -36,7 +64,9 @@ isCartOpen = false;
     // userId: number = 5; // Home
 
 
-    constructor(private cartService: CartService,private router: Router) {}
+    constructor(private cartService: CartService,private router: Router,
+      private notificationService: NotificationService
+    ) {}
 
     ngOnInit(): void {
       // Load cart on component initialization (if not already loaded)
@@ -49,6 +79,13 @@ isCartOpen = false;
 
 
       });
+
+
+
+       this.loadNotifications();
+
+      this.loadUnreadCount();
+
 
 
     }
@@ -71,13 +108,119 @@ isCartOpen = false;
     this.isJoinDropdownOpen = false;
   }
 
-  // Optional: Close dropdown when clicking outside
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: Event) {
-    const target = event.target as HTMLElement;
-    if (!target.closest('.join-dropdown-container')) {
-      this.closeJoinDropdown();
+
+
+
+
+  //notification
+
+
+notifications: NotificationResponseDTO[] = [];
+unreadCount = 0;
+loading = false;
+  showNotificationsPanel = false;
+
+  loadNotifications(): void {
+    this.loading = true;
+    this.notificationService.getUserNotifications(this.userId).subscribe({
+      next: (res) => {
+        this.notifications = res.content || res;
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Failed to fetch notifications:', err);
+        this.loading = false;
+      }
+    });
+  }
+
+
+// ✅ No manual count updates!
+markAsRead(notificationId: number): void {
+  this.notificationService.markAsRead(notificationId).subscribe();
+}
+
+markAllAsRead(): void {
+  this.notificationService.markAllAsRead(this.userId).subscribe();
+}
+
+  loadUnreadCount(): void {
+    this.notificationService.getUnreadCount(this.userId).subscribe({
+      next: (count) => (this.unreadCount = count),
+      error: (err) => console.error('Failed to load unread count:', err)
+    });
+  }
+
+
+
+
+formatTimeAgo(isoDate: string): string {
+    const date = new Date(isoDate);
+    const now = new Date();
+    const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+    let interval = seconds / 31536000;
+    if (interval > 1) return Math.floor(interval) + 'y';
+
+    interval = seconds / 2592000;
+    if (interval > 1) return Math.floor(interval) + 'mo';
+
+    interval = seconds / 86400;
+    if (interval > 1) return Math.floor(interval) + 'd';
+
+    interval = seconds / 3600;
+    if (interval > 1) return Math.floor(interval) + 'h';
+
+    interval = seconds / 60;
+    if (interval > 1) return Math.floor(interval) + 'm';
+
+    return Math.floor(seconds) + 's';
+  }
+
+    ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  // ✅ Fix: Separate click handler with stopPropagation
+  toggleNotifications(event: MouseEvent): void {
+    event.stopPropagation();
+    this.showNotificationsPanel = !this.showNotificationsPanel;
+
+    if (this.showNotificationsPanel) {
+      this.markAllAsRead();
     }
   }
 
+  // ✅ Keep your existing markAsRead, markAllAsRead, formatTimeAgo
+
+  // ✅ Fixed @HostListener
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event): void {
+    const target = event.target as HTMLElement;
+
+    // Close Join Dropdown
+    if (!target.closest('.join-dropdown-container')) {
+      this.isJoinDropdownOpen = false;
+    }
+
+    // Close Notification Panel
+    const bell = document.querySelector('.notification-bell');
+    const panel = document.querySelector('.notification-panel');
+
+    if (
+      this.showNotificationsPanel &&
+      bell &&
+      panel &&
+      !bell.contains(target) &&
+      !panel.contains(target)
+    ) {
+      this.showNotificationsPanel = false;
+    }
+  }
+
+
 }
+
+
+

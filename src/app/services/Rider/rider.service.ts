@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { environment } from 'src/app/Envirment/environment';
-import { Rider } from 'src/app/Models/rider.model';
+import { LocationUpdate, Rider } from 'src/app/Models/rider.model';
 
 
 interface PaginatedResponse<T> {
@@ -112,13 +112,9 @@ export class RiderService {
   /**
    * Update rider location
    */
-  updateRiderLocation(id: number, latitude: number, longitude: number): Observable<Rider> {
-    return this.http.patch<Rider>(`${this.apiUrl}/${id}/location`, {
-      latitude,
-      longitude
-    });
-  }
-
+updateRiderLocation(riderId: number, location: LocationUpdate): Observable<any> {
+  return this.http.patch(`${this.apiUrl}/${riderId}/location`, location);
+}
   /**
    * Change rider status - Go Online
    */
@@ -183,6 +179,10 @@ export class RiderService {
   getTopRatedRiders(limit: number = 10): Observable<Rider[]> {
     const params = new HttpParams().set('limit', limit.toString());
     return this.http.get<Rider[]>(`${this.apiUrl}/top-rated`, { params });
+  }
+
+    getRiderLocation(riderId: number): Observable<LocationUpdate> {
+    return this.http.get<LocationUpdate>(`${this.apiUrl}/${riderId}/currentLocation`);
   }
 
   /**
