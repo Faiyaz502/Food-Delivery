@@ -1,11 +1,14 @@
 import { Component } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { catchError, of, Subscription } from 'rxjs';
+import { catchError, of, Subject, Subscription, takeUntil } from 'rxjs';
+import { environment } from 'src/app/Envirment/environment';
 import { DeliveryOTP, OrderResponseDTO, OrderStatus } from 'src/app/Models/Order/order.models';
 import { Restaurant } from 'src/app/Models/restaurant.model';
 import { Rider } from 'src/app/Models/rider.model';
 import { OrderService } from 'src/app/services/Orders/order.service';
 import { RestaurantService } from 'src/app/services/restaurant/restaurant.service';
+import { ReviewService } from 'src/app/services/reviewAndCoupon/review.service';
 import { RiderService } from 'src/app/services/Rider/rider.service';
 
 @Component({
@@ -16,6 +19,7 @@ import { RiderService } from 'src/app/services/Rider/rider.service';
 export class TrackOrderComponent {
 
   orderId!: number;
+  userId = environment.userId
   order!: OrderResponseDTO;
   isLoading = true;
   rider!:Rider;
@@ -30,7 +34,9 @@ export class TrackOrderComponent {
     private orderService: OrderService ,
     private router : Router ,
     private riderService:RiderService ,
-    private restaurantService:RestaurantService
+    private restaurantService:RestaurantService, 
+    private fb: FormBuilder ,
+    private reviewService:ReviewService
   ) {}
 
   ngOnInit(): void {
@@ -40,11 +46,12 @@ export class TrackOrderComponent {
       this.loadOrder();
 
 
-
-      
+  
 
 
  this.getOTP(this.orderId);
+
+
 
   
   
@@ -60,6 +67,9 @@ export class TrackOrderComponent {
      this.router.navigate(['main/orderList']);
 
 }
+
+
+
 
   getOTP(orderId:number){
 
@@ -89,6 +99,8 @@ export class TrackOrderComponent {
        
         this.getRiderById(this.order.riderId);
         this.getRestaurantById(this.order.restaurantId)
+
+        this.checkIsReviewable();
         
         this.isLoading = false;
       },
@@ -104,7 +116,10 @@ export class TrackOrderComponent {
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
+    this.destroy$.next(); // complete all takeUntil streams
+  this.destroy$.complete(); // finalize the subject
   }
+
 
   // Optional: Format estimated delivery time
   getEstimatedDeliveryTime(): string {
@@ -261,6 +276,112 @@ export class TrackOrderComponent {
         }
       });
   }
+
+
+
+  //Review
+  stars = [1, 2, 3, 4, 5];
+
+  isReviewModalOpen = false;
+selectedOrder: any = null;
+
+// Hover states
+hoverFoodRating: number | null = null;
+hoverDeliveryRating: number | null = null;
+hoverDeliveryPersonRating: number | null = null;
+
+// Review form
+reviewForm: FormGroup = this.fb.group({
+  foodRating: [null as number | null, Validators.required],
+  deliveryRating: [null as number | null, Validators.required],
+  deliveryPersonRating: [null as number | null],
+  comment: ['']
+});
+
+// Modal state
+ // or your Order type
+
+// Open modal (call this when user clicks "Leave Review")
+openReviewModal(order: any) {
+  this.selectedOrder = order;
+  this.isReviewModalOpen = true;
+  this.reviewForm.reset(); // clear previous input
+}
+
+// Close modal
+closeReviewForm() {
+  this.isReviewModalOpen = false;
+  this.selectedOrder = null;
+}
+
+// Set ratings
+setFoodRating(rating: number) {
+  this.reviewForm.get('foodRating')?.setValue(rating);
+}
+
+setDeliveryRating(rating: number) {
+  this.reviewForm.get('deliveryRating')?.setValue(rating);
+}
+
+setDeliveryPersonRating(rating: number) {
+  this.reviewForm.get('deliveryPersonRating')?.setValue(rating);
+}
+ private destroy$ = new Subject<void>(); // 👈 Add this line
+// Submit
+submitReview() {
+  if (this.reviewForm.valid && this.selectedOrder) {
+    
+    const reviewData = {
+      ...this.reviewForm.value,
+      orderId: this.selectedOrder.id  // ← add orderId here
+    };
+
+  
+    console.log('Submitting review:', reviewData, 'for order:', this.selectedOrder.id);
+
+    this.reviewService.createReview(reviewData,this.userId)
+      .pipe(takeUntil(this.destroy$)) // ✅ Prevent memory leak
+      .subscribe({
+        next: (res) => {
+          console.log('Review submitted successfully:', res);
+          // ✅ Close modal ONLY after success
+          this.closeReviewForm();
+          // Optional: show success message
+          alert('Thank you for your review!');
+        },
+        error: (err) => {
+          console.error('Failed to submit review:', err);
+          // ❌ Don't close modal on error — let user retry
+          alert('Failed to submit review. Please try again.');
+        }
+      });
+  }
+}
+
+checkIsReviewable() {
+  if (this.order.orderStatus === 'DELIVERED') {
+    console.log('Order is delivered');
+
+    this.reviewService.getReviewByOrderId(this.order.id).pipe(
+      catchError(error => {
+        // If 404 (Not Found), treat as "no review"
+        if (error.status === 404) {
+          console.log('No review found for this order');
+          return of(null); // return null as observable
+        }
+        // For other errors, re-throw
+        throw error;
+      })
+    ).subscribe(review => {
+      if (review === null) {
+        this.openReviewModal(this.order);
+      } else {
+        console.log('Review already exists:', review);
+        // Optionally show "Already reviewed" message
+      }
+    });
+  }
+}
 
 
  

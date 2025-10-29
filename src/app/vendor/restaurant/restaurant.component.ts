@@ -176,10 +176,17 @@ export class RestaurantComponent {
   }
 
   markReady(order: OrderResponseDTO): void {
-    this.orderService.updateOrderStatus(order.id, 'READY_FOR_PICKUP')
+
+    console.log(order.id);
+   
+    
+    
+    this.orderService.updateOrderStatus2(order.id, 'READY_FOR_PICKUP')
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
+
+
           this.preparingOrders = this.preparingOrders.filter(o => o.id !== order.id);
           this.readyOrders.push(order);
         },

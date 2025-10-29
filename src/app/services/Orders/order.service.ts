@@ -183,6 +183,29 @@ confirmDelivery(orderId: number, otp: string): Observable<string> {
     );
   }
 
+  updateOrderStatus2(orderId: number, status: OrderStatus): Observable<OrderResponseDTO> {
+  // 🔒 VALIDATE orderId BEFORE using it
+  if (orderId == null || orderId <= 0 || isNaN(orderId)) {
+    throw new Error(`Invalid order ID: ${orderId}`);
+  }
+
+  const params = new HttpParams().set('status', status);
+
+  return this.http.patch<OrderResponseDTO>(
+    `${this.apiUrl}/${orderId}/status`,
+    null,
+    { params }
+  ).pipe(
+    tap(updatedOrder => {
+      const orders = this.ordersSubject.value.map(order =>
+        order.id === orderId ? updatedOrder : order
+      );
+      this.ordersSubject.next(orders);
+      this.updateStats();
+    })
+  );
+}
+
   updatePaymentStatus(orderId: number, status: PaymentStatus): Observable<OrderResponseDTO> {
     let params = new HttpParams().set('status', status);
 
