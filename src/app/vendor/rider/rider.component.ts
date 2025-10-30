@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, forkJoin, of, Subject, Subscription, takeUntil } from 'rxjs';
 import { environment } from 'src/app/Envirment/environment';
 import { OrderResponseDTO, OrderStatus } from 'src/app/Models/Order/order.models';
 import { Restaurant } from 'src/app/Models/restaurant.model';
 import { LocationUpdate, Rider } from 'src/app/Models/rider.model';
+import { NotificationResponseDTO, NotificationService } from 'src/app/services/notificationAndcoupon/notification.service';
 import { OrderService } from 'src/app/services/Orders/order.service';
 import { RestaurantService } from 'src/app/services/restaurant/restaurant.service';
 import { RiderService } from 'src/app/services/Rider/rider.service';
@@ -33,7 +34,8 @@ incomingOrders:OrderResponseDTO[] |null = null ;
     private route: ActivatedRoute,
     private router: Router,
     private riderService:RiderService,
-    private restaurantService:RestaurantService
+    private restaurantService:RestaurantService,
+    private notificationService:NotificationService
   ) {}
 
   ngOnInit(
@@ -41,6 +43,9 @@ incomingOrders:OrderResponseDTO[] |null = null ;
 
       this.startLocationTracking();
       this.loadRiderStatus();
+       this.loadNotifications();
+
+      this.loadUnreadCount();
 
 
 forkJoin([
@@ -375,6 +380,105 @@ private sendLocationToServer(lat: number, lng: number): void {
       }
     });
   }
+
+
+  //Notifications
+
+  
+  notifications: NotificationResponseDTO[] = [];
+  unreadCount = 0;
+  loadingN = false;
+    showNotificationsPanel = false;
+  
+    loadNotifications(): void {
+      this.loadingN = true;
+      this.notificationService.getUserNotifications(this.riderId).subscribe({
+        next: (res) => {
+          this.notifications = res.content || res;
+          this.loadingN = false;
+        },
+        error: (err) => {
+          console.error('Failed to fetch notifications:', err);
+          this.loadingN = false;
+        }
+      });
+    }
+  
+  
+  // ✅ No manual count updates!
+  markAsRead(notificationId: number): void {
+    this.notificationService.markAsRead(notificationId).subscribe();
+  }
+  
+  markAllAsRead(): void {
+    this.notificationService.markAllAsRead(this.riderId).subscribe();
+  }
+  
+    loadUnreadCount(): void {
+      this.notificationService.getUnreadCount(this.riderId).subscribe({
+        next: (count) => (this.unreadCount = count),
+        error: (err) => console.error('Failed to load unread count:', err)
+      });
+    }
+  
+  
+  
+  
+  formatTimeAgo(isoDate: string): string {
+      const date = new Date(isoDate);
+      const now = new Date();
+      const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+  
+      let interval = seconds / 31536000;
+      if (interval > 1) return Math.floor(interval) + 'y';
+  
+      interval = seconds / 2592000;
+      if (interval > 1) return Math.floor(interval) + 'mo';
+  
+      interval = seconds / 86400;
+      if (interval > 1) return Math.floor(interval) + 'd';
+  
+      interval = seconds / 3600;
+      if (interval > 1) return Math.floor(interval) + 'h';
+  
+      interval = seconds / 60;
+      if (interval > 1) return Math.floor(interval) + 'm';
+  
+      return Math.floor(seconds) + 's';
+    }
+  
+
+  
+    // ✅ Fix: Separate click handler with stopPropagation
+    toggleNotifications(event: MouseEvent): void {
+      event.stopPropagation();
+      this.showNotificationsPanel = !this.showNotificationsPanel;
+  
+      if (this.showNotificationsPanel) {
+        this.markAllAsRead();
+      }
+    }
+
+     @HostListener('document:click', ['$event'])
+      onDocumentClick(event: Event): void {
+        const target = event.target as HTMLElement;
+    
+   
+    
+        // Close Notification Panel
+        const bell = document.querySelector('.notification-bell');
+        const panel = document.querySelector('.notification-panel');
+    
+        if (
+          this.showNotificationsPanel &&
+          bell &&
+          panel &&
+          !bell.contains(target) &&
+          !panel.contains(target)
+        ) {
+          this.showNotificationsPanel = false;
+        }
+      }
 
 
 
