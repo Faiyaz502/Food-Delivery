@@ -11,6 +11,7 @@ import { CouponApplyRequest } from 'src/app/Models/NotificationAndCoupon/coupon.
 import { UserProfile } from 'src/app/Models/Users/profile.model';
 import { UserProfileService } from 'src/app/services/UserServices/user-profile.service';
 import { environment } from 'src/app/Envirment/environment';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-checkout',
@@ -62,7 +63,8 @@ export class CheckoutComponent {
     private orderService: OrderService,
     private couponService: CouponService,
     private router: Router,
-    private userService: UserProfileService
+    private userService: UserProfileService,
+    private toast:ToastrService
   ) {
     this.deliveryForm = this.fb.group({
       deliveryAddress: ['', Validators.required],
@@ -149,6 +151,7 @@ export class CheckoutComponent {
       },
       error: () => {
         this.couponError = 'Invalid or expired coupon.';
+        this.toast.error("Invalid or expired coupon.")
       }
     });
   }
@@ -186,7 +189,9 @@ export class CheckoutComponent {
         this.isLoading = false;
         console.log(order);
 
-       
+
+          this.toast.success("The Order Successfully Placed");
+
 
         this.navigateToTrack(order.id);
 
@@ -197,6 +202,7 @@ export class CheckoutComponent {
       error: () => {
         this.isLoading = false;
         this.orderError = 'Order placement failed. Please try again.';
+
       }
     });
   }

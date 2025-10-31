@@ -6,6 +6,9 @@ import { CartResponseDTO } from '../Models/cart/cart.models';
 import { environment } from '../Envirment/environment';
 import { NotificationResponseDTO, NotificationService} from '../services/notificationAndcoupon/notification.service';
 
+
+import { WebSocketService } from '../services/web-Socket/web-socket.service';
+
 export interface Page<T> {
   content: T[];
   pageable: {
@@ -36,6 +39,10 @@ export interface Page<T> {
   styleUrls: ['./main.component.scss']
 })
 export class MainComponent {
+
+
+
+
 isCartOpen = false;
   isProfileOpen = false;
   isLogin = false;
@@ -65,7 +72,8 @@ isCartOpen = false;
 
 
     constructor(private cartService: CartService,private router: Router,
-      private notificationService: NotificationService
+      private notificationService: NotificationService ,
+      private webSocket:WebSocketService
     ) {}
 
     ngOnInit(): void {
@@ -75,17 +83,15 @@ isCartOpen = false;
       // Subscribe to currentCart$ for real-time updates
       this.cartService.currentCart$.subscribe(cart => {
         this.cart = cart;
-
-
-
       });
-
-
 
        this.loadNotifications();
 
       this.loadUnreadCount();
 
+      //webSocket
+
+      this.ConncetWebSocket();
 
 
     }
@@ -218,6 +224,21 @@ formatTimeAgo(isoDate: string): string {
       this.showNotificationsPanel = false;
     }
   }
+
+
+    //WebSocket
+
+ConncetWebSocket() {
+  this.webSocket.connect(this.userId);
+
+}
+
+
+
+
+
+
+
 
 
 }

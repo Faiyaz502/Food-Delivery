@@ -15,7 +15,13 @@ import { ToastrModule } from 'ngx-toastr';
   ],
   imports: [
         BrowserAnimationsModule,
-    ToastrModule.forRoot(),
+    ToastrModule.forRoot({
+      progressBar:true,
+      closeButton:true,
+      newestOnTop:true,
+      positionClass:'toast-bottom-right',
+      timeOut:7000
+    }),
     BrowserModule,
     AppRoutingModule,
     CommonModule ,

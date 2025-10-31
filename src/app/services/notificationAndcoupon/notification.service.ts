@@ -9,7 +9,7 @@ export interface NotificationResponseDTO {
   userId: number;
   title: string;
   message: string;
-  type: 'ORDER' | 'PROMOTION' | 'SYSTEM' | 'DELIVERY';
+  type: 'ORDER' | 'PROMOTION' | 'SYSTEM' | 'CHAT';
   isRead: boolean;
   createdAt: string;
   orderId?: number;

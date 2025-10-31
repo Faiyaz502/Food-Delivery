@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { environment } from 'src/app/Envirment/environment';
 import { CartResponseDTO } from 'src/app/Models/cart/cart.models';
 
@@ -16,12 +17,14 @@ export class CartSideBarComponent {
   @Output() closeCartEvent = new EventEmitter<void>();
 
   cart: CartResponseDTO | null = null;
-  // DEMO DATA - Replace with actual user/auth service subscription
+
 
   userId: number = environment.userId; // HOme
 
 
-  constructor(private cartService: CartService, private router: Router) {}
+  constructor(private cartService: CartService, private router: Router
+
+  ) {}
 
   ngOnInit(): void {
     // Load cart on component initialization (if not already loaded)
