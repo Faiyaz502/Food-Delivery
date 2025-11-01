@@ -1,5 +1,5 @@
 // src/app/services/web-Socket/web-socket.service.ts
-import { Injectable } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import * as SockJS from 'sockjs-client';
 import { Client, Message } from '@stomp/stompjs';
@@ -12,6 +12,8 @@ import { NotificationResponseDTO } from '../notificationAndcoupon/notification.s
 export class WebSocketService {
   private client: Client | null = null;
   private userId: string | null = null; // Changed to string to match Spring
+
+    notificationReceived = new EventEmitter<NotificationResponseDTO>();
 
   constructor(private toastr: ToastrService) {}
 
@@ -156,5 +158,10 @@ sendGroupMessage(groupCode: string, content: string): void {
       progressBar: true,
       closeButton: true
     });
+
+       this.notificationReceived.emit(notification);
+
+
+
   }
 }

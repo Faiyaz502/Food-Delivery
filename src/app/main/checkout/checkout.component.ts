@@ -13,6 +13,9 @@ import { UserProfileService } from 'src/app/services/UserServices/user-profile.s
 import { environment } from 'src/app/Envirment/environment';
 import { ToastrService } from 'ngx-toastr';
 
+
+
+
 @Component({
   selector: 'app-checkout',
   templateUrl: './checkout.component.html',
@@ -48,6 +51,19 @@ export class CheckoutComponent {
     latitude: 0,
     longitude: 0
   };
+
+  private createCustomMarkerIcon(): L.Icon {
+  return L.icon({
+    iconUrl: 'assets/img/restLocation.png',
+    // Optional: use a different retina version if available
+    // iconRetinaUrl: 'assets/img/restLocation@2x.png',
+    iconSize: [32, 32],        // width, height — adjust to your image size
+    iconAnchor: [16, 32],      // point of the icon which will correspond to marker's location
+    popupAnchor: [0, -32],     // point from which the popup should open relative to the iconAnchor
+    shadowSize: [0, 0],
+    shadowAnchor: [0, 0]
+  });
+}
 
   get finalTotal(): number {
     return (this.cartSummary.total || 0) + (this.cartSummary.deliveryFee || 0) - this.couponDiscount;
@@ -231,7 +247,10 @@ export class CheckoutComponent {
     }).addTo(this.modalMap);
 
     if (this.modalMarker) this.modalMap.removeLayer(this.modalMarker);
-    this.modalMarker = L.marker([lat, lng]).addTo(this.modalMap);
+
+      const customIcon = this.createCustomMarkerIcon();
+  this.modalMarker = L.marker([lat, lng], { icon: customIcon }).addTo(this.modalMap);
+
 
     // Handle map clicks → round to 6 decimals
     this.modalMap.on('click', (e: any) => {
@@ -243,7 +262,8 @@ export class CheckoutComponent {
 
 
       if (this.modalMarker) this.modalMap.removeLayer(this.modalMarker);
-      this.modalMarker = L.marker([lat, lng]).addTo(this.modalMap);
+     const customIcon = this.createCustomMarkerIcon(); // ← reuse the method
+  this.modalMarker = L.marker([lat, lng], { icon: customIcon }).addTo(this.modalMap);
 
       this.updateProfile.latitude = lat;
         this.updateProfile.longitude = lng;
@@ -257,6 +277,8 @@ export class CheckoutComponent {
   }
 
 //  Allow location access
+
+
 allowLocation() {
   this.showLocationPrompt = false;
 

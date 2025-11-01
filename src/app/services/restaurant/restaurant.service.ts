@@ -35,6 +35,12 @@ export class RestaurantService {
       return this.http.put<Restaurant>(`${this.apiUrl}/restaurants/${id}`, restaurant);
 
     }
+
+  //  Toggle restaurant open/close status
+  toggleRestaurantStatus(id: number, status: boolean): Observable<Restaurant> {
+    return this.http.put<Restaurant>(`${this.apiUrl}/restaurants/${id}/toggle-status?status=${status}`, {});
+  }
+
       getRestaurantsByOwner(ownerId: number): Observable<Restaurant[]> {
     return this.http.get<Restaurant[]>(`${this.apiUrl}/restaurants/owner/${ownerId}`);
   }
@@ -42,5 +48,9 @@ export class RestaurantService {
     deleteRestaurant(id: number): Observable<void> {
       return this.http.delete<void>(`${this.apiUrl}/restaurants/${id}`);
     }
+
+    closeAllRestaurantsByOwner(ownerId: number): Observable<string> {
+  return this.http.put(`${this.apiUrl}/restaurants/close-all/${ownerId}`, {}, { responseType: 'text' });
+}
 
 }

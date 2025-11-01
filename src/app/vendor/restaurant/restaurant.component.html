@@ -168,13 +168,13 @@
           <div>
             <div class="flex items-center gap-3 mb-2">
               <h2 class="text-2xl font-bold text-gray-900">{{ selectedRestaurant.name }}</h2>
-              <button (click)="toggleRestaurantStatus(selectedRestaurant)"
+              <button (click)="toggleOpenClose(selectedRestaurant.id!,selectedRestaurant.isOpen)"
                 [class.bg-emerald-100]="selectedRestaurant.isOpen"
                 [class.text-emerald-800]="selectedRestaurant.isOpen"
                 [class.bg-rose-100]="!selectedRestaurant.isOpen"
                 [class.text-rose-800]="!selectedRestaurant.isOpen"
                 class="px-4 py-1.5 rounded-full text-sm font-semibold">
-                {{ selectedRestaurant.isOpen ? 'Open' : 'Closed' }}
+                {{selectedRestaurant.isOpen ? 'Open' : 'Close' }}
               </button>
             </div>
             <p class="text-gray-600 mb-3 max-w-2xl">{{ selectedRestaurant.description }}</p>

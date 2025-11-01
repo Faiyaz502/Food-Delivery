@@ -1,3 +1,4 @@
+import { ToastrService } from 'ngx-toastr';
 import { Component, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject, takeUntil, interval } from 'rxjs';
@@ -8,6 +9,7 @@ import { NotificationResponseDTO, NotificationService } from 'src/app/services/n
 import { OrderService } from 'src/app/services/Orders/order.service';
 import { RestaurantService } from 'src/app/services/restaurant/restaurant.service';
 import { RestaurantOwnerService } from 'src/app/services/UserServices/restaurant-owner.service';
+import { WebSocketService } from 'src/app/services/web-Socket/web-socket.service';
 
 @Component({
   selector: 'app-restaurant',
@@ -21,7 +23,8 @@ export class RestaurantComponent {
   preparingOrders: OrderResponseDTO[] = [];
   readyOrders: OrderResponseDTO[] = [];
 
-  ownerId: number = environment.ownerId; // Get from auth service 
+
+  ownerId: number = environment.ownerId; // Get from auth service
   loading: boolean = false;
   error: string = '';
 
@@ -37,17 +40,41 @@ export class RestaurantComponent {
     private orderService: OrderService,
     private router: Router ,
     private restaurantOwnerService:RestaurantOwnerService,
-    private notificationService : NotificationService
+    private notificationService : NotificationService,
+     private webSocket:WebSocketService,
+     private toast : ToastrService
   ) {}
 
   ngOnInit(): void {
     this.loadRestaurants();
     this.startOrderPolling();
+
+
+     this.ConncetWebSocket();
+
+
+        this.webSocket.notificationReceived
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(notification => {
+      const exists = this.notifications.some(n => n.id === notification.id);
+      if (!exists) {
+        this.notifications.unshift(notification);
+        this.unreadCount += 1;
+      }
+    });
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+
+
+    this.restaurantService.closeAllRestaurantsByOwner(this.ownerId).subscribe({
+      next: (res) => console.log(res),
+      error: (err) => console.error('❌ Failed to close restaurants', err)
+    });
+  
+
   }
 
   loadRestaurants(): void {
@@ -89,9 +116,9 @@ export class RestaurantComponent {
       .subscribe({
         next: (orders) => {this.preparingOrders = orders
           console.log(orders);
-          
+
         },
-        
+
         error: (err) => {console.error('Error loading preparing orders:', err)}
       });
 
@@ -180,9 +207,9 @@ export class RestaurantComponent {
   markReady(order: OrderResponseDTO): void {
 
     console.log(order.id);
-   
-    
-    
+
+
+
     this.orderService.updateOrderStatus2(order.id, 'READY_FOR_PICKUP')
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -215,26 +242,6 @@ export class RestaurantComponent {
     this.router.navigate(['/restaurant', restaurantId, 'offers']);
   }
 
-  toggleRestaurantStatus(restaurant: Restaurant): void {
-    const updatedRestaurant = { ...restaurant, isOpen: !restaurant.isOpen };
-    this.restaurantService.updateRestaurant(restaurant.id!, updatedRestaurant)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (updated) => {
-          const index = this.restaurants.findIndex(r => r.id === updated.id);
-          if (index !== -1) {
-            this.restaurants[index] = updated;
-            if (this.selectedRestaurant?.id === updated.id) {
-              this.selectedRestaurant = updated;
-            }
-          }
-        },
-        error: (err) => {
-          alert('Failed to update restaurant status');
-          console.error('Error updating status:', err);
-        }
-      });
-  }
 
   getOrderTime(orderDate: string): string {
     const now = new Date();
@@ -249,13 +256,13 @@ export class RestaurantComponent {
 
   //Notification
 
-  
-    
+
+
     notifications: NotificationResponseDTO[] = [];
     unreadCount = 0;
     loadingN = false;
       showNotificationsPanel = false;
-    
+
       loadNotifications(): void {
         this.loadingN = true;
         this.notificationService.getUserNotifications(this.ownerId).subscribe({
@@ -269,72 +276,75 @@ export class RestaurantComponent {
           }
         });
       }
-    
-    
-    // ✅ No manual count updates!
+
+
+    //  No manual count updates!
     markAsRead(notificationId: number): void {
       this.notificationService.markAsRead(notificationId).subscribe();
     }
-    
+
     markAllAsRead(): void {
       this.notificationService.markAllAsRead(this.ownerId).subscribe();
     }
-    
+
       loadUnreadCount(): void {
         this.notificationService.getUnreadCount(this.ownerId).subscribe({
           next: (count) => (this.unreadCount = count),
           error: (err) => console.error('Failed to load unread count:', err)
         });
       }
-    
-    
-    
-    
+
+
+
+
     formatTimeAgo(isoDate: string): string {
         const date = new Date(isoDate);
         const now = new Date();
         const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-    
+
         let interval = seconds / 31536000;
         if (interval > 1) return Math.floor(interval) + 'y';
-    
+
         interval = seconds / 2592000;
         if (interval > 1) return Math.floor(interval) + 'mo';
-    
+
         interval = seconds / 86400;
         if (interval > 1) return Math.floor(interval) + 'd';
-    
+
         interval = seconds / 3600;
         if (interval > 1) return Math.floor(interval) + 'h';
-    
+
         interval = seconds / 60;
         if (interval > 1) return Math.floor(interval) + 'm';
-    
+
         return Math.floor(seconds) + 's';
       }
-    
-  
-    
-      // ✅ Fix: Separate click handler with stopPropagation
-      toggleNotifications(event: MouseEvent): void {
-        event.stopPropagation();
-        this.showNotificationsPanel = !this.showNotificationsPanel;
-    
-        if (this.showNotificationsPanel) {
-          this.markAllAsRead();
-        }
+
+
+
+      //  Fix: Separate click handler with stopPropagation
+        toggleNotifications(event: MouseEvent): void {
+      event.stopPropagation();
+      this.showNotificationsPanel = !this.showNotificationsPanel;
+
+      if (this.showNotificationsPanel) {
+        this.markAllAsRead();
+        this.unreadCount=0;
+          this.loadNotifications();
       }
-  
+    }
+
+
        @HostListener('document:click', ['$event'])
         onDocumentClick(event: Event): void {
           const target = event.target as HTMLElement;
-      
-     
-      
+
+
+
           // Close Notification Panel
           const bell = document.querySelector('.notification-bell');
           const panel = document.querySelector('.notification-panel');
-      
+
           if (
             this.showNotificationsPanel &&
             bell &&
@@ -345,6 +355,39 @@ export class RestaurantComponent {
             this.showNotificationsPanel = false;
           }
         }
+
+
+        //
+
+             async ConncetWebSocket() {
+ await this.webSocket.connect(this.ownerId);
+
+
+}
+
+
+//toggle restaurant status
+
+toggleOpenClose(id: number, isOpen: boolean | undefined): void {
+  const newStatus = !isOpen;
+  this.restaurantService.toggleRestaurantStatus(id, newStatus).subscribe({
+    next: (updated) => {
+      console.log('✅ Restaurant status updated:', updated);
+
+         //  Immediately update local data (UI)
+      const index = this.restaurants.findIndex(r => r.id === id);
+      if (index !== -1) {
+        this.restaurants[index].isOpen = updated.isOpen;
+      }
+
+      this.toast.info(`Restaurant is now ${updated.isOpen ? 'Open' : 'Closed'}`);
+
+    },
+    error: (err) => {
+      console.error('❌ Failed to update restaurant status:', err);
+    }
+  });
+}
 
 
 

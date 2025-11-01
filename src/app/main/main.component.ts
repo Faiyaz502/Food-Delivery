@@ -94,6 +94,17 @@ isCartOpen = false;
       this.ConncetWebSocket();
 
 
+        this.webSocket.notificationReceived
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(notification => {
+      const exists = this.notifications.some(n => n.id === notification.id);
+      if (!exists) {
+        this.notifications.unshift(notification);
+        this.unreadCount += 1;
+      }
+    });
+
+
     }
 
           //restaurants
@@ -195,10 +206,12 @@ formatTimeAgo(isoDate: string): string {
 
     if (this.showNotificationsPanel) {
       this.markAllAsRead();
+      this.unreadCount=0;
+        this.loadNotifications();
     }
   }
 
-  // ✅ Keep your existing markAsRead, markAllAsRead, formatTimeAgo
+
 
   // ✅ Fixed @HostListener
   @HostListener('document:click', ['$event'])
@@ -228,8 +241,9 @@ formatTimeAgo(isoDate: string): string {
 
     //WebSocket
 
-ConncetWebSocket() {
-  this.webSocket.connect(this.userId);
+async ConncetWebSocket() {
+ await this.webSocket.connect(this.userId);
+
 
 }
 
