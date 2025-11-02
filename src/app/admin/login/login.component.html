@@ -1,0 +1,54 @@
+<div id="particles-js"></div>
+
+<div class="container">
+  <div class="form-box">
+    <h2>Login</h2>
+    <p>Welcome Back</p>
+
+    <form (ngSubmit)="onSubmit()">
+      <input
+        type="text"
+        id="username"
+        required
+        class="input-field"
+        [(ngModel)]="username"
+        name="username"
+        autocomplete="off"
+      />
+      <label for="username">Username</label>
+      <div class="glow-line"></div>
+
+      <input
+        type="password"
+        id="password"
+        required
+        class="input-field"
+        [(ngModel)]="password"
+        name="password"
+        autocomplete="new-password"
+      />
+      <label for="password">Password</label>
+      <div class="glow-line"></div>
+
+      <div class="remember-forgot">
+        <div class="remember">
+          <input
+            type="checkbox"
+            id="remember"
+            [(ngModel)]="rememberMe"
+            name="remember"
+          />
+          <label for="remember">Remember me</label>
+        </div>
+        <a href="#" class="forgot">Forgot Password?</a>
+      </div>
+
+      <button type="submit" class="login-btn">
+        <span>SIGN IN</span>
+        <div class="btn-glow"></div>
+      </button>
+
+
+    </form>
+  </div>
+</div>

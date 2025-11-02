@@ -29,6 +29,7 @@
     "net": "^1.0.2",
     "ng-apexcharts": "^1.7.4",
     "ngx-toastr": "^16.2.0",
+    "particles.js": "^2.0.0",
     "quill": "^2.0.3",
     "rxjs": "~7.8.0",
     "sockjs-client": "^1.6.1",
