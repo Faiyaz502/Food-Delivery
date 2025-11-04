@@ -10,6 +10,10 @@ import { OrderService } from 'src/app/services/Orders/order.service';
 import { RestaurantService } from 'src/app/services/restaurant/restaurant.service';
 import { RestaurantOwnerService } from 'src/app/services/UserServices/restaurant-owner.service';
 import { WebSocketService } from 'src/app/services/web-Socket/web-socket.service';
+import { MenuItem } from 'src/app/Models/MenuItem.model';
+import { MenuItemService } from 'src/app/services/menu-item.service';
+import { MenuCategoryDto, MenuCategoryService } from 'src/app/services/restaurant/menu-category.service';
+
 
 @Component({
   selector: 'app-restaurant',
@@ -22,6 +26,14 @@ export class RestaurantComponent {
   newOrders: OrderResponseDTO[] = [];
   preparingOrders: OrderResponseDTO[] = [];
   readyOrders: OrderResponseDTO[] = [];
+    categories!: MenuCategoryDto[];
+  menuItems: MenuItem[] = [];
+    showAddMenuItem = false;
+  showEditMenuItem = false;
+    showCreateModal = false;
+  showEditModal = false;
+  showMenuModal = false;
+   showOrders: boolean = false;
 
 
   ownerId: number = environment.ownerId; // Get from auth service
@@ -42,7 +54,9 @@ export class RestaurantComponent {
     private restaurantOwnerService:RestaurantOwnerService,
     private notificationService : NotificationService,
      private webSocket:WebSocketService,
-     private toast : ToastrService
+     private toast : ToastrService,
+     private menuService : MenuItemService,
+     private menuCategoryService : MenuCategoryService
   ) {}
 
   ngOnInit(): void {
@@ -73,7 +87,7 @@ export class RestaurantComponent {
       next: (res) => console.log(res),
       error: (err) => console.error('❌ Failed to close restaurants', err)
     });
-  
+
 
   }
 
@@ -128,6 +142,20 @@ export class RestaurantComponent {
         next: (orders) => this.readyOrders = orders,
         error: (err) => console.error('Error loading ready orders:', err)
       });
+  }
+
+
+  getAllCategorys(){
+        this.menuCategoryService.getAllCategories().subscribe((res)=>{
+
+          console.log("category ",res);
+
+
+            this.categories = res ;
+
+        })
+
+
   }
 
   loadStats(restaurantId: number): void {
@@ -388,6 +416,164 @@ toggleOpenClose(id: number, isOpen: boolean | undefined): void {
     }
   });
 }
+
+// ✅ FIXED: Corrected method call and error handling
+    // Menu item image upload
+  selectedMenuItemImageFile: File | null = null;
+  previewMenuItemImageUrl: string | null = null;
+
+ currentMenuItem: MenuItem = {
+  name: '',
+  price: 0,
+  description: '',
+  imageUrl: '',
+  isSpicy: false,
+  spiceLevel: 0,
+  preparationTime: 30,
+  isAvailable: true,
+  restaurantId: 0,
+  catagoryName: ''
+};
+onMenuItemImageSelected(event: Event): void {
+  const input = event.target as HTMLInputElement;
+  if (input.files && input.files.length > 0) {
+    this.selectedMenuItemImageFile = input.files[0];
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      this.previewMenuItemImageUrl = e.target.result;
+    };
+    reader.readAsDataURL(this.selectedMenuItemImageFile);
+  }
+}
+
+private async uploadMenuItemImage(menuItemId: number): Promise<void> {
+  if (!this.selectedMenuItemImageFile) {
+    console.log('No menu item image selected');
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('file', this.selectedMenuItemImageFile);
+
+  try {
+    console.log(`Uploading image for menu item ${menuItemId}...`);
+    // ✅ FIXED: Use correct method name from MenuItemService
+    await this.menuService.uploadMenuItemImage(menuItemId, formData).toPromise();
+    console.log('Menu item image uploaded successfully');
+  } catch (error) {
+    console.error('Menu item image upload failed:', error);
+    alert('Failed to upload menu item image. Please try again.');
+    throw error; // Re-throw to handle in calling function
+  }
+}
+
+// ✅ IMPROVED: Better error handling and flow
+
+
+  viewMenuItems(restaurant: Restaurant) {
+
+    this.menuService.getMenuItemsByRestaurant(restaurant.id || 0).subscribe(items => {
+      console.log(items);
+        this.getAllCategorys();
+      this.menuItems = items;
+      this.showMenuModal = true;
+
+
+    });
+  }
+
+  editMenuItem(item: MenuItem) {
+    this.currentMenuItem = { ...item };
+    this.showEditMenuItem = true;
+
+  }
+
+  deleteMenuItem(id: number) {
+    if (confirm('Are you sure you want to delete this menu item?')) {
+      this.menuService.delete(id).subscribe(() => {
+        if (this.selectedRestaurant) {
+          this.viewMenuItems(this.selectedRestaurant);
+        }
+      });
+    }}
+
+async saveMenuItem() {
+  if (!this.selectedRestaurant) {
+    alert('No restaurant selected');
+    return;
+  }
+
+  this.currentMenuItem.restaurantId = this.selectedRestaurant.id ?? 0;
+
+  try {
+    if (this.showEditMenuItem) {
+      // Update existing menu item
+      await this.menuService.updateMenu(this.currentMenuItem.id!, this.currentMenuItem).toPromise();
+      console.log('Menu item updated');
+
+      // Upload image if selected
+      if (this.selectedMenuItemImageFile) {
+        await this.uploadMenuItemImage(this.currentMenuItem.id!);
+      }
+
+      this.viewMenuItems(this.selectedRestaurant!);
+      this.closeMenuItemModal();
+    } else {
+      // Create new menu item
+      const res = await this.menuService.createMenuItem(this.currentMenuItem).toPromise();
+      console.log('Menu item created:', res);
+
+      // Upload image if selected
+      if (res && res.id && this.selectedMenuItemImageFile) {
+        await this.uploadMenuItemImage(res.id);
+      }
+
+      this.viewMenuItems(this.selectedRestaurant!);
+      this.closeMenuItemModal();
+    }
+  } catch (error) {
+    console.error('Error saving menu item:', error);
+    alert('Failed to save menu item. Please check console for details.');
+  }
+}
+
+closeMenuItemModal() {
+  this.showAddMenuItem = false;
+  this.showEditMenuItem = false;
+  this.currentMenuItem = {
+    name: '',
+    price: 0,
+    description: '',
+    imageUrl: '',
+    isSpicy: false,
+    spiceLevel: 0,
+    preparationTime: 30,
+    isAvailable: true,
+    restaurantId: 0,
+    catagoryName: ''
+  };
+  // ✅ Clear image selection
+  this.selectedMenuItemImageFile = null;
+  this.previewMenuItemImageUrl = null;
+}
+
+
+  closeMenuModal() {
+    this.showMenuModal = false;
+
+
+    this.menuItems = [];
+  }
+
+
+  showOrder(){
+
+this.showOrders = true ;
+
+
+  }
+
+
 
 
 

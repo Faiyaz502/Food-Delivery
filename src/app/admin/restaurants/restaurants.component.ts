@@ -107,7 +107,7 @@ onMenuItemImageSelected(event: Event): void {
   }
 }
 
-// ✅ FIXED: Corrected method call and error handling
+//Corrected method call and error handling
 private async uploadMenuItemImage(menuItemId: number): Promise<void> {
   if (!this.selectedMenuItemImageFile) {
     console.log('No menu item image selected');

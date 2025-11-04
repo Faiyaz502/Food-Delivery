@@ -1,0 +1,21 @@
+/* src/styles.css */
+
+/* Enhanced blob animation */
+@keyframes blob {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.1;
+  }
+  50% {
+    transform: translate(10px, -15px) scale(1.03);
+    opacity: 0.15;
+  }
+}
+
+.animate-blob {
+  animation: blob 12s infinite ease-in-out;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
