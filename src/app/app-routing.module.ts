@@ -5,13 +5,22 @@ import { AnalyticsComponent } from './analytics/analytics.component';
 import { MainComponent } from './main/main.component';
 import { VendorComponent } from './vendor/vendor.component';
 import { LoginComponent } from './admin/login/login.component';
+import { AuthGuard } from './services/authService/auth.guard';
+import { RoleGuard } from './services/authService/role.guard';
+import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
 
 const routes: Routes = [
 
-   { path: '', redirectTo: '/vendor', pathMatch: 'full' },
+   { path: '', redirectTo: '/admin', pathMatch: 'full' },
    {path: 'adminLogin', component:LoginComponent},
+     { path: 'unauthorized', component: UnauthorizedComponent },
 
-  { path: 'admin',component:AdminComponent,loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule) },
+  { path: 'admin'
+    ,component:AdminComponent,
+        canLoad: [AuthGuard, RoleGuard],
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['ADMIN'] , loginUrl: '/adminLogin'},
+    loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule) },
 
    { path: 'analytics',component:AnalyticsComponent ,loadChildren: () => import('./analytics/analytics.module').then(m => m.AnalyticsModule) },
 

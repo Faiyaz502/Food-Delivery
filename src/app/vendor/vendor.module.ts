@@ -5,7 +5,7 @@ import { VendorRoutingModule } from './vendor-routing.module';
 import { VendorComponent } from './vendor.component';
 import { RiderComponent } from './rider/rider.component';
 import { RestaurantComponent } from './restaurant/restaurant.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { OrderDetailsComponent } from './restaurant/order-details/order-details.component';
 import { VendorLoginComponent } from './Login/vendor-login/vendor-login.component';
 
@@ -24,6 +24,7 @@ import { VendorLoginComponent } from './Login/vendor-login/vendor-login.componen
     CommonModule,
     VendorRoutingModule,
     FormsModule ,
+    ReactiveFormsModule
 
   ]
 })

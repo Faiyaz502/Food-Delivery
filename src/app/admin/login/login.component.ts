@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
+
+import { AuthServiceService } from 'src/app/services/authService/auth-service.service';
 declare var particlesJS: any;
 @Component({
   selector: 'app-login',
@@ -9,8 +12,13 @@ export class LoginComponent {
 username = '';
   password = '';
   rememberMe = false;
+   loading = false;
+  error: string | null = null;
+  returnUrl = 'admin/dashboard';
 
-  constructor() { }
+  constructor(private auth: AuthServiceService, private router: Router, private route: ActivatedRoute) {
+
+  }
 
   ngOnInit(): void {
     // You'd typically include validation logic or data fetching here.
@@ -55,8 +63,23 @@ username = '';
   }
 
   // Placeholder for the form submission logic
-  onSubmit() {
-    console.log('Login attempt with:', this.username, this.password, this.rememberMe);
-    // Add your Angular form submission logic here (e.g., calling a service)
+ async submit() {
+    this.loading = true;
+    this.error = null;
+    try {
+      await this.auth.login(this.username, this.password);
+      console.log("navigate");
+
+      setTimeout(() => {
+  this.router.navigate(['/admin/dashboard']);
+}, 0);
+
+    
+    } catch (err: any) {
+      this.error = err?.message || 'Login failed';
+    } finally {
+      this.loading = false;
+    }
   }
+
 }

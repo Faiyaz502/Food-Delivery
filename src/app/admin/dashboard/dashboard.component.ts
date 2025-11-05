@@ -1,3 +1,4 @@
+import { TokenService } from './../../services/authService/token.service';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Chart } from 'chart.js';
 import { CateringOrder, CateringPackage } from 'src/app/Models/catering-package.model';
@@ -15,6 +16,7 @@ import { TeamMember } from 'src/app/Models/team-member.model';
 import { User } from 'src/app/Models/Users/user.models';
 
 import { ApiService } from 'src/app/services/api.service';
+import { AuthServiceService } from 'src/app/services/authService/auth-service.service';
 import { OrderService } from 'src/app/services/Orders/order.service';
 
 
@@ -59,10 +61,18 @@ export class DashboardComponent  {
   teamMembers: TeamMember[] = [];
   customerLocations: CustomerLocation[] = [];
 
-  constructor(private apiService: ApiService , private orderApi : OrderService) {}
+  constructor(private apiService: ApiService , private orderApi : OrderService ,
+   private ss :TokenService , private auth : AuthServiceService
+  ) {}
 
   ngOnInit() {
     this.loadDashboardData();
+   const token = this.ss.getToken
+   console.log(token);
+    
+
+
+
   }
 
   loadDashboardData() {
