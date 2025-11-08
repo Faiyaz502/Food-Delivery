@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 
 const TOKEN_KEY = 'app_token';
 const USERNAME_KEY = 'app_username';
+const USER_ID = "user_id"
 @Injectable({
   providedIn: 'root'
 })
@@ -29,6 +30,17 @@ export class TokenService {
   getUsername(): string | null {
     return localStorage.getItem(USERNAME_KEY);
   }
+
+  
+    setId(id: string) {
+    localStorage.setItem(USER_ID, id);
+  }
+
+  getId(): string | null {
+    return localStorage.getItem(USER_ID);
+  }
+
+
 
   isLoggedIn(): boolean {
     const token = this.getToken();

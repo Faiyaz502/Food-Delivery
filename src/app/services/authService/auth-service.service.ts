@@ -62,6 +62,9 @@ getUserRoles(): string[] {
     if (!resp || !resp.jwt) throw new Error('No token returned from server');
     this.tokenService.setToken(resp.jwt);
     // parse username from token if present
+    if(resp.id) this.tokenService.setId(String(resp.id));
+    
+  
     try {
       const payload = parseJwt(resp.jwt);
 
