@@ -85,7 +85,7 @@ export class RestaurantComponent {
 
     this.restaurantService.closeAllRestaurantsByOwner(this.ownerId).subscribe({
       next: (res) => console.log(res),
-      error: (err) => console.error('❌ Failed to close restaurants', err)
+      error: (err) => console.error(' Failed to close restaurants', err)
     });
 
 
