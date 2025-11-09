@@ -10,6 +10,7 @@ import { MenuItemService } from 'src/app/services/menu-item.service';
 import { MenuItem } from 'src/app/Models/MenuItem.model';
 import { Router } from '@angular/router';
 
+
 // Define the structure for a carousel item
 interface CarouselItem {
   id: number;
@@ -64,6 +65,8 @@ export class HomeComponent implements OnInit {
     this.restaurantService.getRestaurants().subscribe((res)=>{
 
       this.restaurants = res ;
+      console.log(res);
+      
 
     })
   }

@@ -55,7 +55,8 @@
       </div>
 
       <!-- Login Form -->
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
+      <form [formGroup]="loginForm" (ngSubmit)="submit()" class="space-y-6">
+        <p>{{error}}</p>
 
         <!-- Username Field -->
         <div class="animate-item">

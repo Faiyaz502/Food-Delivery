@@ -83,6 +83,8 @@ isCartOpen = false;
       // Subscribe to currentCart$ for real-time updates
       this.cartService.currentCart$.subscribe(cart => {
         this.cart = cart;
+        console.log(cart);
+        
       });
 
        this.loadNotifications();

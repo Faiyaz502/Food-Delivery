@@ -1,6 +1,8 @@
 import { trigger, transition, query, style, stagger, animate } from '@angular/animations';
 import { Component } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AuthServiceService } from 'src/app/services/authService/auth-service.service';
 
 @Component({
   selector: 'app-vendor-login',
@@ -33,36 +35,95 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 })
 export class VendorLoginComponent {
 
- loginForm: FormGroup;
+  loginForm: FormGroup;
   userType: 'rider' | 'restaurant' = 'rider';
   isLoading = false;
+  error = '';
 
-  constructor(private fb: FormBuilder) {
+
+  constructor(
+    private fb: FormBuilder,
+    private auth: AuthServiceService,
+    private router: Router
+  ) {
     this.loginForm = this.fb.group({
-      username: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]]
+      username: ['', [Validators.required]],
+      password: ['', [Validators.required, Validators.minLength(4)]]
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+
+      if(this.auth.isLoggedIn()){
+          const roles = this.auth.getUserRoles();
+
+              if (roles.includes('ROLE_RESTAURANT_OWNER')) {
+        this.router.navigate(['vendor/restaurantVendor']);
+      } else if (roles.includes('ROLE_DELIVERY_PERSON')) {
+        this.router.navigate(['vendor/rider']);
+      } else {
+        this.router.navigate(['/']);
+      }
+
+
+
+      }
+
+
+
+  }
 
   switchUserType(type: 'rider' | 'restaurant'): void {
     this.userType = type;
   }
 
-  onSubmit(): void {
-    if (this.loginForm.valid) {
-      this.isLoading = true;
-      // Simulate API call
-      setTimeout(() => {
-        this.isLoading = false;
-        console.log('Login data:', {
-          ...this.loginForm.value,
-          userType: this.userType
-        });
-      }, 2000);
+  async submit() {
+    this.isLoading = true;
+    this.error = '';
+
+    const username = this.loginForm.get('username')?.value;
+    const password = this.loginForm.get('password')?.value;
+
+    try {
+      await this.auth.login(username, password);
+
+      // Get roles after login
+      const roles = this.auth.getUserRoles();
+      console.log('Logged in roles:', roles);
+
+
+    // 🔒 Block admin or other disallowed roles
+    const allowedRoles = ['ROLE_RESTAURANT_OWNER', 'ROLE_DELIVERY_PERSON']; // ← adjust to match your backend roles
+    const hasAllowedRole = roles.some(role => allowedRoles.includes(role));
+
+    if (!hasAllowedRole) {
+      this.auth.logout(); // 🔒 Clear admin token!
+      this.error = 'Only restaurant owners and riders can log in here.';
+      return;
+    }
+
+
+
+
+
+      // Example: navigate based on role
+      if (roles.includes('ROLE_RESTAURANT_OWNER')) {
+        this.router.navigate(['vendor/restaurantVendor']);
+      } else if (roles.includes('ROLE_DELIVERY_PERSON')) {
+        this.router.navigate(['vendor/rider']);
+      } else {
+        this.router.navigate(['/']);
+      }
+
+    } catch (err: any) {
+      this.error = err?.message || 'Login failed';
+    } finally {
+      this.isLoading = false;
     }
   }
+
+ 
+
 
   loginWithGoogle(): void {
     this.isLoading = true;
@@ -81,7 +142,9 @@ export class VendorLoginComponent {
   }
 
   
-  get username() { return this.loginForm.get('username'); }
+  get username() { 
+    return this.loginForm?.get('username') ; 
+  }
   get password() { return this.loginForm.get('password'); }
 
 }

@@ -8,32 +8,42 @@ import { AuthServiceService } from './auth-service.service';
 })
 export class RoleGuard implements CanActivate, CanLoad {
 
-  constructor(private auth: AuthServiceService, private router: Router) {}
+   constructor(private auth: AuthServiceService, private router: Router) {}
 
-  private hasRequiredRole(required: string[]): boolean {
-    if (!required || required.length === 0) return true;
+ private checkRoles(requiredRoles: string[], routePath: string, dataLoginUrl?: string): boolean {
+  // Determine login URL: priority -> route.data.loginUrl -> route path prefix
+  const loginUrl = dataLoginUrl || `/${routePath.split('/')[0] || 'login'}`;
 
-    // Normalize roles: strip "ROLE_" from JWT roles
-    const userRoles = this.auth.getUserRoles().map(r => r.replace(/^ROLE_/, ''));
-
-    // Check if any required role matches
-    const ok = required.some(req => userRoles.includes(req));
-
-    if (!ok) {
-      // Redirect to unauthorized page if not allowed
-      this.router.navigate(['/unauthorized']);
-    }
-
-    return ok;
+  // Not logged in → redirect to login page
+  if (!this.auth.isLoggedIn()) {
+    this.router.navigate([loginUrl]);
+    return false;
   }
 
-  canActivate(route: ActivatedRouteSnapshot): boolean {
-    const requiredRoles = route.data?.['roles'] as string[] | undefined;
-    return this.hasRequiredRole(requiredRoles || []);
+  // Get user roles
+  const userRoles = this.auth.getUserRoles().map(r => r.replace(/^ROLE_/, ''));
+
+  // No roles required → allow
+  if (!requiredRoles || requiredRoles.length === 0) return true;
+
+  // Check if user has any required role
+  const allowed = requiredRoles.some(role => userRoles.includes(role));
+  if (!allowed) {
+    this.router.navigate(['/unauthorized']);
   }
 
-  canLoad(route: Route, segments: UrlSegment[]): boolean {
-    const requiredRoles = route.data?.['roles'] as string[] | undefined;
-    return this.hasRequiredRole(requiredRoles || []);
-  }
+  return allowed;
+}
+
+canActivate(route: ActivatedRouteSnapshot): boolean {
+  const roles = route.data?.['roles'] as string[] || [];
+  const loginUrl = route.data?.['loginUrl'];
+  return this.checkRoles(roles, route.routeConfig?.path || '', loginUrl);
+}
+
+canLoad(route: Route, segments: UrlSegment[]): boolean {
+  const roles = route.data?.['roles'] as string[] || [];
+  const loginUrl = route.data?.['loginUrl'];
+  return this.checkRoles(roles, route.path || '', loginUrl);
+}
 }
