@@ -23,16 +23,17 @@
           </svg>
         </button>
         <div *ngIf="isJoinDropdownOpen" class="absolute mt-1 w-48 bg-white rounded-md shadow-lg py-1 border border-gray-200 z-50" (click)="$event.stopPropagation()">
-          <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors" (click)="closeJoinDropdown()">Join as Rider</a>
-          <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors" (click)="closeJoinDropdown()">Join as Restaurant Owner</a>
+          <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors" (click)="closeJoinDropdown()" routerLink="reg">Join as Rider</a>
+          <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors" (click)="closeJoinDropdown()" routerLink="reg">Join as Restaurant Owner</a>
         </div>
       </div>
     </div>
 
     <!-- Cart & Profile & Notification -->
     <div class="flex items-center gap-3">
+
       <!-- ✅ Notification Bell Button -->
-      <button
+      <button *ngIf="isLogin"
         (click)="toggleNotifications($event)"
         class="notification-bell relative h-10 w-10 rounded-full border-2 border-gray-300 hover:border-blue-600 hover:bg-blue-50 flex items-center justify-center">
         <i class="fas fa-bell text-gray-700"></i>
@@ -44,7 +45,7 @@
       </button>
 
       <!-- Cart -->
-      <button
+      <button *ngIf="isLogin"
         (click)="toggleCart()"
         class="relative h-10 w-10 rounded-full border-2 border-gray-300 hover:border-blue-600 hover:bg-blue-50 flex items-center justify-center">
         <i class="fas fa-shopping-cart text-gray-700"></i>
@@ -54,11 +55,13 @@
       </button>
 
       <!-- Profile -->
-      <button
+      <button *ngIf="isLogin"
         (click)="toggleProfile()"
         class="h-10 w-10 rounded-full border-2 border-gray-300 hover:border-blue-600 hover:bg-blue-50 flex items-center justify-center">
         <i class="fas fa-user text-gray-700"></i>
       </button>
+
+    </div>
 
       <!-- Login -->
       <button
@@ -68,7 +71,7 @@
         SignUp
       </button>
     </div>
-  </div>
+
 </nav>
 
 <!-- ✅ Notification Dropdown Panel (MUST be outside <nav>) -->

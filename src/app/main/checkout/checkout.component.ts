@@ -12,6 +12,7 @@ import { UserProfile } from 'src/app/Models/Users/profile.model';
 import { UserProfileService } from 'src/app/services/UserServices/user-profile.service';
 import { environment } from 'src/app/Envirment/environment';
 import { ToastrService } from 'ngx-toastr';
+import { TokenService } from 'src/app/services/authService/token.service';
 
 
 
@@ -26,7 +27,7 @@ export class CheckoutComponent {
   showLocationPrompt: boolean = false;
 
 
-  userId:number = environment.userId; //home 5
+  userId:any ; //home 5
   user!: UserProfile;
   currentCart: CartResponseDTO | null = null;
   cartSummary: Partial<CartSummaryDTO & { deliveryFee: number }> = { subtotal: 0, tax: 0, total: 0, deliveryFee: 50 };
@@ -80,7 +81,8 @@ export class CheckoutComponent {
     private couponService: CouponService,
     private router: Router,
     private userService: UserProfileService,
-    private toast:ToastrService
+    private toast:ToastrService,
+    private token : TokenService
   ) {
     this.deliveryForm = this.fb.group({
       deliveryAddress: ['', Validators.required],
@@ -95,6 +97,8 @@ export class CheckoutComponent {
   }
 
   ngOnInit(): void {
+
+     this.userId = Number(this.token.getId());
     // Load cart
     this.cartService.currentCart$.subscribe(cart => {
       this.currentCart = cart;
@@ -307,7 +311,7 @@ allowLocation() {
         const preciseLat = Number(lat.toFixed(8));
         const preciseLng = Number(lng.toFixed(8));
 
-        console.log('✅ Final (6-digit):', preciseLat.toFixed(6), preciseLng.toFixed(6));
+        console.log(' Final (6-digit):', preciseLat.toFixed(6), preciseLng.toFixed(6));
 
         this.deliveryForm.patchValue({
           deliveryLatitude: preciseLat,

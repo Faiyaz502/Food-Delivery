@@ -20,7 +20,7 @@ import { LoginComponent } from './login/login.component';
 
 
 const routes: Routes = [
-  { path: 'adminLogin', component: LoginComponent },
+  { path: '', redirectTo: '/adminLogin', pathMatch: 'full' },
   { path: 'dashboard', component: DashboardComponent },
   { path: 'adminAnalytics', component: AdminAnalyticsComponent },
   { path: 'orders', component: OrdersComponent },

@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { environment } from 'src/app/Envirment/environment';
 import { OrderResponseDTO } from 'src/app/Models/Order/order.models';
 import { PaginatedResponse, User } from 'src/app/Models/Users/user.models';
+import { AuthServiceService } from 'src/app/services/authService/auth-service.service';
+import { TokenService } from 'src/app/services/authService/token.service';
 import { OrderService } from 'src/app/services/Orders/order.service';
 import { PaymentService } from 'src/app/services/payment/payment.service';
 import { UserServiceService } from 'src/app/services/UserServices/user.service.service';
@@ -24,7 +26,7 @@ export class LeftSideBarComponent {
   totalElements: number = 0;
 
 
-  UserId:number =  environment.userId ; //Tsp
+  UserId:any ; //Tsp
 
 
 
@@ -34,10 +36,13 @@ export class LeftSideBarComponent {
 
   constructor(private paymentService: PaymentService, private router: Router,
     private userService:UserServiceService,
-    private orderService:OrderService
+    private orderService:OrderService ,
+    private token :TokenService ,
+    private auth:AuthServiceService
   ) {}
 
   ngOnInit(): void {
+     this.UserId = Number(this.token.getId());
     // Load debit cards for the user
     // this.paymentService.getUserDebitCards(this.user.id).subscribe(cards => {
     //   this.debitCards = cards;
@@ -51,13 +56,13 @@ export class LeftSideBarComponent {
 
     this.fetchMostRecentOrder();
 
-   
-    
 
 
 
 
-    
+
+
+
 
 
 
@@ -78,8 +83,8 @@ export class LeftSideBarComponent {
   }
 
 
-  
-  
+
+
 
 
   fetchMostRecentOrder(): void {
@@ -91,15 +96,15 @@ export class LeftSideBarComponent {
       .subscribe((response)=>{
 
           console.log(response);
-          
+
         this.recentOrder = response.content.length > 0 ? response.content[0] : null
 
         console.log(this.recentOrder);
-        
-      }
-          
 
-      
+      }
+
+
+
 
        );
   }
@@ -159,7 +164,18 @@ private uploadProfileImage(file: File): void {
     }
   });
 
-    
+
+}
+
+logout(){
+
+  this.auth.logout();
+  this.closeSidebar();
+
+  this.router.navigate(['/main']).then(() => {
+    window.location.reload(); // optional if you want full reset
+  });
+
 }
 
 

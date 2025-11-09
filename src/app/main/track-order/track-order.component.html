@@ -16,6 +16,11 @@
     </div>
   </header>
 
+    <div *ngIf="!isLoading && order === null" class="text-center py-10 bg-gray-50 rounded-xl border border-dashed">
+    <p class="text-lg font-semibold text-gray-500">No Orders Found</p>
+    <p class="text-gray-400 mt-1">It looks like you haven't placed any orders on this page.</p>
+  </div>
+
   <!-- Main Content -->
   <main class="max-w-7xl mx-auto px-4 py-6">
     <!-- Progress Tracker -->

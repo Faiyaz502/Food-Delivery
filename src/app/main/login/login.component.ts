@@ -1,7 +1,10 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { UserRole } from 'src/app/Enums/profileEnums';
 import { User } from 'src/app/Models/Users/user.models';
+import { AuthServiceService } from 'src/app/services/authService/auth-service.service';
 import { UserProfileService } from 'src/app/services/UserServices/user-profile.service';
 import { UserServiceService } from 'src/app/services/UserServices/user.service.service';
 
@@ -14,9 +17,23 @@ export class LoginComponent {
 
   // Inject services and FormBuilder
 
-  constructor(private fb: FormBuilder, private userService: UserServiceService, private userProfileService: UserProfileService) {
 
-    this.initForm();
+
+  constructor(private fb: FormBuilder,
+     private userService: UserServiceService,
+     private userProfileService: UserProfileService,
+     private auth :AuthServiceService ,
+     private router:Router ,
+     private toast :ToastrService
+    ) {
+
+      this.initForm();
+
+                     this.loginForm = this.fb.group({
+      username: ['', [Validators.required]],
+      loginPass: ['', [Validators.required, Validators.minLength(4)]]
+    });
+
   }
 
   customerProfile = {
@@ -26,12 +43,13 @@ export class LoginComponent {
     longitude: 0
 
   };
-
+    loginForm!: FormGroup;
   registerForm!: FormGroup;
   isRegisterMode: boolean = false;
   isLoading: boolean = false;
   errorMessage: string | null = null;
   successMessage: string | null = null;
+  error = '';
 
 
 
@@ -47,7 +65,18 @@ export class LoginComponent {
       phoneNumber: [''], // Optional fields
       dateOfBirth: [''], // Optional fields
     });
+
+
+
+
   }
+
+
+
+
+
+
+
 
   // Helper to access form controls easily
   get f(): { [key: string]: AbstractControl } {
@@ -158,4 +187,63 @@ export class LoginComponent {
     this.successMessage = null;
     this.isLoading = false;
   }
+
+
+  //Login
+
+   async submit() {
+
+
+
+    const username = this.loginForm.get('username')?.value;
+    const password = this.loginForm.get('loginPass')?.value;
+
+    console.log(username,password);
+
+
+    try {
+      await this.auth.login(username, password);
+
+      // Get roles after login
+      const roles = this.auth.getUserRoles();
+      console.log('Logged in roles:', roles);
+
+
+    // 🔒 Block admin or other disallowed roles
+    const allowedRoles = ['ROLE_CUSTOMER']; // ← adjust to match your backend roles
+    const hasAllowedRole = roles.some(role => allowedRoles.includes(role));
+
+    if (!hasAllowedRole) {
+      this.auth.logout(); // 🔒 Clear admin token!
+
+      return;
+    }
+
+
+
+
+
+      // Example: navigate based on role
+      if (roles.includes('ROLE_CUSTOMER')) {
+           this.router.navigate(['/main']).then(() => {
+    window.location.reload();
+  });
+      }
+
+    } catch (err: any) {
+
+        this.toast.error("Login failed");
+    } finally {
+
+    }
+  }
+
+    get username() {
+    return this.loginForm?.get('username') ;
+  }
+  get password() { return this.loginForm.get('loginPass'); }
+
+
+
+
 }

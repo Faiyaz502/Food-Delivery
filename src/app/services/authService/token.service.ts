@@ -21,6 +21,7 @@ export class TokenService {
   removeToken() {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USERNAME_KEY);
+    localStorage.removeItem(USER_ID);
   }
 
   setUsername(username: string) {
@@ -31,7 +32,7 @@ export class TokenService {
     return localStorage.getItem(USERNAME_KEY);
   }
 
-  
+
     setId(id: string) {
     localStorage.setItem(USER_ID, id);
   }

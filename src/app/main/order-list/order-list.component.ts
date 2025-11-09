@@ -1,9 +1,11 @@
+import { Token } from '@angular/compiler';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { environment } from 'src/app/Envirment/environment';
+
 import { OrderResponseDTO, OrderStatus } from 'src/app/Models/Order/order.models';
 import { PaginatedResponse } from 'src/app/Models/rider.model';
+import { TokenService } from 'src/app/services/authService/token.service';
 import { OrderService } from 'src/app/services/Orders/order.service';
 
 @Component({
@@ -16,7 +18,7 @@ export class OrderListComponent {
   selectedOrder: OrderResponseDTO | null = null;
   isModalOpen: boolean = false;
 
-  customerId = environment.userId;
+  customerId : any;
 
   // Pagination State
   currentPage: number = 0; // 0-indexed
@@ -29,13 +31,16 @@ export class OrderListComponent {
 
   constructor(
     private orderService: OrderService,
-    private router: Router
+    private router: Router,
+    private token : TokenService
   ) { }
 
   ngOnInit(): void {
+    this.customerId = Number(this.token.getId());
+
     this.goToPage(0);
      // Load the first page when the component initializes
-    
+
   }
 
 
@@ -44,17 +49,17 @@ export class OrderListComponent {
     this.orders = []; // Clear previous orders while loading
 
     console.log(this.orders);
-    
+
 
  this.orderService.getOrdersByCustomermain(this.customerId, page, size)
   .subscribe({
     next: (response: PaginatedResponse<OrderResponseDTO>) => {
-    
-      
+
+
 
       this.orders = response.content;
       console.log(this.orders);
-      
+
       this.currentPage = response.number;
       this.totalPages = response.totalPages;
       this.totalElements = response.totalElements;
@@ -65,16 +70,16 @@ export class OrderListComponent {
       this.isLoading = false;
     }
   });
-   
-  }
-  
 
-  
+  }
+
+
+
   /**
    * Navigates to the specified page index (0-indexed) if valid.
    * @param pageIndex The page index to navigate to.
    */
-  
+
   goToPage(pageIndex: number): void {
     if (pageIndex >= 0 && pageIndex < this.totalPages || pageIndex === 0 && this.totalPages === 0) {
       this.currentPage = pageIndex;

@@ -22,7 +22,7 @@ const routes: Routes = [
         canLoad: [AuthGuard, RoleGuard],
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['ADMIN'] , loginUrl: '/adminLogin'},
-    loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule) 
+    loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule)
   },
 
    { path: 'analytics',component:AnalyticsComponent ,loadChildren: () => import('./analytics/analytics.module').then(m => m.AnalyticsModule) },
@@ -38,12 +38,12 @@ const routes: Routes = [
 
 {
   path: 'vendor',
-  
+
   canLoad: [RoleGuard],
   canActivate: [RoleGuard],
-  data: { 
-    roles: ['RESTAURANT_OWNER', 'DELIVERY_PERSON'], 
-    loginUrl: '/vendorLogin' 
+  data: {
+    roles: ['RESTAURANT_OWNER', 'DELIVERY_PERSON'],
+    loginUrl: '/vendorLogin'
   },
   loadChildren: () => import('./vendor/vendor.module').then(m => m.VendorModule)
 }

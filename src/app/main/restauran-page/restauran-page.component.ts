@@ -1,6 +1,6 @@
 import { ApiService } from './../../services/api.service';
 import { Component, HostListener ,AfterViewInit, Input} from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MenuItem } from 'src/app/Models/MenuItem.model';
 import { ReviewResponse, RestaurantReviewSummary } from 'src/app/Models/NotificationAndCoupon/review.model';
 
@@ -17,6 +17,9 @@ import { forkJoin, lastValueFrom, switchMap, tap } from 'rxjs';
 import { CartService } from 'src/app/services/Cart/cart.service';
 import { CartItemCreateDTO, CartResponseDTO } from 'src/app/Models/cart/cart.models';
 import { environment } from 'src/app/Envirment/environment';
+import { TokenService } from 'src/app/services/authService/token.service';
+import { AuthServiceService } from 'src/app/services/authService/auth-service.service';
+import { Toast, ToastrService } from 'ngx-toastr';
 
 
 
@@ -30,7 +33,7 @@ import { environment } from 'src/app/Envirment/environment';
 export class RestauranPageComponent {
 
 
-  userId = environment.userId; // home
+  userId : any; // home
 
     showClearCartOption: boolean = false;
 
@@ -60,12 +63,16 @@ export class RestauranPageComponent {
     private reviewService : ReviewService ,
     private menucategoryService : MenuCategoryService,
     private route: ActivatedRoute ,
-    private cartService:CartService
+    private cartService:CartService,
+    private token : TokenService ,
+    private auth : AuthServiceService,
+    private router: Router,
+    private toast : ToastrService
 
   ){}
 
    ngOnInit(): void {
-
+         this.userId = Number(this.token.getId());
            this.restaurantId = Number(this.route.snapshot.paramMap.get('id'));
     console.log('Restaurant ID:', this.restaurantId);
 
@@ -359,6 +366,14 @@ private async checkAndAddToCart(menuItemId: number): Promise<void> {
 
 
 private proceedToAddItem(item: CartItemCreateDTO): void {
+
+        if(!this.auth.isLoggedIn()){
+
+            this.router.navigate(['/main/login']);
+            this.toast.error("You Must Login Before Adding Anything in Cart");
+            return;
+        }
+
     // Get or create cart, then switch to adding the item
     this.cartService.getOrCreateCart(this.userId).pipe(
       switchMap(() => this.cartService.addItemToCart(this.userId, item)),

@@ -22,6 +22,14 @@ username = '';
 
   ngOnInit(): void {
     // You'd typically include validation logic or data fetching here.
+
+      if(this.auth.isLoggedIn()){
+
+       this.router.navigate(['admin/dashboard']);
+
+      }
+
+
   }
 
   // Initialize particles.js after the component's view has been initialized
@@ -74,12 +82,17 @@ username = '';
   this.router.navigate(['/admin/dashboard']);
 }, 0);
 
-    
+
     } catch (err: any) {
       this.error = err?.message || 'Login failed';
     } finally {
       this.loading = false;
     }
   }
+
+
+  //Login
+
+  
 
 }

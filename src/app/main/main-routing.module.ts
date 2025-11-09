@@ -10,6 +10,7 @@ import { RestaurantListComponent } from './restaurant-list/restaurant-list.compo
 import { LoginComponent } from './login/login.component';
 import { OrderListComponent } from './order-list/order-list.component';
 import { AuthGuard } from '../services/authService/auth.guard';
+import { RegistrationComponent } from './registration/registration.component';
 // ✅ Enable scroll position restoration
 const routerOptions: ExtraOptions = {
   scrollPositionRestoration: 'enabled', // scroll to top on navigation
@@ -18,14 +19,15 @@ const routerOptions: ExtraOptions = {
 const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'home', component: HomeComponent },
+  { path: 'reg', component: RegistrationComponent },
   { path: 'restaurant/:id', component: RestauranPageComponent },
   { path: 'checkout', component: CheckoutComponent, canActivate: [AuthGuard] },
-  { path: 'trackOrder/:id', component: TrackOrderComponent, canActivate: [AuthGuard] },
+  { path: 'trackOrder/:id', component: TrackOrderComponent },
   { path: 'orderList', component: OrderListComponent, canActivate: [AuthGuard] },
   { path: 'support', component: SupportComponent },
   { path: 'restaurantList/:category', component: RestaurantListComponent },
   { path: 'login', component: LoginComponent },
-  
+
 
 
 

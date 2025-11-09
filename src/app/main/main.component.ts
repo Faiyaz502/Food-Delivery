@@ -8,6 +8,8 @@ import { NotificationResponseDTO, NotificationService} from '../services/notific
 
 
 import { WebSocketService } from '../services/web-Socket/web-socket.service';
+import { TokenService } from '../services/authService/token.service';
+import { AuthServiceService } from '../services/authService/auth-service.service';
 
 export interface Page<T> {
   content: T[];
@@ -67,16 +69,31 @@ isCartOpen = false;
 
     cart: CartResponseDTO | null = null;
 
-    userId: number = environment.userId; // TSP
+    userId: any = null; // TSP
     // userId: number = 5; // Home
 
 
     constructor(private cartService: CartService,private router: Router,
       private notificationService: NotificationService ,
-      private webSocket:WebSocketService
+      private webSocket:WebSocketService ,
+      private token : TokenService ,
+      private auth : AuthServiceService
     ) {}
 
     ngOnInit(): void {
+
+      if(this.auth.isLoggedIn()){
+
+        this.isLogin = true ;
+
+      }
+
+     this.userId = Number(this.token.getId());
+
+
+
+
+
       // Load cart on component initialization (if not already loaded)
       this.cartService.getOrCreateCart(this.userId).subscribe();
 
@@ -84,7 +101,7 @@ isCartOpen = false;
       this.cartService.currentCart$.subscribe(cart => {
         this.cart = cart;
         console.log(cart);
-        
+
       });
 
        this.loadNotifications();
@@ -125,6 +142,7 @@ isCartOpen = false;
 
   closeJoinDropdown() {
     this.isJoinDropdownOpen = false;
+   
   }
 
 

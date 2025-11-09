@@ -8,6 +8,7 @@ import { environment } from 'src/app/Envirment/environment';
 import { DeliveryOTP, OrderResponseDTO } from 'src/app/Models/Order/order.models';
 import { Restaurant } from 'src/app/Models/restaurant.model';
 import { LocationUpdate, Rider } from 'src/app/Models/rider.model';
+import { TokenService } from 'src/app/services/authService/token.service';
 
 import { OrderService } from 'src/app/services/Orders/order.service';
 import { RestaurantService } from 'src/app/services/restaurant/restaurant.service';
@@ -30,7 +31,7 @@ L.Icon.Default.mergeOptions({
 export class TrackOrderComponent implements OnInit, AfterViewInit, OnDestroy {
 
   orderId!: number;
-  userId = environment.userId;
+  userId : any;
   order!: OrderResponseDTO;
   isLoading = true;
   rider: Rider | null = null;
@@ -68,10 +69,13 @@ export class TrackOrderComponent implements OnInit, AfterViewInit, OnDestroy {
     private riderService: RiderService,
     private restaurantService: RestaurantService,
     private fb: FormBuilder,
-    private reviewService: ReviewService
+    private reviewService: ReviewService,
+    private token : TokenService
   ) {}
 
   ngOnInit(): void {
+     this.userId = Number(this.token.getId());
+
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
       this.orderId = +idParam;
