@@ -1,10 +1,13 @@
 import { Component, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { catchError, forkJoin, of, Subject, Subscription, takeUntil } from 'rxjs';
 import { environment } from 'src/app/Envirment/environment';
 import { OrderResponseDTO, OrderStatus } from 'src/app/Models/Order/order.models';
 import { Restaurant } from 'src/app/Models/restaurant.model';
 import { LocationUpdate, Rider } from 'src/app/Models/rider.model';
+import { AuthServiceService } from 'src/app/services/authService/auth-service.service';
+import { TokenService } from 'src/app/services/authService/token.service';
 import { NotificationResponseDTO, NotificationService } from 'src/app/services/notificationAndcoupon/notification.service';
 import { OrderService } from 'src/app/services/Orders/order.service';
 import { RestaurantService } from 'src/app/services/restaurant/restaurant.service';
@@ -17,12 +20,13 @@ import { WebSocketService } from 'src/app/services/web-Socket/web-socket.service
   styleUrls: ['./rider.component.scss']
 })
 export class RiderComponent {
+
 order: OrderResponseDTO | null = null;
 orderRestaurant:Restaurant | null = null ;
 incomingOrders:OrderResponseDTO[] |null = null ;
   currentPhase: 'pickup' | 'delivery' = 'pickup';
   deliveryOtp: string = '';
-  riderId: number = environment.riderId; // Get from auth service
+  riderId:any; // Get from auth service
   loading: boolean = false;
   error: string = '';
     isOnline = false;
@@ -37,11 +41,15 @@ incomingOrders:OrderResponseDTO[] |null = null ;
     private riderService:RiderService,
     private restaurantService:RestaurantService,
     private notificationService:NotificationService,
-    private webSocket:WebSocketService
+    private webSocket:WebSocketService ,
+    private token : TokenService ,
+    private auth : AuthServiceService,
+    private toast : ToastrService
   ) {}
 
   ngOnInit(
   ): void {
+     this.riderId = Number(this.token.getId());
 
       this.startLocationTracking();
       this.loadRiderStatus();
@@ -504,6 +512,15 @@ private sendLocationToServer(lat: number, lng: number): void {
 
 
 }
+
+
+Logout() {
+this.auth.logout();
+  this.router.navigate(['/vendor']).then(() => {
+      this.toast.success("Succesfully Logout from the Account")
+  });
+}
+
 
 
 

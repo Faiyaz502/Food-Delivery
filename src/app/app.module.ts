@@ -8,6 +8,7 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { ToastrModule } from 'ngx-toastr';
 import { JwtInterceptor } from './services/authService/jwt.interceptor';
 import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
+import { OAuthCallbackComponent } from './oauth-callback/oauth-callback.component';
 
 
 
@@ -15,7 +16,8 @@ import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
 @NgModule({
   declarations: [
     AppComponent,
-    UnauthorizedComponent
+    UnauthorizedComponent,
+    OAuthCallbackComponent
   ],
   imports: [
         BrowserAnimationsModule,

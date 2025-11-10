@@ -18,6 +18,16 @@
           {{ unreadCount > 9 ? '9+' : unreadCount }}
         </span>
       </button>
+            <button
+        (click)="Logout()"
+        class="notification-bell relative h-10 w-10 rounded-full border-2 border-gray-300 hover:border-blue-600 hover:bg-red-900 flex items-center justify-center">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        <span
+          *ngIf="unreadCount > 0"
+          class="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-xs font-medium text-white">
+          Logout
+        </span>
+      </button>
           <button (click)="navigateToAddRestaurant()"
             class="bg-white text-amber-700 hover:bg-amber-50 px-5 py-2.5 rounded-xl font-semibold transition duration-200 flex items-center gap-2 shadow-lg hover:shadow-xl">
             <i class="fas fa-plus text-sm"></i>

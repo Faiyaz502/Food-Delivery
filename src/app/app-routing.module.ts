@@ -9,12 +9,14 @@ import { AuthGuard } from './services/authService/auth.guard';
 import { RoleGuard } from './services/authService/role.guard';
 import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
 import { VendorLoginComponent } from './vendor/Login/vendor-login/vendor-login.component';
+import { OAuthCallbackComponent } from './oauth-callback/oauth-callback.component';
 
 const routes: Routes = [
 
    { path: '', redirectTo: '/admin', pathMatch: 'full' },
    {path: 'adminLogin', component:LoginComponent},
    { path: 'unauthorized', component: UnauthorizedComponent },
+    { path: 'oauth-callback', component: OAuthCallbackComponent },
 
 
   { path: 'admin'

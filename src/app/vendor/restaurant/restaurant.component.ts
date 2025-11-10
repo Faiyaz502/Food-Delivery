@@ -13,6 +13,8 @@ import { WebSocketService } from 'src/app/services/web-Socket/web-socket.service
 import { MenuItem } from 'src/app/Models/MenuItem.model';
 import { MenuItemService } from 'src/app/services/menu-item.service';
 import { MenuCategoryDto, MenuCategoryService } from 'src/app/services/restaurant/menu-category.service';
+import { TokenService } from 'src/app/services/authService/token.service';
+import { AuthServiceService } from 'src/app/services/authService/auth-service.service';
 
 
 @Component({
@@ -21,6 +23,9 @@ import { MenuCategoryDto, MenuCategoryService } from 'src/app/services/restauran
   styleUrls: ['./restaurant.component.scss']
 })
 export class RestaurantComponent {
+
+
+
  restaurants: Restaurant[] = [];
   selectedRestaurant: Restaurant | null = null;
   newOrders: OrderResponseDTO[] = [];
@@ -36,7 +41,7 @@ export class RestaurantComponent {
    showOrders: boolean = false;
 
 
-  ownerId: number = environment.ownerId; // Get from auth service
+  ownerId: any ; // Get from auth service
   loading: boolean = false;
   error: string = '';
 
@@ -56,10 +61,13 @@ export class RestaurantComponent {
      private webSocket:WebSocketService,
      private toast : ToastrService,
      private menuService : MenuItemService,
-     private menuCategoryService : MenuCategoryService
+     private menuCategoryService : MenuCategoryService,
+     private token : TokenService ,
+     private auth : AuthServiceService
   ) {}
 
   ngOnInit(): void {
+     this.ownerId = Number(this.token.getId());
     this.loadRestaurants();
     this.startOrderPolling();
 
@@ -573,7 +581,12 @@ this.showOrders = true ;
 
   }
 
-
+Logout() {
+this.auth.logout();
+  this.router.navigate(['/vendor']).then(() => {
+      this.toast.success("Succesfully Logout from the Account")
+  });
+}
 
 
 

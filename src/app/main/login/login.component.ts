@@ -50,6 +50,7 @@ export class LoginComponent {
   errorMessage: string | null = null;
   successMessage: string | null = null;
   error = '';
+  userType = '';
 
 
 
@@ -243,7 +244,24 @@ export class LoginComponent {
   }
   get password() { return this.loginForm.get('loginPass'); }
 
+//OAuth2
+loginWithGoogle(event: Event) {
+  event.preventDefault();
+  event.stopPropagation();
 
+  // Just trigger redirect — no promise handling needed
+  this.auth.oauthLogin('google');
+  // Optional: show loading if you want, but page will redirect
+
+
+}
+
+  // ✅ GitHub OAuth login
+loginWithGithub(event: Event) {
+  event.preventDefault();
+  event.stopPropagation();
+  this.auth.oauthLogin('github');
+}
 
 
 }

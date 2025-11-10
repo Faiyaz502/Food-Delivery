@@ -14,7 +14,8 @@
             }}
           </p>
         </div>
-      <button
+        <div class="flex gap-4">
+  <button
         (click)="toggleNotifications($event)"
         class="notification-bell relative h-10 w-10 rounded-full border-2 border-gray-300 hover:border-blue-600 hover:bg-blue-900 flex items-center justify-center">
         <i class="fas fa-bell text-gray-50"></i>
@@ -24,6 +25,19 @@
           {{ unreadCount > 9 ? '9+' : unreadCount }}
         </span>
       </button>
+      <button
+        (click)="Logout()"
+        class="notification-bell relative h-10 w-10 rounded-full border-2 border-gray-300 hover:border-blue-600 hover:bg-red-900 flex items-center justify-center">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        <span
+          *ngIf="unreadCount > 0"
+          class="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-xs font-medium text-white">
+          Logout
+        </span>
+      </button>
+
+        </div>
+    
       </div>
 
       <div
@@ -105,6 +119,7 @@
             {{ isOnline ? 'Online' : 'Offline' }}
           </span>
         </button>
+   
       </div>
     </div>
   </div>

@@ -47,3 +47,7 @@ button {
   border-radius: 6px;
   cursor: pointer;
 }
+
+.leaflet-container {
+  z-index: 0 !important;
+}

@@ -1,4 +1,6 @@
 import { Component, ElementRef, HostListener, Renderer2, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthServiceService } from 'src/app/services/authService/auth-service.service';
 
 @Component({
   selector: 'app-horizantalnav',
@@ -6,9 +8,12 @@ import { Component, ElementRef, HostListener, Renderer2, ViewChild } from '@angu
   styleUrls: ['./horizantalnav.component.scss']
 })
 export class HorizantalnavComponent {
+
 public showChatDropdown: boolean = false;
   public showNotificationsDropdown: boolean = false;
   public showProfileDropdown: boolean = false;
+
+  constructor(private auth:AuthServiceService ,private router : Router){}
 
   /**
    * Toggles the visibility of a specific dropdown and closes all others.
@@ -60,5 +65,14 @@ public showChatDropdown: boolean = false;
       this.closeAllDropdowns();
     }
   }
+
+
+  Logout() {
+
+    this.auth.logout();
+
+    this.router.navigate(['adminLogin'])
+
+}
 
 }

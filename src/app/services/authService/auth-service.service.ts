@@ -58,7 +58,7 @@ getUserRoles(): string[] {
 }
 
   // common handler to save token + optional username
-  private handleAuthResponse(resp: LoginResponse) {
+   handleAuthResponse(resp: LoginResponse) {
     if (!resp || !resp.jwt) throw new Error('No token returned from server');
     this.tokenService.setToken(resp.jwt);
     // parse username from token if present
@@ -75,68 +75,69 @@ getUserRoles(): string[] {
   }
 
   // OAuth popup flow. providerName e.g. "google" or "github"
-  async oauthLogin(providerName: 'google' | 'github'): Promise<void> {
-    const popup = this.openPopup(`${this.baseUrl}/oauth2/authorization/${providerName}`, 'oauth2', 600, 700);
+  // async oauthLogin(providerName: 'google' | 'github'): Promise<void> {
+  //   const popup = this.openPopup(`${this.baseUrl}/oauth2/authorization/${providerName}`, 'oauth2', 600, 700);
 
-    // Poll until popup loads content containing JSON token
-    return new Promise<void>((resolve, reject) => {
-      const timeout = 1000 * 60; // 60s
-      const intervalMs = 500;
-      let elapsed = 0;
+  //   // Poll until popup loads content containing JSON token
+  //   return new Promise<void>((resolve, reject) => {
+  //     const timeout = 1000 * 60; // 60s
+  //     const intervalMs = 500;
+  //     let elapsed = 0;
 
-      const timer = setInterval(() => {
-        elapsed += intervalMs;
-        try {
-          if (!popup || popup.closed) {
-            clearInterval(timer);
-            reject(new Error('OAuth popup closed by user'));
-            return;
-          }
+  //     const timer = setInterval(() => {
+  //       elapsed += intervalMs;
+  //       try {
+  //         if (!popup || popup.closed) {
+  //           clearInterval(timer);
+  //           reject(new Error('OAuth popup closed by user'));
+  //           return;
+  //         }
 
-          // try to access popup document text (same-origin only if backend returned JSON in popup's final response)
-          const doc = popup.document;
-          const bodyText = doc?.body?.innerText;
-          if (bodyText && bodyText.trim()) {
-            // attempt parse JSON
-            try {
-              const data = JSON.parse(bodyText);
-              if (data && data.token) {
-                this.handleAuthResponse(data);
-                popup.close();
-                clearInterval(timer);
-                resolve();
-                return;
-              } else {
-                // maybe backend returned under different fields, try common shapes
-                if (data?.accessToken) {
-                  this.handleAuthResponse({ jwt: data.accessToken });
-                  popup.close();
-                  clearInterval(timer);
-                  resolve();
-                  return;
-                }
-              }
-            } catch (err) {
-              // not JSON yet — ignore
-            }
-          }
-        } catch (err) {
-          // cross-origin access while redirecting to provider; ignore until final JSON is same-origin
-        }
+  //         // try to access popup document text (same-origin only if backend returned JSON in popup's final response)
+  //         const doc = popup.document;
+  //         const bodyText = doc?.body?.innerText;
+  //         if (bodyText && bodyText.trim()) {
+  //           // attempt parse JSON
+  //           try {
+  //             const data = JSON.parse(bodyText);
+  //             if (data && data.token) {
+  //               this.handleAuthResponse(data);
+  //               popup.close();
+  //               clearInterval(timer);
+  //               resolve();
+  //               return;
+  //             } else {
+  //               // maybe backend returned under different fields, try common shapes
+  //               if (data?.accessToken) {
+  //                 this.handleAuthResponse({ jwt: data.accessToken });
+  //                 popup.close();
+  //                 clearInterval(timer);
+  //                 resolve();
+  //                 return;
+  //               }
+  //             }
+  //           } catch (err) {
+  //             // not JSON yet — ignore
+  //           }
+  //         }
+  //       } catch (err) {
+  //         // cross-origin access while redirecting to provider; ignore until final JSON is same-origin
+  //       }
 
-        if (elapsed > timeout) {
-          clearInterval(timer);
-          try { popup?.close(); } catch {}
-          reject(new Error('OAuth popup timed out'));
-        }
-      }, intervalMs);
-    });
-  }
+  //       if (elapsed > timeout) {
+  //         clearInterval(timer);
+  //         try { popup?.close(); } catch {}
+  //         reject(new Error('OAuth popup timed out'));
+  //       }
+  //     }, intervalMs);
+  //   });
+  // }
 
-  private openPopup(url: string, title: string, w: number, h: number): Window | null {
-    const left = window.screenX + (window.innerWidth - w) / 2;
-    const top = window.screenY + (window.innerHeight - h) / 2;
-    const opts = `width=${w},height=${h},left=${left},top=${top},status=0,toolbar=0,menubar=0`;
-    return window.open(url, title, opts);
-  }
+  oauthLogin(providerName: 'google' | 'github'): void {
+  // 🔁 Full-page redirect — no popup
+  const authUrl = `${this.baseUrl}/oauth2/authorization/${providerName}`;
+  window.location.href = authUrl;
+}
+
+
 }
