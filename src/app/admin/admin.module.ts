@@ -29,6 +29,7 @@ import { CouponComponent } from './coupon/coupon/coupon.component';
 import { NotificationComponent } from './notification/notification.component';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { LoginComponent } from './login/login.component';
+import { PayrollComponent } from './payroll/payroll.component';
 
 
 
@@ -55,6 +56,7 @@ import { LoginComponent } from './login/login.component';
     CouponComponent,
     NotificationComponent,
     LoginComponent,
+    PayrollComponent,
 
 
 

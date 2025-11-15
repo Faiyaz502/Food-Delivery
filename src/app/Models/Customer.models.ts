@@ -26,7 +26,7 @@ export interface Address {
 export interface PaymentMethod {
   id: string;
   customer_id: string;
-  type: 'credit_card' | 'debit_card' | 'paypal' | 'wallet';
+  type: 'credit_card' | 'debit_card' | 'paypal' | 'wallet'|'CASH' | 'CARD';
   last_four: string;
   is_default: boolean;
 }

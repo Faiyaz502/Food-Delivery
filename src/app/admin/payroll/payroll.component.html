@@ -1,0 +1,44 @@
+<div class="container mt-4">
+  <h2>Rider Payrolls - {{selectedMonth}}/{{selectedYear}}</h2>
+
+  <div class="mb-3 d-flex gap-2">
+    <input type="number" [(ngModel)]="selectedYear" placeholder="Year" class="form-control" style="width:100px">
+    <input type="number" [(ngModel)]="selectedMonth" placeholder="Month" class="form-control" style="width:100px">
+    <button class="btn btn-primary" (click)="loadPayrolls()">Load</button>
+  </div>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Rider ID</th>
+        <th>Work Hours</th>
+        <th>Break Hours</th>
+        <th>Deliveries</th>
+        <th>Final Pay</th>
+        <th>Paid</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let payroll of payrolls">
+        <td>{{ payroll.riderId }}</td>
+        <td>{{ payroll.totalWorkHours }}</td>
+        <td>{{ payroll.totalBreakHours }}</td>
+        <td>{{ payroll.totalDeliveries }}</td>
+        <td>{{ payroll.finalPay }}</td>
+        <td>{{ payroll.isPaid ? 'Yes' : 'No' }}</td>
+        <td>
+          <button class="btn btn-success btn-sm" 
+                  *ngIf="!payroll.isPaid" 
+                  (click)="payPayroll(payroll.id, 'CASH')">Pay Cash</button>
+
+          <button class="btn btn-primary btn-sm" 
+                  *ngIf="!payroll.isPaid" 
+                  (click)="payPayroll(payroll.id, 'CARD')">Pay Card</button>
+
+          <button class="btn btn-warning btn-sm" (click)="viewReceipt(payroll.id)">Receipt</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
