@@ -23,6 +23,7 @@ import { AvailabilityStatus, VehicleType } from "../Enums/profileEnums";
 
 export interface Rider {
   id: number;
+  userId: number;
   riderId: number;
   riderName: string;
   vehicleType: VehicleType;
@@ -45,6 +46,8 @@ export interface Rider {
   createdAt: string;
   updatedAt: string;
   assignedOrders?: any[];
+  wallet : number ;
+  isOnline: boolean;
 }
 
 export interface DeliveryStats {

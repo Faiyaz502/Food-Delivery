@@ -192,4 +192,9 @@ updateRiderLocation(riderId: number, location: LocationUpdate): Observable<any> 
     const params = new HttpParams().set('limit', limit.toString());
     return this.http.get<Rider[]>(`${this.apiUrl}/top-earners`, { params });
   }
+
+
+  payDailyCollection(riderId: number): Observable<string> {
+    return this.http.post<string>(`${this.apiUrl}/${riderId}/daily-collection`, null);
+  }
 }

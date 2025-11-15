@@ -43,6 +43,7 @@ export interface DeliveryPersonProfile {
   isOnline: boolean;
   createdAt: string;
   updatedAt: string;
+  wallet : number ;
 }
 
 export interface DeliveryPersonCreateDTO {
@@ -57,6 +58,7 @@ export interface LocationUpdateDTO {
 
 export interface RestaurantOwnerProfile {
   id: number;
+  ownerName:string;
   userId: number;
   businessLicenseNumber: string;
   bankAccountNumber: string;

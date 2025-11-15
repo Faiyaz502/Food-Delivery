@@ -2,7 +2,9 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/app/Envirment/environment';
+import { PayoutRequestDTO } from 'src/app/Models/payroll/payroll.model';
 import { Restaurant } from 'src/app/Models/restaurant.model';
+import { RestaurantOwnerProfile } from 'src/app/Models/Users/profile.model';
 
 @Injectable({
   providedIn: 'root'
@@ -52,5 +54,12 @@ export class RestaurantService {
     closeAllRestaurantsByOwner(ownerId: number): Observable<string> {
   return this.http.put(`${this.apiUrl}/restaurants/close-all/${ownerId}`, {}, { responseType: 'text' });
 }
+
+ processPayout(restaurantId: number, payoutRequest: PayoutRequestDTO): Observable<RestaurantOwnerProfile> {
+    return this.http.post<RestaurantOwnerProfile>(
+      `${this.apiUrl}/${restaurantId}/payout`,
+      payoutRequest
+    );
+  }
 
 }

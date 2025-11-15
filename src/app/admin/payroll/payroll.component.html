@@ -1,44 +1,382 @@
-<div class="container mt-4">
-  <h2>Rider Payrolls - {{selectedMonth}}/{{selectedYear}}</h2>
+<!-- payroll-management.component.html -->
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+  <div class="mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-7xl">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">Payroll Management</h1>
+      <p class="text-gray-600">Manage rider collections, monthly salaries, and restaurant payouts</p>
+    </div>
 
-  <div class="mb-3 d-flex gap-2">
-    <input type="number" [(ngModel)]="selectedYear" placeholder="Year" class="form-control" style="width:100px">
-    <input type="number" [(ngModel)]="selectedMonth" placeholder="Month" class="form-control" style="width:100px">
-    <button class="btn btn-primary" (click)="loadPayrolls()">Load</button>
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+      <!-- Total Rider Collections -->
+      <div class="bg-white rounded-xl shadow-sm border-l-4 border-blue-500 p-6">
+        <div class="flex justify-between items-start">
+          <div>
+            <p class="text-sm font-medium text-gray-600">Total Rider Collections</p>
+            <p class="text-2xl font-bold text-gray-900 mt-1">৳{{ totalRiderWallets | number:'1.0-0' }}</p>
+          </div>
+          <div class="bg-blue-50 p-3 rounded-lg text-blue-600">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pending Monthly Salaries -->
+      <div class="bg-white rounded-xl shadow-sm border-l-4 border-purple-500 p-6">
+        <div class="flex justify-between items-start">
+          <div>
+            <p class="text-sm font-medium text-gray-600">Pending Monthly Salaries</p>
+            <p class="text-2xl font-bold text-gray-900 mt-1">৳{{ totalPendingSalaries | number:'1.0-0' }}</p>
+          </div>
+          <div class="bg-purple-50 p-3 rounded-lg text-purple-600">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+              <line x1="2" y1="10" x2="22" y2="10"></line>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pending Restaurant Payouts -->
+      <div class="bg-white rounded-xl shadow-sm border-l-4 border-emerald-500 p-6">
+        <div class="flex justify-between items-start">
+          <div>
+            <p class="text-sm font-medium text-gray-600">Pending Restaurant Payouts</p>
+            <p class="text-2xl font-bold text-gray-900 mt-1">৳{{ totalPendingPayouts | number:'1.0-0' }}</p>
+          </div>
+          <div class="bg-emerald-50 p-3 rounded-lg text-emerald-600">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs Container -->
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+      <!-- Tab Headers -->
+      <div class="flex overflow-x-auto scrollbar-hide border-b border-gray-200">
+        <button
+          class="flex items-center gap-2 px-6 py-4 font-medium whitespace-nowrap transition-colors"
+          [class]="activeTab === 'riders' ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'"
+          (click)="activeTab = 'riders'">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+          </svg>
+          Rider Daily Collections
+        </button>
+
+        <button
+          class="flex items-center gap-2 px-6 py-4 font-medium whitespace-nowrap transition-colors"
+          [class]="activeTab === 'salary' ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'"
+          (click)="activeTab = 'salary'">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+            <line x1="2" y1="10" x2="22" y2="10"></line>
+          </svg>
+          Rider Monthly Salary
+        </button>
+
+        <button
+          class="flex items-center gap-2 px-6 py-4 font-medium whitespace-nowrap transition-colors"
+          [class]="activeTab === 'restaurants' ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'"
+          (click)="activeTab = 'restaurants'">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          </svg>
+          Restaurant Payouts
+        </button>
+      </div>
+
+      <!-- Search Filter -->
+      <div class="p-4 border-b border-gray-100">
+        <input
+          type="text"
+          [(ngModel)]="filterText"
+          [placeholder]="'Search ' + (activeTab === 'riders' ? 'riders' : activeTab === 'salary' ? 'payrolls' : 'restaurants') + '...'"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+      </div>
+
+
+      <!-- Tab Content -->
+      <div class="p-4 sm:p-6">
+        <!-- Rider Daily Collections Tab -->
+        <div *ngIf="activeTab === 'riders'">
+          <div *ngIf="loading['riders-list']" class="flex flex-col items-center justify-center py-12">
+            <div class="w-10 h-10 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin mb-4"></div>
+            <p class="text-gray-600">Loading riders...</p>
+          </div>
+
+          <div *ngIf="!loading['riders-list']" class="space-y-4">
+            <div *ngFor="let rider of filteredRiders" class="bg-gray-50 rounded-lg p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border border-gray-200 hover:shadow-md transition">
+              <div class="flex-1 min-w-0">
+                <div class="flex flex-wrap items-center gap-3 mb-2">
+                  <h3 class="text-lg font-semibold text-gray-900">Rider #{{ rider.id }}</h3>
+                  <span *ngIf="rider.availabilityStatus == 'AVAILABLE'" class="px-2.5 py-0.5 text-xs font-medium bg-green-100 text-green-800 rounded-full">Online</span>
+                  <span *ngIf="rider.availabilityStatus == 'OFFLINE'" class="px-2.5 py-0.5 text-xs font-medium bg-gray-100 text-gray-800 rounded-full">Offline</span>
+                </div>
+                <h4 class="text-gray-800 font-medium mb-3">Rider Name: {{ rider.riderName }}</h4>
+
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+                  <div>
+                    <span class="text-gray-500">Vehicle:</span>
+                    <span class="ml-1 font-medium text-gray-900">{{ rider.vehicleType }}</span>
+                  </div>
+                  <div>
+                    <span class="text-gray-500">Deliveries:</span>
+                    <span class="ml-1 font-medium text-gray-900">{{ rider.totalDeliveries }}</span>
+                  </div>
+                  <div>
+                    <span class="text-gray-500">Rating:</span>
+                    <span class="ml-1 font-medium text-gray-900">⭐ {{ rider.avgRating | number:'1.1-1' }}</span>
+                  </div>
+                  <div>
+                    <span class="text-gray-500">Wallet:</span>
+                    <span class="ml-1 font-bold text-blue-600">৳{{ rider.wallet | number:'1.0-0' }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="shrink-0">
+                <button
+                  class="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:outline-none transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  (click)="handleReceiveDailyCollection(rider.id)"
+                  [disabled]="loading['rider-' + rider.id] || rider.wallet === 0">
+                  <span *ngIf="!loading['rider-' + rider.id]">✓ Receive</span>
+                  <span *ngIf="loading['rider-' + rider.id]" class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                </button>
+              </div>
+              <div class="shrink-0">
+                <button
+                  class="px-4 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:outline-none transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  (click)="handleGeneratePayroll(rider.id)"
+                 >
+                  <span >✓ Generate Salary</span>
+                 
+                </button>
+              </div>
+            </div>
+
+            <div *ngIf="filteredRiders.length === 0" class="text-center py-12 text-gray-500">
+              <p>No riders found</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rider Monthly Salary Tab -->
+        <div *ngIf="activeTab === 'salary'">
+          <!-- Month/Year Selector -->
+          <div class="flex flex-col sm:flex-row gap-4 mb-6 p-4 bg-blue-50 rounded-lg">
+            <div class="flex items-center gap-2">
+              <label class="text-sm font-medium text-gray-700">Month:</label>
+              <select
+                [(ngModel)]="selectedMonth"
+                (change)="onMonthYearChange()"
+                class="px-3 py-2 border border-gray-300 rounded-md bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm">
+                <option [value]="1">January</option>
+                <option [value]="2">February</option>
+                <option [value]="3">March</option>
+                <option [value]="4">April</option>
+                <option [value]="5">May</option>
+                <option [value]="6">June</option>
+                <option [value]="7">July</option>
+                <option [value]="8">August</option>
+                <option [value]="9">September</option>
+                <option [value]="10">October</option>
+                <option [value]="11">November</option>
+                <option [value]="12">December</option>
+              </select>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <label class="text-sm font-medium text-gray-700">Year:</label>
+              <select
+                [(ngModel)]="selectedYear"
+                (change)="onMonthYearChange()"
+                class="px-3 py-2 border border-gray-300 rounded-md bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm">
+                <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+              </select>
+            </div>
+          </div>
+
+          <div *ngIf="loading['payrolls-list']" class="flex flex-col items-center justify-center py-12">
+            <div class="w-10 h-10 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin mb-4"></div>
+            <p class="text-gray-600">Loading payrolls...</p>
+          </div>
+
+          <div *ngIf="!loading['payrolls-list']" class="space-y-4">
+            <div *ngFor="let payroll of filteredPayrolls" class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+              <div class="p-5">
+                <div class="flex flex-wrap items-start justify-between gap-3 mb-4">
+                  <h3 class="text-lg font-semibold text-gray-900">Payroll #{{ payroll.id }} - Rider #{{ payroll.riderId }}</h3>
+                  <span class="px-3 py-1 text-sm font-medium rounded-full"
+                    [class]="
+                      payroll.status === 'PAID' ? 'bg-green-100 text-green-800' :
+                      payroll.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
+                      'bg-red-100 text-red-800'
+                    ">
+                    {{ payroll.status }}
+                  </span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                  <!-- Earnings -->
+                  <div class="bg-gray-50 p-4 rounded-lg">
+                    <h4 class="font-medium text-gray-700 mb-3">Earnings</h4>
+                    <div class="space-y-2 text-sm">
+                      <div class="flex justify-between">
+                        <span>Base Salary:</span>
+                        <span>৳{{ payroll.baseSalary | number:'1.0-0' }}</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span>Total Deliveries:</span>
+                        <span>{{ payroll.totalDeliveries }}</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span>Delivery Earnings:</span>
+                        <span>৳{{ payroll.deliveryEarnings | number:'1.0-0' }}</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span>Bonus:</span>
+                        <span>৳{{ payroll.bonus | number:'1.0-0' }}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Deductions -->
+                  <div class="bg-gray-50 p-4 rounded-lg">
+                    <h4 class="font-medium text-gray-700 mb-3">Deductions</h4>
+                    <div class="space-y-2 text-sm">
+                      <div class="flex justify-between text-red-600 font-medium">
+                        <span>Total Deductions:</span>
+                        <span>-৳{{ payroll.deductions | number:'1.0-0' }}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Net Total -->
+                  <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                    <div class="flex justify-between items-center">
+                      <span class="font-semibold text-gray-800">Net Salary:</span>
+                      <span class="text-xl font-bold text-blue-600">৳{{ payroll.netSalary | number:'1.0-0' }}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Meta -->
+                <div class="bg-yellow-50 p-4 rounded-lg text-sm">
+                  <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <div><span class="font-medium">Generated:</span> {{ payroll.generatedAt | date:'short' }}</div>
+                    <div *ngIf="payroll.paidAt"><span class="font-medium">Paid:</span> {{ payroll.paidAt | date:'short' }}</div>
+                    <div *ngIf="payroll.paymentMethod"><span class="font-medium">Method:</span> {{ payroll.paymentMethod }}</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="px-5 py-4 bg-gray-50 border-t border-gray-200 flex justify-end">
+                <button
+                  *ngIf="payroll.status !== 'PAID'"
+                  class="px-4 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:outline-none transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  (click)="handlePaySalary(payroll.id)"
+                  [disabled]="loading['payroll-' + payroll.id]">
+                  <span *ngIf="!loading['payroll-' + payroll.id]">💰 Pay Salary</span>
+                  <span *ngIf="loading['payroll-' + payroll.id]" class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                </button>
+                <span *ngIf="payroll.status === 'PAID'" class="px-4 py-2 bg-green-100 text-green-800 font-medium rounded-lg">
+                  ✓ Paid
+                </span>
+              </div>
+            </div>
+
+            <div *ngIf="filteredPayrolls.length === 0" class="text-center py-12 text-gray-500">
+              <p>No payrolls found for selected month</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Restaurant Payouts Tab -->
+        <div *ngIf="activeTab === 'restaurants'">
+          <div *ngIf="loading['restaurants-list']" class="flex flex-col items-center justify-center py-12">
+            <div class="w-10 h-10 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin mb-4"></div>
+            <p class="text-gray-600">Loading restaurants...</p>
+          </div>
+
+          <div *ngIf="!loading['restaurants-list']" class="space-y-4">
+            <div *ngFor="let restaurant of filteredRestaurants" class="bg-white border border-gray-200 rounded-lg p-5">
+              <div class="flex flex-wrap items-start justify-between gap-3 mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Restaurant #{{ restaurant.id }}</h3>
+                <span *ngIf="restaurant.isApproved" class="px-2.5 py-0.5 text-xs font-medium bg-green-100 text-green-800 rounded-full">✓ Approved</span>
+              </div>
+                  <div class="flex flex-wrap items-start justify-between gap-3 mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Restaurant Name : {{ restaurant.ownerName }}</h3>
+
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5 text-sm">
+                <div>
+                  <span class="text-gray-500">License:</span>
+                  <span class="ml-1 font-medium text-gray-900 break-words">{{ restaurant.businessLicenseNumber }}</span>
+                </div>
+                <div>
+                  <span class="text-gray-500">Commission:</span>
+                  <span class="ml-1 font-medium text-gray-900">{{ restaurant.commissionRate }}%</span>
+                </div>
+                <div>
+                  <span class="text-gray-500">Total Earnings:</span>
+                  <span class="ml-1 font-medium text-gray-900">৳{{ restaurant.totalEarnings | number:'1.0-0' }}</span>
+                </div>
+              </div>
+
+              <div class="bg-gray-50 p-4 rounded-lg">
+                <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                  <span class="font-medium text-gray-700">Pending Payout:</span>
+                  <span class="text-xl font-bold text-emerald-600">৳{{ restaurant.pendingPayout | number:'1.0-0' }}</span>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3">
+                  <input
+                    type="number"
+                    [value]="getCustomPayout(restaurant.id)"
+                    (input)="setCustomPayout(restaurant.id, $any($event.target).value)"
+                    [max]="restaurant.pendingPayout"
+                    placeholder="Enter custom amount"
+                    class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm min-w-0"
+                    [class]="!getCustomPayout(restaurant.id) || getCustomPayout(restaurant.id) <= 0 || getCustomPayout(restaurant.id) > restaurant.pendingPayout ? 'border-red-300' : ''">
+
+                  <button
+                    class="px-4 py-2 bg-amber-600 text-white font-medium rounded-lg hover:bg-amber-700 focus:ring-2 focus:ring-amber-500 focus:outline-none transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                    (click)="handleRestaurantPayout(restaurant.id, getCustomPayout(restaurant.id))"
+                    [disabled]="loading['restaurant-' + restaurant.id] ||
+                               !getCustomPayout(restaurant.id) ||
+                               getCustomPayout(restaurant.id) <= 0 ||
+                               getCustomPayout(restaurant.id) > restaurant.pendingPayout">
+                    <span *ngIf="!loading['restaurant-' + restaurant.id]">Pay Custom</span>
+                    <span *ngIf="loading['restaurant-' + restaurant.id]" class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                  </button>
+
+                  <button
+                    class="px-4 py-2 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                    (click)="handleRestaurantPayout(restaurant.id, restaurant.pendingPayout)"
+                    [disabled]="loading['restaurant-' + restaurant.id] || restaurant.pendingPayout === 0">
+                    <span *ngIf="!loading['restaurant-' + restaurant.id]">✓ Pay Full</span>
+                    <span *ngIf="loading['restaurant-' + restaurant.id]" class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div *ngIf="filteredRestaurants.length === 0" class="text-center py-12 text-gray-500">
+              <p>No restaurants found</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Rider ID</th>
-        <th>Work Hours</th>
-        <th>Break Hours</th>
-        <th>Deliveries</th>
-        <th>Final Pay</th>
-        <th>Paid</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let payroll of payrolls">
-        <td>{{ payroll.riderId }}</td>
-        <td>{{ payroll.totalWorkHours }}</td>
-        <td>{{ payroll.totalBreakHours }}</td>
-        <td>{{ payroll.totalDeliveries }}</td>
-        <td>{{ payroll.finalPay }}</td>
-        <td>{{ payroll.isPaid ? 'Yes' : 'No' }}</td>
-        <td>
-          <button class="btn btn-success btn-sm" 
-                  *ngIf="!payroll.isPaid" 
-                  (click)="payPayroll(payroll.id, 'CASH')">Pay Cash</button>
-
-          <button class="btn btn-primary btn-sm" 
-                  *ngIf="!payroll.isPaid" 
-                  (click)="payPayroll(payroll.id, 'CARD')">Pay Card</button>
-
-          <button class="btn btn-warning btn-sm" (click)="viewReceipt(payroll.id)">Receipt</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
 </div>
