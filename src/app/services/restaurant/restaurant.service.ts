@@ -62,4 +62,13 @@ export class RestaurantService {
     );
   }
 
+  getPendingApprovalRestaurants(): Observable<Restaurant[]> {
+  return this.http.get<Restaurant[]>(`${this.apiUrl}/restaurants/pending`);
+}
+
+  verifyRestaurant(id: number, status: string): Observable<Restaurant> {
+    const url = `${this.apiUrl}/restaurants/${id}/verify?status=${status}`;
+    return this.http.put<Restaurant>(url, {}); // body empty since only status changes
+  }
+
 }

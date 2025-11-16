@@ -5,7 +5,9 @@ export interface UserProfile {
   id: number;
   userId: number;
   dateOfBirth?: string;
+  username?: string;
   profileImageUrl?: string;
+  imageUrl:string;
   totalOrders: number;
   totalSpent: number;
   averageOrderValue: number;
@@ -27,6 +29,7 @@ export interface UserProfileCreateDTO {
 export interface DeliveryPersonProfile {
   id: number;
   userId: number;
+  riderName : string ;
   vehicleType: VehicleType;
   drivingLicenseNumber: string;
   maxDeliveryRadius: number;

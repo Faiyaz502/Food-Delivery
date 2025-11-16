@@ -5,7 +5,8 @@ import { AnalyticsModule } from "src/app/analytics/analytics.module";
 import { CateringPackage, CateringOrder } from 'src/app/Models/catering-package.model';
 import { CustomerLocation } from 'src/app/Models/customer-location.model';
 import { MenuItem } from 'src/app/Models/MenuItem.model';
-import { OrderResponseDTO } from 'src/app/Models/Order/order.models';
+import { ReviewResponse } from 'src/app/Models/NotificationAndCoupon/review.model';
+import { OrderResponseDTO, OrderStatistics } from 'src/app/Models/Order/order.models';
 
 
 import { PendingRequest } from 'src/app/Models/pending-request.model';
@@ -13,9 +14,16 @@ import { Restaurant } from 'src/app/Models/restaurant.model';
 import { Review } from 'src/app/Models/review.model';
 import { Rider } from 'src/app/Models/rider.model';
 import { TeamMember } from 'src/app/Models/team-member.model';
+import { DeliveryPersonProfile } from 'src/app/Models/Users/profile.model';
 import { User } from 'src/app/Models/Users/user.models';
-import {  ApiService } from 'src/app/services/api.service';
+import { MenuItemService } from 'src/app/services/menu-item.service';
 import { OrderService } from 'src/app/services/Orders/order.service';
+import { RestaurantService } from 'src/app/services/restaurant/restaurant.service';
+import { ReviewService } from 'src/app/services/reviewAndCoupon/review.service';
+import { DeliveryPersonService } from 'src/app/services/UserServices/delivery-person.service';
+import { UserProfileService } from 'src/app/services/UserServices/user-profile.service';
+import { UserServiceService } from 'src/app/services/UserServices/user.service.service';
+
 
 
 @Component({
@@ -33,18 +41,52 @@ export class AdminAnalyticsComponent {
 ///Total Order
 @Input() dontWant : boolean = true ;
 
+
+private orderStatusChartInstance: Chart | null = null;
+private revenueChartInstance: Chart | null = null;
+private topMenuChartInstance: Chart | null = null;
+private customerLocationChartInstance: Chart | null = null;
+private mainMonthlyChartInstance: Chart | null = null; // for #chartCanvas
+
+statistics: OrderStatistics | null = null;
+
+
  @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
   chart!: Chart;
 
-  constructor(private api: ApiService , private orderService : OrderService) {}
+  constructor( private orderService : OrderService ,
+    private userService : UserServiceService , private riderService : DeliveryPersonService, private menuItemService : MenuItemService,
+    private restaurantService:RestaurantService , private reviewService : ReviewService , private customerService:UserProfileService ,
+    
+  ) {}
 
   ngOnInit() {
     Chart.register(...registerables);
     this.orderService.getAllOrders().subscribe(orders => this.createMonthlyChart(orders));
-     this.loadDashboardData();
+    
+     this.fetchStatistics();
+
+      this.loadDashboardData();
+    
   }
 
+  ngAfterViewInit() {
+  if (this.statistics) {
+    this.createRevenueChart();
+  }
+}
 
+
+fetchStatistics() {
+  this.orderService.getCompanyStatistics().subscribe(stats => {
+    this.statistics = stats;
+
+    // If the chart canvas already loaded, draw the chart
+    if (this.revenueChart?.nativeElement) {
+      this.createRevenueChart();
+    }
+  });
+}
 
 private createMonthlyChart(orders: OrderResponseDTO[]) {
   const monthlyCounts = new Array(12).fill(0);
@@ -141,6 +183,7 @@ private createMonthlyChart(orders: OrderResponseDTO[]) {
     @ViewChild('revenueChart') revenueChart!: ElementRef;
     @ViewChild('topMenuChart') topMenuChart!: ElementRef;
     @ViewChild('customerLocationChart') customerLocationChart!: ElementRef;
+    private salesChartInstance: Chart | null = null;
 
     // Dashboard statistics
     totalOrders = 0;
@@ -177,7 +220,7 @@ private createMonthlyChart(orders: OrderResponseDTO[]) {
     // Data arrays
     orders: OrderResponseDTO[] = [];
     users: User[] = [];
-    riders: Rider[] = [];
+    riders: DeliveryPersonProfile[] = [];
     menuItems: MenuItem[] = [];
     restaurants: Restaurant[] = [];
     cateringPackages: CateringPackage[] = [];
@@ -185,9 +228,9 @@ private createMonthlyChart(orders: OrderResponseDTO[]) {
     recentTransactions: OrderResponseDTO[] = [];
     trendingMenuItems: MenuItem[] = [];
     availableRidersList: any[] = [];
-    reviews: Review[] = [];
-    recentReviews: any[] = [];
-    pendingRequests: PendingRequest[] = [];
+    reviews: ReviewResponse[] = [];
+    recentReviews: ReviewResponse[] = [];
+    pendingRequests: any[] = [];
     teamMembers: TeamMember[] = [];
     customerLocations: CustomerLocation[] = [];
 
@@ -204,51 +247,59 @@ private createMonthlyChart(orders: OrderResponseDTO[]) {
         this.createCharts();
       });
 
-      this.api.getUsers().subscribe(users => {
+      this.userService.getAllUserswithoutPage().subscribe(users => {
         this.users = users;
         this.calculateUserStatistics();
       });
 
-      this.api.getRiders().subscribe(riders => {
+      this.riderService.getAllDeliveryPersonswithoutPage().subscribe(riders => {
         this.riders = riders;
         this.calculateRiderStatistics();
         this.getAvailableRiders();
       });
 
-      this.api.getMenuItems().subscribe(menuItems => {
+      this.menuItemService.getAllMenuItems().subscribe(menuItems => {
         this.menuItems = menuItems;
         this.getTrendingMenuItems();
       });
 
-      this.api.getRestaurants().subscribe(restaurants => {
+      this.getMenuItem();
+
+      this.restaurantService.getRestaurants().subscribe(restaurants => {
         this.restaurants = restaurants;
       });
 
-      this.api.getCateringOrders().subscribe(cateringOrders => {
-        this.cateringOrders = cateringOrders;
-        this.totalCateringOrders = cateringOrders.length;
-      });
+      // this.api.getCateringOrders().subscribe(cateringOrders => {
+      //   this.cateringOrders = cateringOrders;
+      //   this.totalCateringOrders = cateringOrders.length;
+      // });
 
-      this.api.getReviews().subscribe(reviews => {
+      this.reviewService.getAllReviews().subscribe(reviews => {
         this.reviews = reviews;
         this.calculateReviewStatistics();
         this.getRecentReviews();
       });
 
-      this.api.getPendingRequests().subscribe(requests => {
-        this.pendingRequests = requests;
-        this.pendingRequestsCount = requests.filter(r => r.status === 'pending').length;
-      });
 
-      this.api.getTeamMembers().subscribe(members => {
-        this.teamMembers = members;
-        this.activeTeamMembers = members.filter(m => m.status === 'active').length;
-      });
 
-      this.api.getCustomerLocations().subscribe(locations => {
+      // this.api.getTeamMembers().subscribe(members => {
+      //   this.teamMembers = members;
+      //   this.activeTeamMembers = members.filter(m => m.status === 'active').length;
+      // });
+
+      this.customerService.getCustomerLocations().subscribe(locations => {
         this.customerLocations = locations;
       });
     }
+      getMenuItem(){
+           this.menuItemService.getAllMenuItems().subscribe(menuItems => {
+        this.menuItems = menuItems;
+        this.getTrendingMenuItems();
+      });
+      }
+
+
+    
 
     calculateOrderStatistics() {
       this.totalOrders = this.orders.length;
@@ -323,9 +374,7 @@ private createMonthlyChart(orders: OrderResponseDTO[]) {
           const user = this.users.find(u => u.id === review.userId);
           const restaurant = this.restaurants.find(r => r.id === review.restaurantId);
           return {
-            ...review,
-            userName: user?.firstName || 'Unknown User',
-            restaurantName: restaurant?.name || 'Unknown Restaurant'
+            ...review
           };
         });
     }
@@ -338,59 +387,62 @@ private createMonthlyChart(orders: OrderResponseDTO[]) {
       this.createCharts();
     }
 
-    approveRequest(requestId: string) {
-      this.api.approveRequest(requestId).subscribe(() => {
-        const request = this.pendingRequests.find(r => r.id === requestId);
-        if (request) {
-          request.status = 'approved';
-          this.pendingRequestsCount = this.pendingRequests.filter(r => r.status === 'pending').length;
-        }
-      });
-    }
 
-    rejectRequest(requestId: string) {
-      this.api.rejectRequest(requestId).subscribe(() => {
-        const request = this.pendingRequests.find(r => r.id === requestId);
-        if (request) {
-          request.status = 'rejected';
-          this.pendingRequestsCount = this.pendingRequests.filter(r => r.status === 'pending').length;
-        }
-      });
-    }
+createSalesChart() {
+  if (!this.salesChart?.nativeElement) return;
 
-    createSalesChart() {
-      if (!this.salesChart) return;
+  // Use real orders
+  const monthlyCounts = new Array(12).fill(0);
+  this.orders.forEach(order => {
+    const month = new Date(order.createdAt).getMonth();
+    if (month >= 0 && month < 12) monthlyCounts[month]++;
+  });
 
-      const ctx = this.salesChart.nativeElement.getContext('2d');
-      new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-          datasets: [{
-            label: 'Monthly Sales',
-            data: [65, 59, 80, 81, 56, 55, 40, 65, 75, 85, 90, 95],
-            borderColor: '#4F46E5',
-            backgroundColor: 'rgba(79, 70, 229, 0.1)',
-            tension: 0.4,
-            fill: true
-          }]
+  const monthLabels = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  const ctx = this.salesChart.nativeElement.getContext('2d');
+  if (!ctx) return;
+
+  // Cleanup
+  if (this.salesChartInstance) this.salesChartInstance.destroy();
+
+  const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+  gradient.addColorStop(0, 'rgba(79, 70, 229, 0.8)');
+  gradient.addColorStop(1, 'rgba(79, 70, 229, 0.2)');
+
+  this.salesChartInstance = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: monthLabels,
+      datasets: [{
+        label: 'Orders',
+        data: monthlyCounts,
+        borderColor: '#4F46E5',
+        backgroundColor: gradient,
+        borderWidth: 3,
+        fill: true,
+        tension: 0.3,
+        pointRadius: 4,
+        pointHoverRadius: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        title: {
+          display: true,
+          text: '📈 Monthly Orders Trend',
+          font: { size: 16, weight: 'bold' }
         },
-        options: {
-          responsive: true,
-          plugins: {
-            title: {
-              display: true,
-              text: 'Monthly Sales Trend'
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: true
-            }
-          }
-        }
-      });
+        legend: { display: true }
+      },
+      scales: {
+        y: { beginAtZero: true, ticks: { stepSize: 1 } },
+        x: { grid: { display: false } }
+      }
     }
+  });
+}
 
     createOrderStatusChart() {
       if (!this.orderStatusChart) return;
@@ -428,113 +480,154 @@ private createMonthlyChart(orders: OrderResponseDTO[]) {
       });
     }
 
-    createRevenueChart() {
-      if (!this.revenueChart) return;
+  createRevenueChart() {
+    if (!this.revenueChart?.nativeElement || !this.statistics) return;
 
-      const monthlyRevenue = Array(12).fill(0);
-      this.orders.forEach(order => {
-        if (order.paymentStatus === 'PAID') {
-          const month = new Date(order.createdAt).getMonth();
-          monthlyRevenue[month] += order.totalAmount;
-        }
-      });
+    const ctx = this.revenueChart.nativeElement.getContext('2d');
+    if (!ctx) return;
 
-      const ctx = this.revenueChart.nativeElement.getContext('2d');
-      new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-          datasets: [{
-            label: 'Revenue ($)',
-            data: monthlyRevenue,
-            backgroundColor: '#059669',
-            borderRadius: 8
-          }]
+    if (this.revenueChartInstance) this.revenueChartInstance.destroy();
+
+    this.revenueChartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Total Revenue'], // You can expand to months if backend supports
+        datasets: [{
+          label: 'Revenue (৳)',
+          data: [this.statistics.totalRevenue],
+          backgroundColor: '#059669',
+          borderRadius: 8,
+          borderSkipped: false
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: '💰 Company Revenue',
+            font: { size: 16, weight: 'bold' }
+          }
         },
-        options: {
-          responsive: true,
-          plugins: {
-            title: {
-              display: true,
-              text: 'Monthly Revenue'
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: true
-            }
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: { callback: (v) => '৳' + v.toLocaleString() }
           }
         }
-      });
-    }
+      }
+    });
+  }
+
 
     createTopMenuChart() {
-      if (!this.topMenuChart) return;
+  if (!this.topMenuChart?.nativeElement || this.orders.length === 0) return;
 
-      const ctx = this.topMenuChart.nativeElement.getContext('2d');
-      new Chart(ctx, {
-        type: 'polarArea',
-        data: {
-          labels: this.trendingMenuItems.map(item => item.name),
-          datasets: [{
-            data: [25, 20, 18, 15],
-            backgroundColor: [
-              '#F59E0B',
-              '#EF4444',
-              '#8B5CF6',
-              '#06B6D4'
-            ]
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            title: {
-              display: true,
-              text: 'Popular Menu Items'
-            }
-          }
+  const ctx = this.topMenuChart.nativeElement.getContext('2d');
+  if (!ctx) return;
+
+  if (this.topMenuChartInstance) {
+    this.topMenuChartInstance.destroy();
+  }
+
+  // 🔥 Count how many times each menu item appears across all orders
+  const itemCounts: { [name: string]: number } = {};
+
+  this.orders.forEach(order => {
+    order.orderItems?.forEach(item => {
+      const name = item.menuItemName?.trim() || 'Unknown Item';
+      itemCounts[name] = (itemCounts[name] || 0) + (item.quantity || 1);
+    });
+  });
+
+  // Get top 5 items by count
+  const topItems = Object.entries(itemCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5);
+
+  if (topItems.length === 0) return;
+
+  const labels = topItems.map(([name]) => name);
+  const data = topItems.map(([, count]) => count);
+  const colors = ['#8B5CF6', '#EC4899', '#F59E0B', '#10B981', '#3B82F6'];
+
+  this.topMenuChartInstance = new Chart(ctx, {
+    type: 'polarArea',
+    data: {
+      labels,
+      datasets: [{
+        data,
+        backgroundColor: colors.slice(0, labels.length),
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        title: {
+          display: true,
+          text: 'Items With Most Orders 🔥',
+          font: { size: 16, weight: 'bold' }
         }
-      });
-    }
-
-    createCustomerLocationChart() {
-      if (!this.customerLocationChart) return;
-
-      const ctx = this.customerLocationChart.nativeElement.getContext('2d');
-      new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: this.customerLocations.map(location => location.city),
-          datasets: [{
-            label: 'Customers',
-            data: this.customerLocations.map(location => location.customers),
-            backgroundColor: '#3B82F6',
-            borderRadius: 8
-          }, {
-            label: 'Orders',
-            data: this.customerLocations.map(location => location.orders),
-            backgroundColor: '#10B981',
-            borderRadius: 8
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            title: {
-              display: true,
-              text: 'Customers by Location'
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: true
-            }
-          }
+      },
+      scales: {
+        r: {
+          beginAtZero: true
         }
-      });
+      }
     }
+  });
+}
 
+
+createCustomerLocationChart() {
+  if (!this.customerLocationChart?.nativeElement || this.customerLocations.length === 0) return;
+
+  const locations = this.customerLocations.slice(0, 8); // top 8 to avoid clutter
+  const cities = locations.map(loc => loc.city);
+  const customerCounts = locations.map(loc => loc.customers || 0);
+  const orderCounts = locations.map(loc => loc.orders || 0);
+
+  const ctx = this.customerLocationChart.nativeElement.getContext('2d');
+  if (!ctx) return;
+
+  if (this.customerLocationChartInstance) this.customerLocationChartInstance.destroy();
+
+  this.customerLocationChartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: cities,
+      datasets: [
+        {
+          label: 'Customers',
+          data: customerCounts,
+          backgroundColor: 'rgba(59, 130, 246, 0.7)',
+          borderRadius: 6
+        },
+        {
+          label: 'Orders',
+          data: orderCounts,
+          backgroundColor: 'rgba(16, 185, 129, 0.7)',
+          borderRadius: 6
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        title: {
+          display: true,
+          text: '📍 Customers & Orders by City',
+          font: { size: 16, weight: 'bold' }
+        }
+      },
+      scales: {
+        x: { stacked: false },
+        y: { beginAtZero: true, stacked: false }
+      }
+    }
+  });
+}
     getOrderStatusClass(status: string): string {
       const statusClasses: { [key: string]: string } = {
         'delivered': 'bg-green-100 text-green-800',

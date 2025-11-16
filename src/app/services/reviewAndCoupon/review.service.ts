@@ -50,6 +50,10 @@ export class ReviewService {
     return params;
   }
 
+    getAllReviews(): Observable<ReviewResponse[]> {
+    return this.http.get<ReviewResponse[]>(`${this.baseUrl}/all`);
+  }
+
   // POST /api/reviews/{userId}
   createReview(request: ReviewCreateRequest, userId: number): Observable<ReviewResponse> {
     const url = `${this.baseUrl}/${userId}`;

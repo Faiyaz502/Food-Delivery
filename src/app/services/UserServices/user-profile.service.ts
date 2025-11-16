@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { CustomerTier } from 'src/app/Enums/profileEnums';
 import { environment } from 'src/app/Envirment/environment';
+import { CustomerLocation } from 'src/app/Models/customer-location.model';
 import { UserProfileCreateDTO, UserProfile } from 'src/app/Models/Users/profile.model';
 import { PaginatedResponse } from 'src/app/Models/Users/user.models';
 
@@ -86,4 +87,8 @@ export class UserProfileService {
   deleteUserProfile(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  getCustomerLocations(): Observable<CustomerLocation[]> {
+  return this.http.get<CustomerLocation[]>(`${this.apiUrl}/customers/locations`);
+}
 }

@@ -30,6 +30,7 @@ import { NotificationComponent } from './notification/notification.component';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { LoginComponent } from './login/login.component';
 import { PayrollComponent } from './payroll/payroll.component';
+import { A11yModule } from "@angular/cdk/a11y";
 
 
 
@@ -63,22 +64,17 @@ import { PayrollComponent } from './payroll/payroll.component';
 
   ],
   imports: [
-
-
     CommonModule,
     AdminRoutingModule,
     FormsModule,
-    AnalyticsModule ,
-   ReactiveFormsModule,
-   DragDropModule,
-
-   ToastrModule,
+    AnalyticsModule,
+    ReactiveFormsModule,
+    DragDropModule,
+    ToastrModule,
     MatDialogModule,
-     NgApexchartsModule
-
-
-
-  ]
+    NgApexchartsModule,
+    A11yModule
+]
 })
 export class AdminModule {
 

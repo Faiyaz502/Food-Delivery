@@ -1,13 +1,16 @@
-import { Component, EventEmitter, HostListener, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, OnInit, Output } from '@angular/core';
 import { Router, NavigationEnd, Event as RouterEvent } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { AdminProfile } from 'src/app/Models/Users/profile.model';
+import { TokenService } from 'src/app/services/authService/token.service';
+import { AdminProfileService } from 'src/app/services/UserServices/admin-profile.service';
 
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss']
 })
-export class SidebarComponent {
+export class SidebarComponent implements OnInit {
 
    navItems = [
     { path: 'dashboard', label: 'Dashboard', icon: '<i class="fas fa-chart-line"></i>' },
@@ -20,6 +23,7 @@ export class SidebarComponent {
     { path: 'notification', label: 'Notification', icon: '<i class="fa-solid fa-bell"></i>' },
     { path: 'chat', label: 'Chat', icon: '<i class="fa-solid fa-comments"></i>' },
     { path: 'profile', label: 'Profile', icon: '<i class="fa-solid fa-user"></i>' },
+    { path: 'payroll', label: 'Payroll', icon: '<i class="fa-solid fa-comments-dollar"></i>' },
 
   ];
 
@@ -31,12 +35,22 @@ export class SidebarComponent {
 
   @Output() sectionChange = new EventEmitter<string>();
 
+      userId: any = null; 
+    admin! : AdminProfile ;
 
  sidebarOpen: boolean = false;
   isMobile: boolean = false;
 
-  constructor() {
+  constructor(private token : TokenService,
+    private adminService:AdminProfileService
+  ) {
     this.checkWindowSize();
+  }
+  ngOnInit(): void {
+     this.userId = Number(this.token.getId());
+
+     this.loadAdmin();
+
   }
 
   toggleSidebar() {
@@ -46,6 +60,21 @@ export class SidebarComponent {
   closeSidebar() {
     this.sidebarOpen = false;
   }
+
+   loadAdmin(){
+
+    this.adminService.getAdminProfileById(this.userId).subscribe((x)=>{
+
+        this.admin = x ;
+
+      })
+
+
+
+  }
+
+
+
 
   @HostListener('window:resize', ['$event'])
   onResize(event: any) {

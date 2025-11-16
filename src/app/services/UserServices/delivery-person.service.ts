@@ -33,6 +33,10 @@ export class DeliveryPersonService {
     return this.http.get<PaginatedResponse<DeliveryPersonProfile>>(this.apiUrl, { params });
   }
 
+    getAllDeliveryPersonswithoutPage(): Observable<DeliveryPersonProfile[]> {
+    return this.http.get<DeliveryPersonProfile[]>(`${this.apiUrl}/all`);
+  }
+
   getByAvailabilityStatus(status: AvailabilityStatus, page = 0, size = 10): Observable<PaginatedResponse<DeliveryPersonProfile>> {
     const params = new HttpParams()
       .set('page', page.toString())

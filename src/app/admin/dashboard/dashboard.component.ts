@@ -4,6 +4,7 @@ import { Chart } from 'chart.js';
 import { CateringOrder, CateringPackage } from 'src/app/Models/catering-package.model';
 import { CustomerLocation } from 'src/app/Models/customer-location.model';
 import { MenuItem } from 'src/app/Models/MenuItem.model';
+import { ReviewResponse } from 'src/app/Models/NotificationAndCoupon/review.model';
 
 import { OrderResponseDTO } from 'src/app/Models/Order/order.models';
 
@@ -13,11 +14,19 @@ import { Restaurant } from 'src/app/Models/restaurant.model';
 import { Review } from 'src/app/Models/review.model';
 import { Rider } from 'src/app/Models/rider.model';
 import { TeamMember } from 'src/app/Models/team-member.model';
+import { DeliveryPersonProfile } from 'src/app/Models/Users/profile.model';
 import { User } from 'src/app/Models/Users/user.models';
 
-import { ApiService } from 'src/app/services/api.service';
+
 import { AuthServiceService } from 'src/app/services/authService/auth-service.service';
+import { MenuItemService } from 'src/app/services/menu-item.service';
 import { OrderService } from 'src/app/services/Orders/order.service';
+import { RestaurantService } from 'src/app/services/restaurant/restaurant.service';
+import { ReviewService } from 'src/app/services/reviewAndCoupon/review.service';
+import { DeliveryPersonService } from 'src/app/services/UserServices/delivery-person.service';
+import { UserProfileService } from 'src/app/services/UserServices/user-profile.service';
+import { UserServiceService } from 'src/app/services/UserServices/user.service.service';
+
 
 
 @Component({
@@ -47,22 +56,24 @@ export class DashboardComponent  {
   // Data arrays
   orders: OrderResponseDTO[] = [];
   users: User[] = [];
-  riders: Rider[] = [];
+  riders: DeliveryPersonProfile[] = [];
   menuItems: MenuItem[] = [];
   restaurants: Restaurant[] = [];
   cateringPackages: CateringPackage[] = [];
   cateringOrders: CateringOrder[] = [];
   recentTransactions: OrderResponseDTO[] = [];
   trendingMenuItems: MenuItem[] = [];
-  availableRidersList: any[] = [];
-  reviews: Review[] = [];
-  recentReviews: any[] = [];
-  pendingRequests: PendingRequest[] = [];
+  availableRidersList: DeliveryPersonProfile[] = [];
+  reviews: ReviewResponse[] = [];
+  recentReviews: ReviewResponse[] = [];
+  pendingRequests: Restaurant[] = [];
   teamMembers: TeamMember[] = [];
   customerLocations: CustomerLocation[] = [];
 
-  constructor(private apiService: ApiService , private orderApi : OrderService ,
-   private ss :TokenService , private auth : AuthServiceService
+  constructor( private orderApi : OrderService , private userService : UserServiceService,
+   private ss :TokenService , private auth : AuthServiceService , private riderService:DeliveryPersonService,
+   private menuService : MenuItemService , private restaurantService:RestaurantService,private reviewService:ReviewService,
+   private customerService:UserProfileService
   ) {}
 
   ngOnInit() {
@@ -84,48 +95,47 @@ export class DashboardComponent  {
 
     });
 
-    this.apiService.getUsers().subscribe(users => {
+    this.userService.getAllUserswithoutPage().subscribe(users => {
       this.users = users;
       this.calculateUserStatistics();
     });
 
-    this.apiService.getRiders().subscribe(riders => {
+    this.riderService.getAllDeliveryPersonswithoutPage().subscribe(riders => {
       this.riders = riders;
       this.calculateRiderStatistics();
       this.getAvailableRiders();
     });
 
-    this.apiService.getMenuItems().subscribe(menuItems => {
+    this.menuService.getAllMenuItems().subscribe(menuItems => {
       this.menuItems = menuItems;
       this.getTrendingMenuItems();
     });
 
-    this.apiService.getRestaurants().subscribe(restaurants => {
+    this.restaurantService.getRestaurants().subscribe(restaurants => {
       this.restaurants = restaurants;
     });
 
-    this.apiService.getCateringOrders().subscribe(cateringOrders => {
-      this.cateringOrders = cateringOrders;
-      this.totalCateringOrders = cateringOrders.length;
-    });
 
-    this.apiService.getReviews().subscribe(reviews => {
+
+    this.reviewService.getAllReviews().subscribe(reviews => {
       this.reviews = reviews;
+      console.log(reviews);
+      
       this.calculateReviewStatistics();
       this.getRecentReviews();
     });
 
-    this.apiService.getPendingRequests().subscribe(requests => {
+    this.restaurantService.getPendingApprovalRestaurants().subscribe(requests => {
       this.pendingRequests = requests;
-      this.pendingRequestsCount = requests.filter(r => r.status === 'pending').length;
+      
     });
 
-    this.apiService.getTeamMembers().subscribe(members => {
-      this.teamMembers = members;
-      this.activeTeamMembers = members.filter(m => m.status === 'active').length;
-    });
+    // this.apiService.getTeamMembers().subscribe(members => {
+    //   this.teamMembers = members;
+    //   this.activeTeamMembers = members.filter(m => m.status === 'active').length;
+    // });
 
-    this.apiService.getCustomerLocations().subscribe(locations => {
+    this.customerService.getCustomerLocations().subscribe(locations => {
       this.customerLocations = locations;
     });
   }
@@ -169,11 +179,8 @@ export class DashboardComponent  {
     this.availableRidersList = this.riders
       .filter(rider => rider.availabilityStatus)
       .map(rider => {
-        const user = this.users.find(u => u.id === rider.id);
         return {
-          ...rider,
-          name: user?.firstName || 'Unknown',
-          phone: user?.phoneNumber || 'N/A'
+          ...rider
         };
       });
   }
@@ -195,26 +202,49 @@ export class DashboardComponent  {
         const user = this.users.find(u => u.id === review.userId);
         const restaurant = this.restaurants.find(r => r.id === review.restaurantId);
         return {
-          ...review,
-          userName: user?.firstName || 'Unknown User',
-          restaurantName: restaurant?.name || 'Unknown Restaurant'
+          ...review
         };
       });
   }
 
-   approveRequest(requestId: string) {
-      this.apiService.approveRequest(requestId).subscribe(() => {
+   approveRequest(requestId: number) {
+      this.restaurantService.verifyRestaurant(requestId,'ACTIVE').subscribe(() => {
         const request = this.pendingRequests.find(r => r.id === requestId);
         if (request) {
-          request.status = 'approved';
-          this.pendingRequestsCount = this.pendingRequests.filter(r => r.status === 'pending').length;
+          request.status = 'ACTIVE';
+          this.pendingRequestsCount = this.pendingRequests.filter(r => r.status === 'PENDING_APPROVAL').length;
         }
+
       });
     }
 
+    
+//   verifyRestaurant(id: number, status: string) {
+//   if (!confirm(`Are you sure you want to mark this restaurant as ${status.toLowerCase()}?`)) {
+//     return;
+//   }
 
-  rejectRequest(requestId: string) {
-    this.apiService.rejectRequest(requestId).subscribe(() => {
+//   this.apiService.verifyRestaurant(id, status).subscribe({
+//     next: (updatedRestaurant) => {
+//       // Update the local restaurant list with the new status
+//       const index = this.restaurants.findIndex(r => r.id === id);
+//       if (index !== -1) {
+//         this.restaurants[index] = updatedRestaurant;
+//       }
+//       alert('Restaurant status updated successfully!');
+//     },
+//     error: (err) => {
+//       console.error('Verification failed', err);
+//       alert('Failed to update restaurant status. Please try again.');
+//     }
+//   });
+// }
+
+    
+
+
+  rejectRequest(requestId: number) {
+    this.restaurantService.verifyRestaurant(requestId,'REJECTED').subscribe(() => {
       const request = this.pendingRequests.find(r => r.id === requestId);
       if (request) {
         request.status = 'rejected';

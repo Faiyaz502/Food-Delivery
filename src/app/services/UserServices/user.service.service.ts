@@ -35,6 +35,10 @@ export class UserServiceService {
     return this.http.get<PaginatedResponse<User>>(this.apiUrl, { params });
   }
 
+    getAllUserswithoutPage(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.apiUrl}/all`);
+  }
+
   getUsersByRole(role: UserRole, page = 0, size = 10): Observable<PaginatedResponse<User>> {
     const params = new HttpParams()
       .set('page', page.toString())

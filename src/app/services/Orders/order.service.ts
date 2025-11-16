@@ -331,6 +331,10 @@ confirmDelivery(orderId: number, otp: string): Observable<string> {
     });
   }
 
+    getCompanyStatistics(): Observable<OrderStatistics> {
+    return this.http.get<OrderStatistics>(this.apiUrl);
+  }
+
   private updateStats(): void {
     this.calculateStats(this.ordersSubject.value);
   }
