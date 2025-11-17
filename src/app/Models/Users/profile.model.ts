@@ -1,4 +1,4 @@
-import { CustomerTier, VehicleType, AvailabilityStatus, AdminLevel } from "src/app/Enums/profileEnums";
+import { CustomerTier, VehicleType, AvailabilityStatus, AdminLevel, UserStatus } from "src/app/Enums/profileEnums";
 
 
 export interface UserProfile {
@@ -84,7 +84,13 @@ export interface RestaurantOwnerCreateDTO {
 export interface AdminProfile {
   id: number;
   userId: number;
+  adminName:string;
+  adminEmail:string ;
   department: string;
+  adminImg : string ;
+  location:string ;
+  phone : string ;
+  status : UserStatus;
   adminLevel: AdminLevel;
   accessLevel: number;
   supervisorId?: number;

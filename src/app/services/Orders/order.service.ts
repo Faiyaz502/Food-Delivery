@@ -44,7 +44,7 @@ export class OrderService {
   // ============================================
   // GET ORDERS
   // ============================================
-  getAllOrders(page: number = 0, size: number = 50, sortBy: string = 'orderDate', sortDir: string = 'DESC'): Observable<OrderResponseDTO[]> {
+  getAllOrders(page: number = 0, size: number = 100, sortBy: string = 'orderDate', sortDir: string = 'DESC'): Observable<OrderResponseDTO[]> {
     let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString())

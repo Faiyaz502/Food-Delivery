@@ -134,7 +134,7 @@ statistics: OrderStatistics | null = null;
 
     this.reviewService.getAllReviews().subscribe(reviews => {
       this.reviews = reviews;
-    
+
 
       this.calculateReviewStatistics();
       this.getRecentReviews();
@@ -194,7 +194,7 @@ statistics: OrderStatistics | null = null;
 
   getAvailableRiders() {
     this.availableRidersList = this.riders
-      .filter(rider => rider.availabilityStatus)
+      .filter(rider => rider.availabilityStatus.match('AVAILABLE') )
       .map(rider => {
         return {
           ...rider

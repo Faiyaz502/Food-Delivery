@@ -1,23 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { TeamMember } from 'src/app/Models/team-member.model';
+import { AdminProfile } from 'src/app/Models/Users/profile.model';
+import { User } from 'src/app/Models/Users/user.models';
 import { ApiService } from 'src/app/services/api.service';
+import { TokenService } from 'src/app/services/authService/token.service';
+import { AdminProfileService } from 'src/app/services/UserServices/admin-profile.service';
+import { UserServiceService } from 'src/app/services/UserServices/user.service.service';
 
-interface AdminProfile {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  avatar: string;
-  phone?: string;
-  department?: string;
-  joined_date: string;
-  permissions: string[];
-  last_login: string;
-  status: 'active' | 'away' | 'offline';
-  bio?: string;
-  location?: string;
-  timezone?: string;
-}
+
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
@@ -25,32 +15,18 @@ interface AdminProfile {
 })
 export class ProfileComponent {
 
-  currentAdmin: AdminProfile = {
-    id: '1',
-    name: 'John Admin',
-    email: 'john@fooddelivery.com',
-    role: 'Super Admin',
-    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=400&auto=format&fit=crop',
-    phone: '+1-555-0100',
-    department: 'Operations',
-    joined_date: '2023-01-15T09:00:00Z',
-    permissions: ['manage_users', 'manage_orders', 'manage_restaurants', 'manage_reviews', 'view_analytics'],
-    last_login: new Date().toISOString(),
-    status: 'active',
-    bio: 'Experienced administrator with 5+ years in food delivery operations.',
-    location: 'New York, NY',
-    timezone: 'EST (UTC-5)'
-  };
+  currentAdmin!: AdminProfile ;
 
   teamMembers: TeamMember[] = [];
   editMode: boolean = false;
   editedProfile: AdminProfile = {...this.currentAdmin};
   activeTab: 'profile' | 'security' | 'team' | 'notifications' = 'profile';
-
+   id : any;
   // Form data
   currentPassword: string = '';
   newPassword: string = '';
   confirmPassword: string = '';
+  timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   // Notification settings
   notifications = {
@@ -63,16 +39,41 @@ export class ProfileComponent {
     sms_critical: true
   };
 
-  constructor(private apiService: ApiService) {}
+  constructor(private apiService: ApiService,private adminService: AdminProfileService,
+     private token: TokenService,
+     private userService: UserServiceService
+
+    ) {}
 
   ngOnInit() {
+
+   this.id = this.token.getId();
+
+    this.loadAdmin()
     this.loadTeamMembers();
+
   }
 
   loadTeamMembers() {
     this.apiService.getTeamMembers().subscribe(members => {
       this.teamMembers = members;
     });
+  }
+
+ async loadAdmin(){
+
+
+    this.adminService.getAdminProfileByUserId(this.id).subscribe((x)=>{
+
+      console.log(x);
+
+
+        this.currentAdmin = x ;
+
+
+    })
+
+
   }
 
   toggleEditMode() {
@@ -125,6 +126,16 @@ export class ProfileComponent {
     }
   }
 
+permissions: Array<{ key: keyof AdminProfile; label: string }> = [
+  { key: 'canApproveRestaurants', label: 'Approve Restaurants' },
+  { key: 'canManageUsers', label: 'Manage Users' },
+  { key: 'canManageOrders', label: 'Manage Orders' },
+  { key: 'canManagePayments', label: 'Manage Payments' },
+  { key: 'canManageDrones', label: 'Manage Drones' },
+  { key: 'canViewAnalytics', label: 'View Analytics' }
+];
+
+
   getRoleColor(role: string): string {
     switch (role.toLowerCase()) {
       case 'super admin': return 'text-purple-600 bg-purple-100';
@@ -151,6 +162,64 @@ export class ProfileComponent {
       hour: '2-digit',
       minute: '2-digit'
     });
+  }
+
+
+   //upload image
+
+    @ViewChild('profileImageInput', { static: false }) profileImageInput!: ElementRef;
+
+  // Trigger file input click
+  triggerFileInput(): void {
+    this.profileImageInput.nativeElement.click();
+  }
+
+  // Handle image selection
+  onProfileImageSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+
+      // Optional: Validate file
+      if (!file.type.startsWith('image/')) {
+        alert('Please select an image file (JPG, PNG, etc.)');
+        return;
+      }
+
+      // Preview immediately
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.currentAdmin.adminImg = e.target.result; // Update preview
+      };
+      reader.readAsDataURL(file);
+
+      // Upload to backend
+      this.uploadProfileImage(file);
+    }
+
+    // Reset input to allow re-selecting same file
+    input.value = '';
+  }
+
+  // Upload to API
+  private uploadProfileImage(file: File): void {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    this.userService.uploadProfileImage(this.currentAdmin.id, formData).subscribe({
+      next: (updatedUser: User) => {
+        // Optional: Update full user object if backend returns it
+        this.currentAdmin = { ...this.currentAdmin, ...updatedUser };
+        console.log('Profile image uploaded successfully');
+      },
+      error: (err) => {
+        console.error('Profile image upload failed', err);
+        alert('Failed to upload profile picture. Please try again.');
+        // Revert to previous image if needed
+      }
+    });
+
+
   }
 
 }

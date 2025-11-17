@@ -231,7 +231,6 @@
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Priority</th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
@@ -261,13 +260,6 @@
                 <span [class]="'px-2 py-1 text-xs font-semibold rounded-full ' + getStatusColor(order.orderStatus)">
                   {{ formatStatusText(order.orderStatus) }}
                 </span>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="flex items-center">
-                  <div *ngFor="let i of [1,2,3,4,5]"
-                    [class]="'w-2 h-2 rounded-full mr-1 ' + (i <= order.priorityLevel ? 'bg-orange-400' : 'bg-gray-200')">
-                  </div>
-                </div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm">
                 <button
