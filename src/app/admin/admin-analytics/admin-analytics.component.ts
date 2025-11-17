@@ -57,17 +57,17 @@ statistics: OrderStatistics | null = null;
   constructor( private orderService : OrderService ,
     private userService : UserServiceService , private riderService : DeliveryPersonService, private menuItemService : MenuItemService,
     private restaurantService:RestaurantService , private reviewService : ReviewService , private customerService:UserProfileService ,
-    
+
   ) {}
 
   ngOnInit() {
     Chart.register(...registerables);
     this.orderService.getAllOrders().subscribe(orders => this.createMonthlyChart(orders));
-    
+
      this.fetchStatistics();
 
       this.loadDashboardData();
-    
+
   }
 
   ngAfterViewInit() {
@@ -299,7 +299,7 @@ private createMonthlyChart(orders: OrderResponseDTO[]) {
       }
 
 
-    
+
 
     calculateOrderStatistics() {
       this.totalOrders = this.orders.length;

@@ -13,6 +13,7 @@ import { UserProfileService } from 'src/app/services/UserServices/user-profile.s
 import { environment } from 'src/app/Envirment/environment';
 import { ToastrService } from 'ngx-toastr';
 import { TokenService } from 'src/app/services/authService/token.service';
+import { BD_CITIES } from 'src/app/Models/Order/citys.model';
 
 
 
@@ -33,6 +34,8 @@ export class CheckoutComponent {
   cartSummary: Partial<CartSummaryDTO & { deliveryFee: number }> = { subtotal: 0, tax: 0, total: 0, deliveryFee: 50 };
   cartItems: CartItemResponseDTO[] = [];
 
+cities = BD_CITIES;
+
   deliveryForm: FormGroup;
   selectedCard: any | null = { id: 1, last4Digits: '4242', cardType: 'Visa', expiryDate: '12/26', holderName: 'John Doe' };
 
@@ -50,7 +53,8 @@ export class CheckoutComponent {
     dateOfBirth: '',
     profileImageUrl: '',
     latitude: 0,
-    longitude: 0
+    longitude: 0 ,
+    city : ''
   };
 
   private createCustomMarkerIcon(): L.Icon {
@@ -92,7 +96,8 @@ export class CheckoutComponent {
       specialInstructions: [''],
       deliveryFee: [50] ,
       discount : this.couponDiscount ,
-      paymentMethod: [this.selectedCard ? 'CARD' : 'CASH_ON_DELIVERY', Validators.required]
+      paymentMethod: [this.selectedCard ? 'CARD' : 'CASH_ON_DELIVERY', Validators.required] ,
+      city: ['']
     });
   }
 
@@ -341,6 +346,7 @@ allowLocation() {
 
 
   updateUserProfile(){
+          console.log("Update"+this.updateProfile);
 
         this.userService.updateUserProfile(this.userId, this.updateProfile).subscribe({
           next: () => this.initModalMap(),

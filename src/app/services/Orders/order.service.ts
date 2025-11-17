@@ -87,7 +87,7 @@ export class OrderService {
 
   //OTP
 
-  
+
   getOrderOTP(orderId: number): Observable<DeliveryOTP> {
     return this.http.get<DeliveryOTP>(`${this.apiUrl}/${orderId}/otp`);
   }
@@ -332,7 +332,7 @@ confirmDelivery(orderId: number, otp: string): Observable<string> {
   }
 
     getCompanyStatistics(): Observable<OrderStatistics> {
-    return this.http.get<OrderStatistics>(this.apiUrl);
+    return this.http.get<OrderStatistics>(`${this.apiUrl}/company`);
   }
 
   private updateStats(): void {

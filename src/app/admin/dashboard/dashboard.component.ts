@@ -6,7 +6,7 @@ import { CustomerLocation } from 'src/app/Models/customer-location.model';
 import { MenuItem } from 'src/app/Models/MenuItem.model';
 import { ReviewResponse } from 'src/app/Models/NotificationAndCoupon/review.model';
 
-import { OrderResponseDTO } from 'src/app/Models/Order/order.models';
+import { OrderResponseDTO, OrderStatistics } from 'src/app/Models/Order/order.models';
 
 
 import { PendingRequest } from 'src/app/Models/pending-request.model';
@@ -36,6 +36,8 @@ import { UserServiceService } from 'src/app/services/UserServices/user.service.s
 })
 export class DashboardComponent  {
 
+
+statistics: OrderStatistics | null = null;
 
   // Dashboard statistics
   totalOrders = 0;
@@ -77,14 +79,27 @@ export class DashboardComponent  {
   ) {}
 
   ngOnInit() {
-    this.loadDashboardData();
+
    const token = this.ss.getToken
    console.log(token);
-    
 
+
+
+   this.loadDashboardData();
 
 
   }
+
+  fetchStatistics() {
+  this.orderApi.getCompanyStatistics().subscribe(stats => {
+    this.statistics = stats;
+
+    console.log(stats);
+
+
+
+  });
+}
 
   loadDashboardData() {
     // Load all data concurrently
@@ -119,15 +134,15 @@ export class DashboardComponent  {
 
     this.reviewService.getAllReviews().subscribe(reviews => {
       this.reviews = reviews;
-      console.log(reviews);
-      
+    
+
       this.calculateReviewStatistics();
       this.getRecentReviews();
     });
 
     this.restaurantService.getPendingApprovalRestaurants().subscribe(requests => {
       this.pendingRequests = requests;
-      
+
     });
 
     // this.apiService.getTeamMembers().subscribe(members => {
@@ -138,6 +153,8 @@ export class DashboardComponent  {
     this.customerService.getCustomerLocations().subscribe(locations => {
       this.customerLocations = locations;
     });
+
+     this.fetchStatistics();
   }
 
   calculateOrderStatistics() {
@@ -218,7 +235,7 @@ export class DashboardComponent  {
       });
     }
 
-    
+
 //   verifyRestaurant(id: number, status: string) {
 //   if (!confirm(`Are you sure you want to mark this restaurant as ${status.toLowerCase()}?`)) {
 //     return;
@@ -240,7 +257,7 @@ export class DashboardComponent  {
 //   });
 // }
 
-    
+
 
 
   rejectRequest(requestId: number) {
