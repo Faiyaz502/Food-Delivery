@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/app/Envirment/environment';
 import { PaymentMethodPayroll, RiderPayroll } from 'src/app/Models/payroll/payroll.model';
+import { PayrollRuleDTO } from 'src/app/Models/payroll/riderShift.model';
 
 
 
@@ -52,4 +53,29 @@ export class PayrollService {
   getPayrollsForRider(riderId: number): Observable<RiderPayroll[]> {
     return this.http.get<RiderPayroll[]>(`${this.apiUrl}/rider/${riderId}`);
   }
+
+
+// Get paginated shifts
+getShifts(params: any): Observable<any> {
+  return this.http.get<any>(`${this.apiUrl}/shifts/admin`, { params });
+}
+
+// End a shift manually
+endShift(shiftId: number): Observable<void> {
+  return this.http.post<void>(`${this.apiUrl}/shifts/${shiftId}/end`, {});
+}
+
+// Payroll Rules
+getPayrollRules(): Observable<PayrollRuleDTO[]> {
+  return this.http.get<PayrollRuleDTO[]>(`${this.apiUrl}/admin/payroll-rules`);
+}
+
+updatePayrollRule(key: string, value: number, description: string): Observable<PayrollRuleDTO> {
+  return this.http.put<PayrollRuleDTO>(
+    `${this.apiUrl}/admin/payroll-rules/${key}`,
+    { value, description }
+  );
+}
+
+
 }

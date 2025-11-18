@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+// payroll.component.ts
+import { Component, OnInit } from '@angular/core';
 import { finalize } from 'rxjs';
 import { PaymentMethodPayroll, RiderPayroll } from 'src/app/Models/payroll/payroll.model';
 import { Rider } from 'src/app/Models/rider.model';
@@ -6,6 +7,8 @@ import { DeliveryPersonProfile, RestaurantOwnerProfile } from 'src/app/Models/Us
 import { PayrollService } from 'src/app/services/payroll/payroll.service';
 import { RiderService } from 'src/app/services/Rider/rider.service';
 import { RestaurantOwnerService } from 'src/app/services/UserServices/restaurant-owner.service';
+import { RiderShiftService } from 'src/app/services/rider-shift.service';
+import { RiderShiftSummary, PayrollRuleDTO, RiderShiftDetail, PayrollRuleKey } from 'src/app/Models/payroll/riderShift.model';
 
 
 interface LoadingState {
@@ -21,14 +24,15 @@ interface CustomPayoutAmount {
   templateUrl: './payroll.component.html',
   styleUrls: ['./payroll.component.scss']
 })
-export class PayrollComponent {
-
-
-  activeTab: 'riders' | 'salary' | 'restaurants' = 'riders';
+export class PayrollComponent implements OnInit {
+  activeTab: 'riders' | 'salary' | 'restaurants' | 'shifts' | 'rules' = 'riders';
 
   riders: Rider[] = [];
   restaurants: RestaurantOwnerProfile[] = [];
   monthlyPayrolls: RiderPayroll[] = [];
+  shifts: RiderShiftSummary[] = [];
+  payrollRules: PayrollRuleDTO[] = [];
+  selectedShiftDetail: RiderShiftDetail | null = null;
 
   loading: LoadingState = {};
   customPayouts: CustomPayoutAmount = {};
@@ -40,18 +44,32 @@ export class PayrollComponent {
   selectedMonth: number = new Date().getMonth() + 1;
   years: number[] = [];
 
+  // Shift filters
+  shiftStartDate: string = '';
+  shiftEndDate: string = '';
+  shiftRiderId: number | null = null;
+  shiftRiderName: string = '';
+
   // Pagination
   riderPage = 0;
   riderSize = 20;
   restaurantPage = 0;
   restaurantSize = 20;
+  shiftPage = 0;
+  shiftSize = 20;
+  totalShiftPages = 0;
+  totalShiftElements = 0;
+
+  // Edit mode for rules
+  editingRules: { [key: string]: boolean } = {};
+  ruleEditValues: { [key: string]: string } = {};
 
   constructor(
     private riderService: RiderService,
     private restaurantOwnerService: RestaurantOwnerService,
-    private payrollService: PayrollService
+    private payrollService: PayrollService,
+    private riderShiftService: RiderShiftService
   ) {
-    // Generate years array (current year and previous 2 years)
     const currentYear = new Date().getFullYear();
     for (let i = 0; i < 3; i++) {
       this.years.push(currentYear - i);
@@ -62,6 +80,8 @@ export class PayrollComponent {
     this.loadRiders();
     this.loadRestaurants();
     this.loadMonthlyPayrolls();
+    this.loadShifts();
+    this.loadPayrollRules();
   }
 
   loadRiders(): void {
@@ -72,9 +92,6 @@ export class PayrollComponent {
       .subscribe({
         next: (response) => {
           this.riders = response.content;
-
-          console.log(this.riders);
-
         },
         error: (error) => {
           console.error('Error loading riders:', error);
@@ -90,9 +107,6 @@ export class PayrollComponent {
       .pipe(finalize(() => this.loading['restaurants-list'] = false))
       .subscribe({
         next: (response) => {
-          console.log(response.content);
-
-
           this.restaurants = response.content;
         },
         error: (error) => {
@@ -118,6 +132,137 @@ export class PayrollComponent {
       });
   }
 
+  loadShifts(): void {
+    this.loading['shifts-list'] = true;
+    this.riderShiftService
+      .getAllShiftsForAdmin(
+        this.shiftPage,
+        this.shiftSize,
+        this.shiftStartDate,
+        this.shiftEndDate,
+        this.shiftRiderId || undefined,
+        this.shiftRiderName || undefined
+      )
+      .pipe(finalize(() => this.loading['shifts-list'] = false))
+      .subscribe({
+        next: (response) => {
+          this.shifts = response.content;
+          this.totalShiftPages = response.totalPages;
+          this.totalShiftElements = response.totalElements;
+        },
+        error: (error) => {
+          console.error('Error loading shifts:', error);
+          alert('Failed to load shifts. Please try again.');
+        }
+      });
+  }
+
+  loadPayrollRules(): void {
+    this.loading['rules-list'] = true;
+    this.riderShiftService
+      .getAllPayrollRules()
+      .pipe(finalize(() => this.loading['rules-list'] = false))
+      .subscribe({
+        next: (rules) => {
+          this.payrollRules = rules;
+          rules.forEach(rule => {
+            this.ruleEditValues[rule.key] = rule.value;
+          });
+        },
+        error: (error) => {
+          console.error('Error loading payroll rules:', error);
+          alert('Failed to load payroll rules. Please try again.');
+        }
+      });
+  }
+
+  onShiftFiltersChange(): void {
+    this.shiftPage = 0;
+    this.loadShifts();
+  }
+
+  clearShiftFilters(): void {
+    this.shiftStartDate = '';
+    this.shiftEndDate = '';
+    this.shiftRiderId = null;
+    this.shiftRiderName = '';
+    this.onShiftFiltersChange();
+  }
+
+  previousShiftPage(): void {
+    if (this.shiftPage > 0) {
+      this.shiftPage--;
+      this.loadShifts();
+    }
+  }
+
+  nextShiftPage(): void {
+    if (this.shiftPage < this.totalShiftPages - 1) {
+      this.shiftPage++;
+      this.loadShifts();
+    }
+  }
+
+  viewShiftDetail(shiftId: number): void {
+    this.loading[`shift-detail-${shiftId}`] = true;
+    this.riderShiftService
+      .getShiftDetail(shiftId)
+      .pipe(finalize(() => this.loading[`shift-detail-${shiftId}`] = false))
+      .subscribe({
+        next: (detail) => {
+          this.selectedShiftDetail = detail;
+        },
+        error: (error) => {
+          console.error('Error loading shift detail:', error);
+          alert('Failed to load shift details. Please try again.');
+        }
+      });
+  }
+
+  closeShiftDetail(): void {
+    this.selectedShiftDetail = null;
+  }
+
+  startEditingRule(key: string): void {
+    this.editingRules[key] = true;
+  }
+
+  cancelEditingRule(key: string): void {
+    this.editingRules[key] = false;
+    const rule = this.payrollRules.find(r => r.key === key);
+    if (rule) {
+      this.ruleEditValues[key] = rule.value;
+    }
+  }
+
+  saveRule(key: PayrollRuleKey): void {
+    const newValue = this.ruleEditValues[key];
+
+    if (!newValue || parseFloat(newValue) < 0) {
+      alert('Please enter a valid positive number.');
+      return;
+    }
+
+    this.loading[`rule-${key}`] = true;
+    this.riderShiftService
+      .updatePayrollRule(key, { value: newValue })
+      .pipe(finalize(() => this.loading[`rule-${key}`] = false))
+      .subscribe({
+        next: (updatedRule) => {
+          const index = this.payrollRules.findIndex(r => r.key === key);
+          if (index !== -1) {
+            this.payrollRules[index] = updatedRule;
+          }
+          this.editingRules[key] = false;
+          alert('Payroll rule updated successfully!');
+        },
+        error: (error) => {
+          console.error('Error updating payroll rule:', error);
+          alert('Failed to update payroll rule. Please try again.');
+        }
+      });
+  }
+
   onMonthYearChange(): void {
     this.loadMonthlyPayrolls();
   }
@@ -133,7 +278,6 @@ export class PayrollComponent {
       .pipe(finalize(() => this.loading[`rider-${riderId}`] = false))
       .subscribe({
         next: () => {
-          // Update local state
           this.riders = this.riders.map(r =>
             r.id === riderId ? { ...r, wallet: 0 } : r
           );
@@ -175,7 +319,6 @@ export class PayrollComponent {
       .pipe(finalize(() => this.loading[`restaurant-${restaurantId}`] = false))
       .subscribe({
         next: (updatedRestaurant) => {
-          // Update local state with response from backend
           this.restaurants = this.restaurants.map(r =>
             r.id === restaurantId ? updatedRestaurant : r
           );
@@ -201,7 +344,6 @@ export class PayrollComponent {
       .subscribe({
         next: (payroll) => {
           alert(`Payroll generated successfully! Payroll ID: ${payroll.id}`);
-          // Reload payrolls if we're on the salary tab
           if (this.activeTab === 'salary') {
             this.loadMonthlyPayrolls();
           }
@@ -237,7 +379,6 @@ export class PayrollComponent {
       .pipe(finalize(() => this.loading[`payroll-${payrollId}`] = false))
       .subscribe({
         next: (updatedPayroll) => {
-          // Update local state
           this.monthlyPayrolls = this.monthlyPayrolls.map(p =>
             p.id === payrollId ? updatedPayroll : p
           );
@@ -258,7 +399,6 @@ export class PayrollComponent {
       r.id.toString().includes(search) ||
       r.userId.toString().includes(search) ||
       r.vehicleType.toLowerCase().includes(search)
-
     );
   }
 
@@ -279,6 +419,17 @@ export class PayrollComponent {
     return this.monthlyPayrolls.filter(p =>
       p.id.toString().includes(search) ||
       p.riderId.toString().includes(search)
+    );
+  }
+
+  get filteredShifts(): RiderShiftSummary[] {
+    if (!this.filterText) return this.shifts;
+
+    const search = this.filterText.toLowerCase();
+    return this.shifts.filter(s =>
+      s.id.toString().includes(search) ||
+      s.riderId.toString().includes(search) ||
+      s.riderName.toLowerCase().includes(search)
     );
   }
 
@@ -312,13 +463,29 @@ export class PayrollComponent {
   getStatusClass(status: string): string {
     switch (status) {
       case 'PAID':
+      case 'COMPLETED':
         return 'status-paid';
       case 'GENERATED':
+      case 'ACTIVE':
         return 'status-pending';
       case 'FAILED':
+      case 'AUTO_ENDED':
         return 'status-failed';
       default:
         return '';
+    }
+  }
+
+  getShiftStatusClass(status: string): string {
+    switch (status) {
+      case 'COMPLETED':
+        return 'bg-green-100 text-green-800';
+      case 'ACTIVE':
+        return 'bg-blue-100 text-blue-800';
+      case 'AUTO_ENDED':
+        return 'bg-yellow-100 text-yellow-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   }
 
@@ -327,7 +494,4 @@ export class PayrollComponent {
                    'July', 'August', 'September', 'October', 'November', 'December'];
     return months[month - 1] || '';
   }
-
-
-
 }

@@ -93,6 +93,28 @@
           </svg>
           Restaurant Payouts
         </button>
+
+              <button
+          class="flex items-center gap-2 px-6 py-4 font-medium whitespace-nowrap transition-colors"
+          [class]="activeTab === 'shifts' ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'"
+          (click)="activeTab = 'shifts'">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          Rider Shifts
+        </button>
+
+        <button
+          class="flex items-center gap-2 px-6 py-4 font-medium whitespace-nowrap transition-colors"
+          [class]="activeTab === 'rules' ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'"
+          (click)="activeTab = 'rules'">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path d="M12 20h9"></path>
+            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+          </svg>
+          Payroll Rules
+        </button>
       </div>
 
       <!-- Search Filter -->
@@ -159,7 +181,7 @@
                   (click)="handleGeneratePayroll(rider.id)"
                  >
                   <span >✓ Generate Salary</span>
-                 
+
                 </button>
               </div>
             </div>
@@ -374,6 +396,295 @@
             <div *ngIf="filteredRestaurants.length === 0" class="text-center py-12 text-gray-500">
               <p>No restaurants found</p>
             </div>
+          </div>
+        </div>
+      </div>
+             <div *ngIf="activeTab === 'shifts'">
+          <!-- Filters -->
+          <div class="mb-6 p-4 bg-blue-50 rounded-lg space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                <input
+                  type="date"
+                  [(ngModel)]="shiftStartDate"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm">
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                <input
+                  type="date"
+                  [(ngModel)]="shiftEndDate"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm">
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Rider ID</label>
+                <input
+                  type="number"
+                  [(ngModel)]="shiftRiderId"
+                  placeholder="Enter rider ID"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm">
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Rider Name</label>
+                <input
+                  type="text"
+                  [(ngModel)]="shiftRiderName"
+                  placeholder="Search by name"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm">
+              </div>
+            </div>
+
+            <div class="flex gap-3">
+              <button
+                (click)="onShiftFiltersChange()"
+                class="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+                Apply Filters
+              </button>
+              <button
+                (click)="clearShiftFilters()"
+                class="px-4 py-2 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 focus:ring-2 focus:ring-gray-400 focus:outline-none transition">
+                Clear Filters
+              </button>
+            </div>
+          </div>
+
+          <div *ngIf="loading['shifts-list']" class="flex flex-col items-center justify-center py-12">
+            <div class="w-10 h-10 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin mb-4"></div>
+            <p class="text-gray-600">Loading shifts...</p>
+          </div>
+
+          <div *ngIf="!loading['shifts-list']" class="space-y-4">
+            <div *ngFor="let shift of filteredShifts" class="bg-white border border-gray-200 rounded-lg p-5 hover:shadow-md transition">
+              <div class="flex flex-wrap items-start justify-between gap-3 mb-4">
+                <div>
+                  <h3 class="text-lg font-semibold text-gray-900">Shift #{{ shift.id }} - {{ shift.riderName }}</h3>
+                  <p class="text-sm text-gray-500">Rider ID: {{ shift.riderId }}</p>
+                </div>
+                <span class="px-3 py-1 text-sm font-medium rounded-full" [ngClass]="getShiftStatusClass(shift.status)">
+                  {{ shift.status }}
+                </span>
+              </div>
+
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4 text-sm">
+                <div>
+                  <span class="text-gray-500">Date:</span>
+                  <span class="ml-1 font-medium text-gray-900">{{ shift.date | date:'shortDate' }}</span>
+                </div>
+                <div>
+                  <span class="text-gray-500">Start:</span>
+                  <span class="ml-1 font-medium text-gray-900">{{ shift.shiftStart | date:'shortTime' }}</span>
+                </div>
+                <div>
+                  <span class="text-gray-500">Hours Worked:</span>
+                  <span class="ml-1 font-medium text-gray-900">{{ shift.totalWorkHours | number:'1.1-1' }}h</span>
+                </div>
+                <div>
+                  <span class="text-gray-500">Deliveries:</span>
+                  <span class="ml-1 font-medium text-gray-900">{{ shift.completedDeliveries }}</span>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+                <div>
+                  <span class="text-gray-500 text-sm">Final Pay:</span>
+                  <span class="ml-2 text-xl font-bold text-green-600">৳{{ shift.finalPay }}</span>
+                </div>
+                <button
+                  (click)="viewShiftDetail(shift.id)"
+                  class="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+                  View Details
+                </button>
+              </div>
+            </div>
+
+            <div *ngIf="filteredShifts.length === 0" class="text-center py-12 text-gray-500">
+              <p>No shifts found</p>
+            </div>
+
+            <!-- Pagination -->
+            <div class="flex items-center justify-between pt-4">
+              <p class="text-sm text-gray-600">
+                Showing {{ shifts.length }} of {{ totalShiftElements }} shifts
+              </p>
+              <div class="flex gap-2">
+                <button
+                  (click)="previousShiftPage()"
+                  [disabled]="shiftPage === 0"
+                  class="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                  Previous
+                </button>
+                <span class="px-3 py-1 text-sm text-gray-600">
+                  Page {{ shiftPage + 1 }} of {{ totalShiftPages }}
+                </span>
+                <button
+                  (click)="nextShiftPage()"
+                  [disabled]="shiftPage >= totalShiftPages - 1"
+                  class="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                  Next
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payroll Rules Tab -->
+        <div *ngIf="activeTab === 'rules'">
+          <div class="mb-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-2">Payroll Configuration</h2>
+            <p class="text-gray-600">Manage payroll calculation rules and rates</p>
+          </div>
+
+          <div *ngIf="loading['rules-list']" class="flex flex-col items-center justify-center py-12">
+            <div class="w-10 h-10 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin mb-4"></div>
+            <p class="text-gray-600">Loading payroll rules...</p>
+          </div>
+
+          <div *ngIf="!loading['rules-list']" class="space-y-4">
+            <div *ngFor="let rule of payrollRules" class="bg-white border border-gray-200 rounded-lg p-5">
+              <div class="flex items-start justify-between gap-4">
+                <div class="flex-1">
+                  <h3 class="text-lg font-semibold text-gray-900 mb-1">
+                    {{ rule.key.replace('_', ' ') }}
+                  </h3>
+                  <p class="text-sm text-gray-600 mb-3">{{ rule.description }}</p>
+
+                  <div *ngIf="!editingRules[rule.key]" class="flex items-center gap-3">
+                    <span class="text-gray-500 text-sm">Current Value:</span>
+                    <span class="text-xl font-bold text-blue-600">৳{{ rule.value }}</span>
+                    <span class="text-xs text-gray-400">(Default: ৳{{ rule.defaultValue }})</span>
+                  </div>
+
+                  <div *ngIf="editingRules[rule.key]" class="flex items-center gap-3">
+                    <input
+                      type="number"
+                      [(ngModel)]="ruleEditValues[rule.key]"
+                      step="0.01"
+                      min="0"
+                      class="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none w-32">
+                    <span class="text-sm text-gray-500">৳</span>
+                  </div>
+                </div>
+
+                <div class="flex gap-2">
+                  <button
+                    *ngIf="!editingRules[rule.key]"
+                    (click)="startEditingRule(rule.key)"
+                    class="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+                    Edit
+                  </button>
+
+                  <ng-container *ngIf="editingRules[rule.key]">
+                    <button
+                      (click)="saveRule(rule.key)"
+                      [disabled]="loading['rule-' + rule.key]"
+                      class="px-4 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:outline-none transition disabled:opacity-50 disabled:cursor-not-allowed">
+                      <span *ngIf="!loading['rule-' + rule.key]">Save</span>
+                      <span *ngIf="loading['rule-' + rule.key]" class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin inline-block"></span>
+                    </button>
+                    <button
+                      (click)="cancelEditingRule(rule.key)"
+                      class="px-4 py-2 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 focus:ring-2 focus:ring-gray-400 focus:outline-none transition">
+                      Cancel
+                    </button>
+                  </ng-container>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Shift Detail Modal -->
+<div *ngIf="selectedShiftDetail" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+  <div class="bg-white rounded-xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+    <div class="p-6 border-b border-gray-200 flex items-center justify-between">
+      <h2 class="text-2xl font-bold text-gray-900">Shift Details #{{ selectedShiftDetail.id }}</h2>
+      <button
+        (click)="closeShiftDetail()"
+        class="text-gray-400 hover:text-gray-600 focus:outline-none">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+
+    <div class="p-6 space-y-6">
+      <!-- Rider Info -->
+      <div class="bg-blue-50 p-4 rounded-lg">
+        <h3 class="font-semibold text-gray-900 mb-3">Rider Information</h3>
+        <p class="text-gray-700">{{ selectedShiftDetail.riderName }}</p>
+      </div>
+
+      <!-- Time Details -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-gray-50 p-4 rounded-lg">
+          <h4 class="font-medium text-gray-700 mb-2">Shift Start</h4>
+          <p class="text-lg font-semibold">{{ selectedShiftDetail.shiftStart | date:'medium' }}</p>
+        </div>
+        <div class="bg-gray-50 p-4 rounded-lg">
+          <h4 class="font-medium text-gray-700 mb-2">Shift End</h4>
+          <p class="text-lg font-semibold">
+            {{ selectedShiftDetail.shiftEnd ? (selectedShiftDetail.shiftEnd | date:'medium') : 'Ongoing' }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Work Stats -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-gray-50 p-4 rounded-lg text-center">
+          <p class="text-sm text-gray-600 mb-1">Work Hours</p>
+          <p class="text-2xl font-bold text-gray-900">{{ selectedShiftDetail.totalWorkHours | number:'1.1-1' }}h</p>
+        </div>
+        <div class="bg-gray-50 p-4 rounded-lg text-center">
+          <p class="text-sm text-gray-600 mb-1">Break Hours</p>
+          <p class="text-2xl font-bold text-gray-900">{{ selectedShiftDetail.totalBreakHours | number:'1.1-1' }}h</p>
+        </div>
+        <div class="bg-green-50 p-4 rounded-lg text-center">
+          <p class="text-sm text-gray-600 mb-1">Completed</p>
+          <p class="text-2xl font-bold text-green-600">{{ selectedShiftDetail.completedDeliveries }}</p>
+        </div>
+        <div class="bg-red-50 p-4 rounded-lg text-center">
+          <p class="text-sm text-gray-600 mb-1">Delayed</p>
+          <p class="text-2xl font-bold text-red-600">{{ selectedShiftDetail.delayedDeliveries }}</p>
+        </div>
+      </div>
+
+      <!-- Payroll Breakdown -->
+      <div class="bg-gradient-to-br from-green-50 to-blue-50 p-6 rounded-lg border border-green-200">
+        <h3 class="font-semibold text-gray-900 mb-4">Payroll Breakdown</h3>
+
+        <div class="space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="text-gray-700">Work Payment:</span>
+            <span class="font-semibold text-gray-900">৳{{ selectedShiftDetail.payroll.workPayment }}</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-700">Overtime Bonus:</span>
+            <span class="font-semibold text-green-600">+৳{{ selectedShiftDetail.payroll.overtimeBonus }}</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-700">Delivery Bonus:</span>
+            <span class="font-semibold text-green-600">+৳{{ selectedShiftDetail.payroll.deliveryBonus }}</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-700">Delay Penalty:</span>
+            <span class="font-semibold text-red-600">-৳{{ selectedShiftDetail.payroll.delayPenalty }}</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-700">Other Deductions:</span>
+            <span class="font-semibold text-red-600">-৳{{ selectedShiftDetail.payroll.deductions }}</span>
+          </div>
+
+          <div class="pt-3 border-t-2 border-gray-300 flex justify-between items-center">
+            <span class="text-lg font-bold text-gray-900">Final Pay:</span>
+            <span class="text-2xl font-bold text-green-600">৳{{ selectedShiftDetail.payroll.finalPay }}</span>
           </div>
         </div>
       </div>
