@@ -1,4 +1,4 @@
-export type PaymentMethodPayroll = 'BANK_TRANSFER' | 'CASH' | 'MOBILE_MONEY';
+export type PaymentMethodPayroll = 'NET_BANKING' | 'CASH' | 'MOBILE_MONEY';
 export type PayrollStatus = 'GENERATED' | 'PAID' | 'FAILED' | 'PENDING';
 
 export interface RiderPayroll {
@@ -6,16 +6,25 @@ export interface RiderPayroll {
   riderId: number;
   year: number;
   month: number;
-  baseSalary: number;
+
+  workPayment: number;
   totalDeliveries: number;
-  deliveryEarnings: number;
-  bonus: number;
-  deductions: number;
-  netSalary: number;
-  status: PayrollStatus;
-  generatedAt: string;
-  paidAt?: string;
-  paymentMethod?: PaymentMethodPayroll;
+
+  // New / updated fields
+  deliveryBonus: number;
+  overtimeBonus: number;
+
+  deductionAmount: number;
+
+  finalPay: number;
+
+  totalWorkHours: number;
+  totalBreakHours: number;
+
+  paid: boolean;
+  paymentDate: string | null;
+  paymentMethod: PaymentMethodPayroll | null;
+  receiptNumber: string | null;
 }
 
 export interface PayoutRequestDTO {

@@ -4,6 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { catchError, forkJoin, of, Subject, Subscription, takeUntil } from 'rxjs';
 import { environment } from 'src/app/Envirment/environment';
 import { OrderResponseDTO, OrderStatus } from 'src/app/Models/Order/order.models';
+import { RiderShiftSummary } from 'src/app/Models/payroll/riderShift.model';
 import { Restaurant } from 'src/app/Models/restaurant.model';
 import { LocationUpdate, Rider } from 'src/app/Models/rider.model';
 import { AuthServiceService } from 'src/app/services/authService/auth-service.service';
@@ -11,6 +12,7 @@ import { TokenService } from 'src/app/services/authService/token.service';
 import { NotificationResponseDTO, NotificationService } from 'src/app/services/notificationAndcoupon/notification.service';
 import { OrderService } from 'src/app/services/Orders/order.service';
 import { RestaurantService } from 'src/app/services/restaurant/restaurant.service';
+import { RiderShiftService } from 'src/app/services/rider-shift.service';
 import { RiderService } from 'src/app/services/Rider/rider.service';
 import { WebSocketService } from 'src/app/services/web-Socket/web-socket.service';
 
@@ -31,6 +33,7 @@ incomingOrders:OrderResponseDTO[] |null = null ;
   error: string = '';
     isOnline = false;
   isToggling = false;
+  shift:RiderShiftSummary | null = null ;
 
   private destroy$ = new Subject<void>();
 
@@ -44,7 +47,8 @@ incomingOrders:OrderResponseDTO[] |null = null ;
     private webSocket:WebSocketService ,
     private token : TokenService ,
     private auth : AuthServiceService,
-    private toast : ToastrService
+    private toast : ToastrService ,
+    private shiftService:RiderShiftService
   ) {}
 
   ngOnInit(
@@ -93,7 +97,7 @@ forkJoin([
     });
 
 
-
+    this.getShift();
 
   }
 
@@ -196,6 +200,23 @@ forkJoin([
       alert('Customer phone number not available');
     }
   }
+
+getShift() {
+  this.shiftService.getRiderShift()
+    .pipe(
+      catchError((error) => {
+        console.error('Error fetching shift:', error);
+        // Optionally show an alert or toast
+        alert('Failed to fetch shift. Please try again.');
+        // Return a default/fallback value so the stream continues
+        return of(null);
+      })
+    )
+    .subscribe((x) => {
+      console.log(x);
+      this.shift = x; // will be null in case of error
+    });
+}
 
 
 toastMessage: string | null = null;
@@ -521,6 +542,42 @@ this.auth.logout();
   });
 }
 
+//Shift
+shiftEnd(){
+
+  this.shiftService.endShift(this.riderId).subscribe({
+  next: (data) => {
+    this.toast.success("Shift Ended ")
+    console.log("Shift ended:", data);
+  },
+  error: (err) => {
+    console.error("Error ending shift:", err);
+  }
+});
+
+
+
+}
+
+triggerSOS() {
+  if (confirm('🚨 Emergency SOS!\n\nSend alert with your live location to support team?')) {
+    // TODO: Call API: this.sosService.trigger(this.shift?.riderId);
+    this.showToast('SOS signal sent. Help is on the way.');
+  }
+}
+
+openSupportChat() {
+  // TODO: Open in-app chat or redirect
+  alert('Support chat opened (placeholder)');
+}
+
+// Convert totalWorkHours (e.g., 3.75) → "3h 45m"
+formatDuration(hours: number): string {
+  if (hours == null) return '—';
+  const h = Math.floor(hours);
+  const m = Math.round((hours - h) * 60);
+  return `${h}h ${m}m`;
+}
 
 
 

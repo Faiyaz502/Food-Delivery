@@ -123,6 +123,8 @@ export class PayrollComponent implements OnInit {
       .pipe(finalize(() => this.loading['payrolls-list'] = false))
       .subscribe({
         next: (payrolls) => {
+          console.log(payrolls);
+
           this.monthlyPayrolls = payrolls;
         },
         error: (error) => {
@@ -356,7 +358,7 @@ export class PayrollComponent implements OnInit {
       });
   }
 
-  handlePaySalary(payrollId: number, paymentMethod: PaymentMethodPayroll = 'BANK_TRANSFER'): void {
+  handlePaySalary(payrollId: number, paymentMethod: PaymentMethodPayroll = 'NET_BANKING'): void {
     const payroll = this.monthlyPayrolls.find(p => p.id === payrollId);
 
     if (!payroll) {
@@ -364,12 +366,12 @@ export class PayrollComponent implements OnInit {
       return;
     }
 
-    if (payroll.status === 'PAID') {
+    if (payroll.paid) {
       alert('This payroll has already been paid.');
       return;
     }
 
-    if (!confirm(`Pay salary of ৳${payroll.netSalary.toLocaleString()} to Rider #${payroll.riderId}?`)) {
+    if (!confirm(`Pay salary of ৳${payroll.finalPay.toLocaleString()} to Rider #${payroll.riderId}?`)) {
       return;
     }
 
@@ -443,8 +445,8 @@ export class PayrollComponent implements OnInit {
 
   get totalPendingSalaries(): number {
     return this.monthlyPayrolls
-      .filter(p => p.status !== 'PAID')
-      .reduce((sum, p) => sum + p.netSalary, 0);
+      .filter(p => p.paid)
+      .reduce((sum, p) => sum + p.finalPay, 0);
   }
 
   get activeRidersCount(): number {

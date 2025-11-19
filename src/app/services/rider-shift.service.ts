@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { RiderShiftDetail, PayrollRuleDTO, UpdatePayrollRuleRequest } from '../Models/payroll/riderShift.model';
+import { RiderShiftDetail, PayrollRuleDTO, UpdatePayrollRuleRequest, RiderShiftSummary } from '../Models/payroll/riderShift.model';
 import { environment } from '../Envirment/environment';
 
 @Injectable({
@@ -62,10 +62,13 @@ export class RiderShiftService {
     return this.http.get<RiderShiftDetail>(`${this.API_URL}/me/${shiftId}`);
   }
 
-  //  End a shift manually (Admin only)
-  endShiftManually(shiftId: number): Observable<void> {
-    return this.http.post<void>(`${this.API_URL}/${shiftId}/end`, {});
+  getRiderShift():Observable<RiderShiftSummary>{
+
+      return this.http.get<RiderShiftSummary>(`${this.API_URL}/me/today`);
+
+
   }
+
 
   //  PAYROLL RULES MANAGEMENT
 
@@ -77,6 +80,10 @@ export class RiderShiftService {
   //  Get single rule
   getPayrollRule(key: string): Observable<PayrollRuleDTO> {
     return this.http.get<PayrollRuleDTO>(`${this.RULES_URL}/${key}`);
+  }
+
+    endShift(riderId: number): Observable<RiderShiftDetail> {
+    return this.http.post<RiderShiftDetail>(`${this.API_URL}/${riderId}/end`, {});
   }
 
   //  Update a rule
