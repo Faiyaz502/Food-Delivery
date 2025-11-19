@@ -2,18 +2,19 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { RiderShiftDetail, PayrollRuleDTO, UpdatePayrollRuleRequest } from '../Models/payroll/riderShift.model';
+import { environment } from '../Envirment/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RiderShiftService {
 
- private readonly API_URL = '/api/shifts';
-  private readonly RULES_URL = '/api/admin/payroll-rules';
+ private readonly API_URL = `${environment.apiUrl}/api/shifts`;
+  private readonly RULES_URL = `${environment.apiUrl}/api/admin/payroll-rules`;
 
   constructor(private http: HttpClient) { }
 
-  // 👥 ADMIN: Get paginated shifts
+  //  ADMIN: Get paginated shifts
   getAllShiftsForAdmin(
     page: number = 0,
     size: number = 20,
@@ -34,7 +35,7 @@ export class RiderShiftService {
     return this.http.get<any>(`${this.API_URL}/admin`, { params });
   }
 
-  // 👤 RIDER: Get own shifts
+  //  RIDER: Get own shifts
   getMyShifts(
     page: number = 0,
     size: number = 20,
@@ -51,34 +52,34 @@ export class RiderShiftService {
     return this.http.get<any>(`${this.API_URL}/me`, { params });
   }
 
-  // 📋 Get shift detail (Admin or Rider)
+  //  Get shift detail (Admin or Rider)
   getShiftDetail(shiftId: number): Observable<RiderShiftDetail> {
     return this.http.get<RiderShiftDetail>(`${this.API_URL}/admin/${shiftId}`);
   }
 
-  // 👤 Get own shift detail
+  //  Get own shift detail
   getMyShiftDetail(shiftId: number): Observable<RiderShiftDetail> {
     return this.http.get<RiderShiftDetail>(`${this.API_URL}/me/${shiftId}`);
   }
 
-  // 🛑 End a shift manually (Admin only)
+  //  End a shift manually (Admin only)
   endShiftManually(shiftId: number): Observable<void> {
     return this.http.post<void>(`${this.API_URL}/${shiftId}/end`, {});
   }
 
-  // 🔑 PAYROLL RULES MANAGEMENT
+  //  PAYROLL RULES MANAGEMENT
 
-  // 📜 Get all payroll rules
+  //  Get all payroll rules
   getAllPayrollRules(): Observable<PayrollRuleDTO[]> {
     return this.http.get<PayrollRuleDTO[]>(this.RULES_URL);
   }
 
-  // 📖 Get single rule
+  //  Get single rule
   getPayrollRule(key: string): Observable<PayrollRuleDTO> {
     return this.http.get<PayrollRuleDTO>(`${this.RULES_URL}/${key}`);
   }
 
-  // ✏️ Update a rule
+  //  Update a rule
   updatePayrollRule(
     key: string,
     request: UpdatePayrollRuleRequest
