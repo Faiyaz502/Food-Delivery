@@ -1,0 +1,278 @@
+<div class="payment-list-container">
+  <!-- Header -->
+  <div class="page-header">
+    <h2>Payment Management</h2>
+    <div class="header-actions">
+      <button class="btn btn-primary" (click)="loadStatistics()">
+        <i class="fas fa-chart-bar"></i> View Statistics
+      </button>
+      <button class="btn btn-secondary" (click)="downloadBulkSlip()">
+        <i class="fas fa-download"></i> Export Bulk PDF
+      </button>
+    </div>
+  </div>
+
+  <!-- Statistics Panel -->
+  <div class="statistics-panel" *ngIf="showStatistics && statistics">
+    <div class="stats-header">
+      <h3>Payment Statistics</h3>
+      <button class="btn-close" (click)="showStatistics = false">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon revenue">
+          <i class="fas fa-dollar-sign"></i>
+        </div>
+        <div class="stat-info">
+          <h4>Total Revenue</h4>
+          <p class="stat-value">{{ statistics.totalRevenue | currency:'BDT ' }}</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon customer">
+          <i class="fas fa-shopping-cart"></i>
+        </div>
+        <div class="stat-info">
+          <h4>Customer Payments</h4>
+          <p class="stat-value">{{ statistics.customerPaymentAmount | currency:'BDT ' }}</p>
+          <small>{{ statistics.customerPaymentCount }} transactions</small>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon rider">
+          <i class="fas fa-motorcycle"></i>
+        </div>
+        <div class="stat-info">
+          <h4>Rider Collections</h4>
+          <p class="stat-value">{{ statistics.riderCollectionAmount | currency:'BDT ' }}</p>
+          <small>{{ statistics.riderCollectionCount }} collections</small>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon salary">
+          <i class="fas fa-wallet"></i>
+        </div>
+        <div class="stat-info">
+          <h4>Rider Salaries</h4>
+          <p class="stat-value">{{ statistics.riderSalaryAmount | currency:'BDT ' }}</p>
+          <small>{{ statistics.riderSalaryCount }} payments</small>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon restaurant">
+          <i class="fas fa-utensils"></i>
+        </div>
+        <div class="stat-info">
+          <h4>Restaurant Payouts</h4>
+          <p class="stat-value">{{ statistics.restaurantPayoutAmount | currency:'BDT ' }}</p>
+          <small>{{ statistics.restaurantPayoutCount }} payouts</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filter-section">
+    <form [formGroup]="filterForm" class="filter-form">
+      <div class="filter-row">
+        <div class="form-group">
+          <label>Payment Type</label>
+          <select formControlName="paymentType" class="form-control">
+            <option value="">All Types</option>
+            <option *ngFor="let type of paymentTypes" [value]="type">
+              {{ getPaymentTypeLabel(type) }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Payment Status</label>
+          <select formControlName="paymentStatus" class="form-control">
+            <option value="">All Statuses</option>
+            <option *ngFor="let status of paymentStatuses" [value]="status">
+              {{ status }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>User ID</label>
+          <input
+            type="number"
+            formControlName="userId"
+            class="form-control"
+            placeholder="Filter by User ID"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Start Date</label>
+          <input
+            type="datetime-local"
+            formControlName="startDate"
+            class="form-control"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>End Date</label>
+          <input
+            type="datetime-local"
+            formControlName="endDate"
+            class="form-control"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Sort By</label>
+          <select formControlName="sortBy" class="form-control">
+            <option value="paymentDate">Payment Date</option>
+            <option value="amount">Amount</option>
+            <option value="paymentStatus">Status</option>
+            <option value="paymentType">Type</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Order</label>
+          <select formControlName="sortDirection" class="form-control">
+            <option value="DESC">Descending</option>
+            <option value="ASC">Ascending</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>&nbsp;</label>
+          <button type="button" class="btn btn-secondary btn-block" (click)="resetFilters()">
+            <i class="fas fa-redo"></i> Reset
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div class="loading-spinner" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading payments...</p>
+  </div>
+
+  <!-- Payment Table -->
+  <div class="table-container" *ngIf="!loading">
+    <table class="payment-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Transaction ID</th>
+          <th>User</th>
+          <th>Amount</th>
+          <th>Payment Type</th>
+          <th>Status</th>
+          <th>Method</th>
+          <th>Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let payment of payments">
+          <td>{{ payment.id }}</td>
+          <td>
+            <code>{{ payment.transactionId }}</code>
+          </td>
+          <td>
+            <div class="user-info">
+              <strong>{{ payment.userName }}</strong>
+              <small>ID: {{ payment.userId }}</small>
+            </div>
+          </td>
+          <td class="amount">{{ payment.amount | currency:'BDT ' }}</td>
+          <td>
+            <span class="badge badge-type">
+              {{ getPaymentTypeLabel(payment.paymentMethod) }}
+            </span>
+          </td>
+          <td>
+            <span class="badge" [ngClass]="getStatusClass(payment.paymentStatus)">
+              {{ payment.paymentStatus }}
+            </span>
+          </td>
+          <td>{{ payment.paymentMethod }}</td>
+          <td>{{ payment.paymentDate | date:'short' }}</td>
+          <td>
+            <button (click)="downloadSingleSlip(payment.id)" class="btn btn-sm btn-info" title="View Details">
+              <i class="fa-solid fa-download"></i>
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="payments.length === 0">
+          <td colspan="9" class="text-center">No payments found</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination-container" *ngIf="!loading && totalPages > 0">
+    <div class="pagination-info">
+      Showing {{ currentPage * pageSize + 1 }} to
+      {{ Math.min((currentPage + 1) * pageSize, totalElements) }} of
+      {{ totalElements }} entries
+    </div>
+
+    <div class="pagination-controls">
+      <select
+        class="form-control page-size-select"
+        [value]="pageSize"
+        (change)="onPageSizeChange(+$any($event.target).value)"
+      >
+        <option [value]="10">10 per page</option>
+        <option [value]="25">25 per page</option>
+        <option [value]="50">50 per page</option>
+        <option [value]="100">100 per page</option>
+      </select>
+
+      <div class="pagination-buttons">
+        <button
+          class="btn btn-sm"
+          [disabled]="currentPage === 0"
+          (click)="onPageChange(0)"
+        >
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+        <button
+          class="btn btn-sm"
+          [disabled]="currentPage === 0"
+          (click)="onPageChange(currentPage - 1)"
+        >
+          <i class="fas fa-angle-left"></i>
+        </button>
+
+        <span class="page-indicator">
+          Page {{ currentPage + 1 }} of {{ totalPages }}
+        </span>
+
+        <button
+          class="btn btn-sm"
+          [disabled]="currentPage >= totalPages - 1"
+          (click)="onPageChange(currentPage + 1)"
+        >
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <button
+          class="btn btn-sm"
+          [disabled]="currentPage >= totalPages - 1"
+          (click)="onPageChange(totalPages - 1)"
+        >
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

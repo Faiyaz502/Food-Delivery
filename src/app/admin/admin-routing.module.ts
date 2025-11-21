@@ -18,6 +18,7 @@ import { CouponComponent } from './coupon/coupon/coupon.component';
 import { NotificationComponent } from './notification/notification.component';
 import { LoginComponent } from './login/login.component';
 import { PayrollComponent } from './payroll/payroll.component';
+import { PaymentsComponent } from './payments/payments.component';
 
 
 const routes: Routes = [
@@ -35,7 +36,8 @@ const routes: Routes = [
   { path: 'profile', component: ProfileComponent },
   { path: 'coupon', component: CouponComponent },
   { path: 'notification', component: NotificationComponent },
-    { path: 'payroll', component: PayrollComponent }
+    { path: 'payroll', component: PayrollComponent },
+    { path: 'finance', component: PaymentsComponent }
 
 ];
 

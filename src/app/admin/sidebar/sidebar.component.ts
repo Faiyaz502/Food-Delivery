@@ -24,6 +24,7 @@ export class SidebarComponent implements OnInit {
     { path: 'chat', label: 'Chat', icon: '<i class="fa-solid fa-comments"></i>' },
     { path: 'profile', label: 'Profile', icon: '<i class="fa-solid fa-user"></i>' },
     { path: 'payroll', label: 'Payroll', icon: '<i class="fa-solid fa-comments-dollar"></i>' },
+    { path: 'finance', label: 'Finance', icon: '<i class="fa-solid fa-bangladeshi-taka-sign"></i>' },
 
   ];
 
@@ -35,7 +36,7 @@ export class SidebarComponent implements OnInit {
 
   @Output() sectionChange = new EventEmitter<string>();
 
-      userId: any = null; 
+      userId: any = null;
     admin! : AdminProfile ;
 
  sidebarOpen: boolean = false;

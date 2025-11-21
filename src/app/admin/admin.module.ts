@@ -31,6 +31,7 @@ import { NgApexchartsModule } from 'ng-apexcharts';
 import { LoginComponent } from './login/login.component';
 import { PayrollComponent } from './payroll/payroll.component';
 import { A11yModule } from "@angular/cdk/a11y";
+import { PaymentsComponent } from './payments/payments.component';
 
 
 
@@ -58,6 +59,7 @@ import { A11yModule } from "@angular/cdk/a11y";
     NotificationComponent,
     LoginComponent,
     PayrollComponent,
+    PaymentsComponent,
 
 
 
