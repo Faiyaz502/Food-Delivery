@@ -11,20 +11,19 @@
       <div class="flex items-center justify-between mb-4">
         <div>
           <h1 class="text-3xl font-extrabold mb-0.5 tracking-tight">
-            {{ currentPhase === "pickup" ? "Order Pickup" : "Order Delivery" }}
+            {{ order ? (currentPhase === "pickup" ? "Order Pickup" : "Order Delivery") : "Rider Dashboard" }}
           </h1>
           <p class="text-indigo-200 text-sm">
             {{
-              currentPhase === "pickup"
-                ? "Navigate to the restaurant"
-                : "Finalize customer delivery"
+              order ?
+                (currentPhase === "pickup" ? "Navigate to the restaurant" : "Finalize customer delivery")
+                : "Ready for new orders"
             }}
           </p>
         </div>
 
         <!-- Action Buttons -->
         <div class="flex gap-3">
-          <!-- SOS Button -->
           <button
             (click)="triggerSOS()"
             title="Emergency SOS"
@@ -36,7 +35,6 @@
             </span>
           </button>
 
-          <!-- Notifications -->
           <button
             (click)="toggleNotifications($event)"
             class="notification-bell relative h-10 w-10 rounded-full border-2 border-gray-300 hover:border-blue-600 hover:bg-blue-900 flex items-center justify-center transition-all active:scale-95">
@@ -48,7 +46,6 @@
             </span>
           </button>
 
-          <!-- Logout -->
           <button
             (click)="Logout()"
             class="notification-bell relative h-10 w-10 rounded-full border-2 border-gray-300 hover:border-red-600 hover:bg-red-900 flex items-center justify-center transition-all active:scale-95">
@@ -57,14 +54,13 @@
         </div>
       </div>
 
-      <!-- ✅ SHIFT STATUS BANNER -->
+      <!-- Shift Banner -->
       <div *ngIf="shift" class="mb-6 mt-2">
         <div
           class="rounded-xl p-4 text-white text-center font-medium shadow-xl backdrop-blur-sm"
           [class.bg-green-600]="shift.status === 'ACTIVE'"
           [class.bg-blue-600]="shift.status === 'COMPLETED'"
-          [class.bg-orange-500]="shift.status === 'AUTO_ENDED'"
-        >
+          [class.bg-orange-500]="shift.status === 'AUTO_ENDED'">
           <div class="flex flex-wrap justify-center items-center gap-3 text-sm">
             <span class="flex items-center gap-1.5">
               <i class="fas fa-user-clock"></i>
@@ -87,8 +83,7 @@
             </span>
             <span
               *ngIf="shift.status === 'ACTIVE'"
-              class="px-3 py-1 bg-white/20 rounded-full text-xs uppercase tracking-wide font-semibold"
-            >
+              class="px-3 py-1 bg-white/20 rounded-full text-xs uppercase tracking-wide font-semibold">
               {{ shift.status }}
             </span>
           </div>
@@ -100,31 +95,12 @@
         </div>
       </div>
 
-      <!-- Shift End Button (only if active) -->
-      <button *ngIf="shift?.status === 'ACTIVE'"
+      <!-- Shift End Button -->
+      <button *ngIf="shift?.status === 'ACTIVE' && rider.availabilityStatus != 'BUSY'"
         (click)="shiftEnd()"
-        class="
-          px-5 py-2.5 my-2
-          bg-red-600
-          text-white
-          rounded-lg
-          font-semibold
-          shadow-md
-          hover:bg-red-700
-          hover:shadow-lg
-          active:scale-95
-          transition-all
-          duration-200
-          flex items-center gap-2
-          w-full sm:w-auto
-          mx-auto sm:mx-0
-        ">
-        <svg xmlns="http://www.w3.org/2000/svg"
-             fill="none" viewBox="0 0 24 24"
-             stroke-width="2" stroke="currentColor"
-             class="w-5 h-5">
-          <path stroke-linecap="round" stroke-linejoin="round"
-                d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+        class="px-5 py-2.5 my-2 bg-red-600 text-white rounded-lg font-semibold shadow-md hover:bg-red-700 hover:shadow-lg active:scale-95 transition-all duration-200 flex items-center gap-2 w-full sm:w-auto mx-auto sm:mx-0">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
         End Shift
       </button>
@@ -146,16 +122,16 @@
         </button>
       </div>
 
-      <div *ngIf="loading" class="text-center py-6">
+      <div *ngIf="loadingN" class="text-center py-6">
         <i class="fas fa-spinner fa-spin text-3xl text-indigo-600"></i>
       </div>
 
-      <div *ngIf="!loading && notifications.length === 0" class="text-center py-6">
+      <div *ngIf="!loadingN && notifications.length === 0" class="text-center py-6">
         <i class="fas fa-bell-slash text-4xl text-gray-300 mb-2"></i>
         <p class="text-gray-500 text-sm">No notifications yet</p>
       </div>
 
-      <div class="space-y-3" *ngIf="!loading && notifications.length > 0">
+      <div class="space-y-3" *ngIf="!loadingN && notifications.length > 0">
         <div
           *ngFor="let notification of notifications"
           (click)="markAsRead(notification.id); $event.stopPropagation()"
@@ -184,7 +160,7 @@
   </div>
 
   <!-- Online/Offline Toggle -->
-  <div class="absolute w-full max-w-4xl left-1/2 -translate-x-1/2 -bottom-6 px-6 z-20">
+  <div *ngIf="rider.availabilityStatus != 'BUSY'" class="absolute w-full max-w-4xl left-1/2 -translate-x-1/2 -bottom-48 px-6 z-20">
     <div class="flex items-center gap-4 p-4 bg-white rounded-xl shadow-xl border border-gray-200">
       <div class="p-3 bg-green-500/10 rounded-lg">
         <i
@@ -205,8 +181,7 @@
             [class.bg-gray-400]="!isOnline"
             [class.text-white]="isOnline"
             [class.text-gray-700]="!isOnline"
-            class="px-4 py-1.5 rounded-lg font-bold text-sm shadow-md transition-all duration-200 flex items-center gap-1.5 active:scale-95"
-          >
+            class="px-4 py-1.5 rounded-lg font-bold text-sm shadow-md transition-all duration-200 flex items-center gap-1.5 active:scale-95">
             <span *ngIf="isToggling" class="fas fa-spinner fa-spin"></span>
             <span *ngIf="!isToggling">
               {{ isOnline ? 'Online' : 'Offline' }}
@@ -221,43 +196,95 @@
   <div class="max-w-4xl mx-auto px-6 relative pt-8">
     <!-- Loading/Error -->
     <div *ngIf="loading" class="mt-8">
-      <div
-        class="bg-white rounded-2xl shadow-xl p-8 text-center border border-gray-200 animate-pulse">
+      <div class="bg-white rounded-2xl shadow-xl p-8 text-center border border-gray-200 animate-pulse">
         <i class="fas fa-spinner fa-spin text-4xl text-indigo-600 mb-4"></i>
         <p class="text-lg font-semibold text-gray-700">
-          Loading order details...
+          Loading...
         </p>
       </div>
     </div>
 
     <div *ngIf="error && !loading" class="mt-8">
-      <div
-        class="bg-red-100 border-l-4 border-red-500 p-4 rounded-r-lg shadow-md">
+      <div class="bg-red-100 border-l-4 border-red-500 p-4 rounded-r-lg shadow-md">
         <p class="text-red-800 font-medium">{{ error }}</p>
       </div>
     </div>
 
-    <!-- Order Content -->
+    <!-- ✅ ONLINE NAV / INCOMING ORDERS LIST -->
+    <div *ngIf="!order && !loading && !error" class="pb-32">
+      <div class="text-center py-16 bg-white rounded-2xl shadow-xl border border-gray-200">
+        <div class="inline-block p-4 bg-indigo-100 rounded-full mb-6">
+          <i class="fas fa-motorcycle text-indigo-600 text-5xl"></i>
+        </div>
+        <h2 class="text-2xl font-bold text-gray-800 mb-2">
+          {{ isOnline ? 'Ready for Orders' : 'You Are Offline' }}
+        </h2>
+        <p class="text-gray-500 mb-6 max-w-md mx-auto">
+          <span *ngIf="isOnline">
+            You're online and available. New orders will appear here automatically.
+          </span>
+          <span *ngIf="!isOnline">
+            Go online to receive new orders.
+          </span>
+        </p>
+
+        <!-- Incoming Orders List -->
+        <div *ngIf="incomingOrders.length > 0" class="mt-8">
+          <h3 class="text-lg font-semibold text-gray-700 mb-4 flex items-center gap-2 justify-center">
+            <i class="fas fa-bell text-indigo-500"></i>
+            Pending Orders ({{ incomingOrders.length }})
+          </h3>
+          <div class="space-y-3 max-w-md mx-auto">
+            <div
+              *ngFor="let ord of incomingOrders"
+              (click)="selectOrder(ord)"
+              class="p-4 border border-gray-200 rounded-xl bg-gray-50 hover:bg-indigo-50 cursor-pointer transition shadow-sm">
+              <div class="flex justify-between items-start">
+                <div>
+                  <span class="px-2 py-1 text-xs font-bold rounded-full text-white"
+                        [class.bg-indigo-600]="ord.orderStatus === 'PREPARING'"
+                        [class.bg-yellow-500]="ord.orderStatus === 'READY_FOR_PICKUP'"
+                        [class.bg-green-600]="ord.orderStatus === 'OUT_FOR_DELIVERY'">
+                    {{ ord.orderStatus | titlecase }}
+                  </span>
+                  <p class="font-semibold text-gray-800 mt-1">Order #{{ ord.orderNumber }}</p>
+                  <p class="text-sm text-gray-600">{{ ord.restaurantName }}</p>
+                </div>
+                <div class="text-right">
+                  <p class="font-bold text-lg text-gray-900">৳{{ ord.totalAmount }}</p>
+                  <p class="text-xs text-gray-500">{{ formatTimeAgo(ord.createdAt) }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button
+          (click)="refreshOrders()"
+          class="mt-6 px-6 py-2.5 mx-auto bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition shadow-md flex items-center gap-2">
+          <i class="fas fa-sync-alt"></i> Refresh Orders
+        </button>
+      </div>
+    </div>
+
+    <!-- ✅ ORDER DETAIL VIEW -->
     <div *ngIf="order && !loading" class="pb-32">
-      <!-- ✅ ORDER STATUS TIMELINE -->
       <div class="mb-6 bg-gradient-to-r from-gray-50 to-indigo-50 rounded-xl p-4 border border-gray-200 shadow-sm">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 text-sm">
           <div class="flex items-center gap-3">
             <span class="font-bold text-gray-700">Status:</span>
             <span class="px-3 py-1 rounded-full text-white font-medium text-sm"
                   [class.bg-indigo-600]="order.orderStatus === 'PREPARING'"
-                  [class.bg-yellow-500 text-gray-900]="order.orderStatus === 'READY_FOR_PICKUP'"
+                  [class.bg-yellow-500]="order.orderStatus === 'READY_FOR_PICKUP'"
                   [class.bg-green-600]="order.orderStatus === 'OUT_FOR_DELIVERY'"
                   [class.bg-gray-500]="order.orderStatus === 'DELIVERED'">
               {{ order.orderStatus | titlecase }}
             </span>
           </div>
-
           <div class="text-xs text-gray-500 flex-shrink-0">
             <i class="far fa-clock"></i>
             <span class="ml-1">
-              {{ order.createdAt | date: 'h:mm a' }} •
-              {{ formatTimeAgo(order.createdAt) }}
+              {{ order.createdAt | date: 'h:mm a' }} • {{ formatTimeAgo(order.createdAt) }}
             </span>
           </div>
         </div>
@@ -266,39 +293,35 @@
         <div class="mt-4 flex justify-between items-center relative">
           <div class="absolute top-4 left-0 right-0 h-1 bg-gray-200 z-0"></div>
           <div class="relative z-10 flex flex-col items-center">
-            <div
-              class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-white shadow-md mb-2 bg-indigo-600">
+            <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-white shadow-md mb-2 bg-indigo-600">
               1
             </div>
             <span class="text-xs text-gray-600 whitespace-nowrap">Order Placed</span>
           </div>
           <div class="relative z-10 flex flex-col items-center">
-            <div
-              class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-white shadow-md mb-2"
-              [class.bg-indigo-600]="['READY_FOR_PICKUP','OUT_FOR_DELIVERY','DELIVERED'].includes(order.orderStatus)"
-              [class.bg-yellow-500]="order.orderStatus === 'READY_FOR_PICKUP'"
-              [class.bg-gray-300]="order.orderStatus === 'PREPARING'">
+            <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-white shadow-md mb-2"
+                 [class.bg-indigo-600]="['READY_FOR_PICKUP','OUT_FOR_DELIVERY','DELIVERED'].includes(order.orderStatus)"
+                 [class.bg-yellow-500]="order.orderStatus === 'READY_FOR_PICKUP'"
+                 [class.bg-gray-300]="order.orderStatus === 'PREPARING'">
               <i *ngIf="order.orderStatus !== 'PREPARING'" class="fas fa-check text-xs"></i>
               <span *ngIf="order.orderStatus === 'PREPARING'">2</span>
             </div>
             <span class="text-xs text-gray-600 whitespace-nowrap">Ready</span>
           </div>
           <div class="relative z-10 flex flex-col items-center">
-            <div
-              class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-white shadow-md mb-2"
-              [class.bg-green-600]="order.orderStatus === 'OUT_FOR_DELIVERY'"
-              [class.bg-indigo-600]="order.orderStatus === 'DELIVERED'"
-              [class.bg-gray-300]="!['OUT_FOR_DELIVERY','DELIVERED'].includes(order.orderStatus)">
+            <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-white shadow-md mb-2"
+                 [class.bg-green-600]="order.orderStatus === 'OUT_FOR_DELIVERY'"
+                 [class.bg-indigo-600]="order.orderStatus === 'DELIVERED'"
+                 [class.bg-gray-300]="!['OUT_FOR_DELIVERY','DELIVERED'].includes(order.orderStatus)">
               <i *ngIf="['OUT_FOR_DELIVERY','DELIVERED'].includes(order.orderStatus)" class="fas fa-check text-xs"></i>
               <span *ngIf="!['OUT_FOR_DELIVERY','DELIVERED'].includes(order.orderStatus)">3</span>
             </div>
             <span class="text-xs text-gray-600 whitespace-nowrap">Out for Delivery</span>
           </div>
           <div class="relative z-10 flex flex-col items-center">
-            <div
-              class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-white shadow-md mb-2"
-              [class.bg-green-600]="order.orderStatus === 'DELIVERED'"
-              [class.bg-gray-300]="order.orderStatus !== 'DELIVERED'">
+            <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-white shadow-md mb-2"
+                 [class.bg-green-600]="order.orderStatus === 'DELIVERED'"
+                 [class.bg-gray-300]="order.orderStatus !== 'DELIVERED'">
               <i *ngIf="order.orderStatus === 'DELIVERED'" class="fas fa-check text-xs"></i>
               <span *ngIf="order.orderStatus !== 'DELIVERED'">4</span>
             </div>
@@ -307,9 +330,7 @@
         </div>
       </div>
 
-      <!-- New Order Alert -->
-      <div
-        class="bg-yellow-100 border border-yellow-300 p-4 rounded-xl shadow-md mb-6 animate-pulse-slow">
+      <div class="bg-yellow-100 border border-yellow-300 p-4 rounded-xl shadow-md mb-6 animate-pulse">
         <div class="flex items-center gap-4">
           <div class="p-2 bg-yellow-400/20 rounded-full">
             <i class="fas fa-motorcycle text-yellow-600 text-xl"></i>
@@ -317,17 +338,13 @@
           <div>
             <p class="font-bold text-yellow-900 text-lg">New Order Assigned</p>
             <p class="text-sm text-yellow-800">
-              Please proceed to **{{
-                currentPhase === "pickup" ? "Pickup" : "Delivery"
-              }}** location immediately.
+              Please proceed to **{{ currentPhase === "pickup" ? "Pickup" : "Delivery" }}** location immediately.
             </p>
           </div>
         </div>
       </div>
 
-      <!-- Order Card -->
-      <div
-        class="bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-200 mb-6">
+      <div class="bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-200 mb-6">
         <div class="bg-indigo-600 text-white p-6">
           <div class="flex justify-between items-center">
             <div>
@@ -346,22 +363,19 @@
         </div>
 
         <div class="divide-y divide-gray-100">
-          <div
-            class="p-6 bg-white hover:bg-green-50/70 transition duration-300">
+          <div class="p-6 bg-white hover:bg-green-50/70 transition duration-300">
             <div class="flex items-start gap-4">
               <div class="p-3 bg-green-500 rounded-full shadow-lg shrink-0">
                 <i class="fas fa-store text-white text-xl"></i>
               </div>
               <div class="flex-1">
-                <p
-                  class="text-xs text-green-600 uppercase font-extrabold mb-1 tracking-wide flex items-center gap-2">
+                <p class="text-xs text-green-600 uppercase font-extrabold mb-1 tracking-wide flex items-center gap-2">
                   <i class="fas fa-truck-loading text-xs"></i>
                   Pickup Location
                 </p>
                 <h3 class="text-xl font-bold text-gray-900 mb-2">
                   {{ order.restaurantName }}
                 </h3>
-
                 <button
                   (click)="callRestaurant()"
                   class="inline-flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold text-sm transition shadow-md shadow-green-500/30 active:scale-95">
@@ -378,8 +392,7 @@
                 <i class="fas fa-user text-white text-xl"></i>
               </div>
               <div class="flex-1">
-                <p
-                  class="text-xs text-blue-600 uppercase font-extrabold mb-1 tracking-wide flex items-center gap-2">
+                <p class="text-xs text-blue-600 uppercase font-extrabold mb-1 tracking-wide flex items-center gap-2">
                   <i class="fas fa-map-pin text-xs"></i>
                   Delivery Destination
                 </p>
@@ -403,29 +416,23 @@
 
         <div class="p-6 border-t border-gray-100 bg-gray-50">
           <div class="grid grid-cols-2 gap-4">
-            <div
-              class="flex items-center gap-4 p-4 bg-white rounded-xl shadow-inner border border-purple-100">
+            <div class="flex items-center gap-4 p-4 bg-white rounded-xl shadow-inner border border-purple-100">
               <div class="p-3 bg-purple-100 rounded-lg">
                 <i class="fas fa-route text-purple-600 text-2xl"></i>
               </div>
               <div>
-                <p class="text-xs text-gray-500 font-semibold uppercase">
-                  Distance
-                </p>
+                <p class="text-xs text-gray-500 font-semibold uppercase">Distance</p>
                 <p class="font-bold text-gray-900 text-2xl">3.2 km</p>
               </div>
             </div>
-            <div
-              class="flex items-center gap-4 p-4 bg-white rounded-xl shadow-inner border border-orange-100">
+            <div class="flex items-center gap-4 p-4 bg-white rounded-xl shadow-inner border border-orange-100">
               <div class="p-3 bg-orange-100 rounded-lg">
                 <i class="fas fa-clock text-orange-600 text-2xl"></i>
               </div>
               <div>
-                <p class="text-xs text-gray-500 font-semibold uppercase">
-                  Est. Time
-                </p>
+                <p class="text-xs text-gray-500 font-semibold uppercase">Est. Time</p>
                 <p class="font-bold text-gray-900 text-2xl">
-                 {{ getEstimatedTime() | date: 'hh:mm a' }}
+                  {{ getEstimatedTime() }}
                 </p>
               </div>
             </div>
@@ -433,8 +440,7 @@
         </div>
 
         <div class="p-6 border-t border-gray-100">
-          <h4
-            class="font-extrabold text-gray-900 mb-4 flex items-center gap-3 text-xl">
+          <h4 class="font-extrabold text-gray-900 mb-4 flex items-center gap-3 text-xl">
             <i class="fas fa-shopping-bag text-indigo-600"></i>
             Order Details
             <span class="text-sm font-medium text-gray-500">
@@ -446,51 +452,38 @@
               *ngFor="let item of order.orderItems"
               class="flex justify-between items-center p-3 bg-gray-50 rounded-lg border border-gray-100">
               <div class="flex items-center gap-3">
-                <span
-                  class="bg-indigo-500 text-white font-bold px-3 py-1.5 rounded-full text-sm shadow-md shadow-indigo-500/20">
+                <span class="bg-indigo-500 text-white font-bold px-3 py-1.5 rounded-full text-sm shadow-md shadow-indigo-500/20">
                   {{ item.quantity }}x
                 </span>
-                <span class="text-gray-800 font-semibold">{{
-                  item.menuItemName
-                }}</span>
+                <span class="text-gray-800 font-semibold">{{ item.menuItemName }}</span>
               </div>
               <span class="font-bold text-gray-900 text-lg">
                 ৳{{ item.totalPrice | number : "1.0-0" }}
               </span>
             </div>
           </div>
-          <div
-            class="mt-6 pt-4 border-t border-gray-200 flex justify-between items-center px-3">
-            <span class="font-extrabold text-gray-900 text-xl">
-              Total Payable
-            </span>
+          <div class="mt-6 pt-4 border-t border-gray-200 flex justify-between items-center px-3">
+            <span class="font-extrabold text-gray-900 text-xl">Total Payable</span>
             <span class="font-extrabold text-indigo-600 text-3xl">
               ৳{{ order.totalAmount | number : "1.0-0" }}
             </span>
           </div>
         </div>
 
-        <div
-          *ngIf="order.specialInstructions"
-          class="p-6 bg-yellow-50 border-t border-yellow-200">
-          <h4
-            class="font-bold text-gray-900 mb-2 flex items-center gap-3 text-lg">
+        <div *ngIf="order.specialInstructions" class="p-6 bg-yellow-50 border-t border-yellow-200">
+          <h4 class="font-bold text-gray-900 mb-2 flex items-center gap-3 text-lg">
             <i class="fas fa-sticky-note text-yellow-600"></i>
             Special Instructions
           </h4>
-          <p
-            class="text-sm text-gray-700 p-3 bg-white rounded-lg border border-yellow-200">
+          <p class="text-sm text-gray-700 p-3 bg-white rounded-lg border border-yellow-200">
             {{ order.specialInstructions }}
           </p>
         </div>
 
-        <div
-          *ngIf="order.orderStatus == 'OUT_FOR_DELIVERY'"
-          class="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
+        <div *ngIf="order.orderStatus == 'OUT_FOR_DELIVERY'" class="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
           <label class="text-sm font-semibold mb-3 block text-gray-700">
             Enter Delivery OTP
           </label>
-
           <input
             type="text"
             placeholder="Enter 4-digit OTP"
@@ -500,17 +493,14 @@
         </div>
 
         <div class="p-6 border-t border-gray-100">
-          <h4
-            class="font-bold text-gray-900 mb-4 flex items-center gap-3 text-xl">
+          <h4 class="font-bold text-gray-900 mb-4 flex items-center gap-3 text-xl">
             <i class="fas fa-map text-indigo-600"></i>
             Route Map
           </h4>
-          <div
-            class="relative bg-gray-200 rounded-xl overflow-hidden h-64 shadow-inner border border-gray-300">
+          <div class="relative bg-gray-200 rounded-xl overflow-hidden h-64 shadow-inner border border-gray-300">
             <div class="absolute inset-0 flex items-center justify-center">
               <div class="text-center">
-                <i
-                  class="fas fa-map-marked-alt text-6xl text-indigo-400 opacity-70 mb-3"></i>
+                <i class="fas fa-map-marked-alt text-6xl text-indigo-400 opacity-70 mb-3"></i>
                 <p class="text-lg font-bold text-gray-800">Navigation Ready</p>
                 <p class="text-sm text-gray-600 mt-1">
                   {{
@@ -534,14 +524,12 @@
   </div>
 
   <!-- Phase-Specific Action Bars -->
-  <div
-    *ngIf="order && currentPhase === 'pickup'"
-    class="fixed bottom-0 left-0 right-0 bg-white shadow-3xl border-t border-gray-200 p-6 z-10">
+  <div *ngIf="order && currentPhase === 'pickup'" class="fixed bottom-0 left-0 right-0 bg-white shadow-3xl border-t border-gray-200 p-6 z-10">
     <div class="max-w-4xl mx-auto space-y-4">
       <button
         (click)="onArrivedAtRestaurant()"
-        [disabled]="loading"
         *ngIf="order.orderStatus == 'PREPARING'"
+        [disabled]="loading"
         class="w-full bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-extrabold py-4 rounded-xl transition shadow-lg shadow-yellow-500/40 flex items-center justify-center gap-3 text-lg disabled:opacity-60 disabled:cursor-not-allowed active:scale-95">
         <i class="fas fa-map-marker-alt text-2xl"></i>
         <span>Arrived at Restaurant</span>
@@ -551,45 +539,31 @@
         *ngIf="order.orderStatus == 'READY_FOR_PICKUP'"
         [disabled]="loading"
         class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold py-4 rounded-xl transition shadow-lg shadow-indigo-600/40 flex items-center justify-center gap-3 text-lg disabled:opacity-60 disabled:cursor-not-allowed active:scale-95">
-        <i
-          [class.fa-spinner]="loading"
-          [class.fa-spin]="loading"
-          [class.fa-check-circle]="!loading"
-          class="fas text-2xl"></i>
+        <i [class.fa-spinner]="loading" [class.fa-spin]="loading" [class.fa-check-circle]="!loading" class="fas text-2xl"></i>
         <span>{{ loading ? "Processing..." : "Mark Order as Picked Up" }}</span>
       </button>
     </div>
   </div>
 
-  <div
-    *ngIf="order && currentPhase === 'delivery'"
-    class="fixed bottom-0 left-0 right-0 bg-white shadow-3xl border-t border-gray-200 p-6 z-10">
+  <div *ngIf="order && currentPhase === 'delivery'" class="fixed bottom-0 left-0 right-0 bg-white shadow-3xl border-t border-gray-200 p-6 z-10">
     <div class="max-w-4xl mx-auto space-y-4">
-      <div
-        class="bg-blue-50 border-l-4 border-blue-500 rounded-lg p-4 shadow-sm">
+      <div class="bg-blue-50 border-l-4 border-blue-500 rounded-lg p-4 shadow-sm">
         <p class="text-sm font-semibold text-blue-800 flex items-center gap-2">
           <i class="fas fa-box-open"></i>
           Order is with you. Head to the customer now!
         </p>
       </div>
-
       <button
         (click)="onDeliveryComplete()"
         [disabled]="loading"
         class="w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold py-4 rounded-xl transition shadow-lg shadow-blue-600/40 flex items-center justify-center gap-3 text-lg disabled:opacity-60 disabled:cursor-not-allowed active:scale-95">
-        <i
-          [class.fa-spinner]="loading"
-          [class.fa-spin]="loading"
-          [class.fa-check-circle]="!loading"
-          class="fas text-2xl"></i>
-        <span>{{
-          loading ? "Processing..." : "Confirm Delivery Complete"
-        }}</span>
+        <i [class.fa-spinner]="loading" [class.fa-spin]="loading" [class.fa-check-circle]="!loading" class="fas text-2xl"></i>
+        <span>{{ loading ? "Processing..." : "Confirm Delivery Complete" }}</span>
       </button>
     </div>
   </div>
 
-  <!-- ✅ RIDER SUPPORT BADGE (Bottom-left) -->
+  <!-- Rider Support Badge -->
   <div class="fixed bottom-24 left-4 z-40" *ngIf="shift">
     <div class="bg-white rounded-xl shadow-lg p-3 border border-gray-200 max-w-xs text-sm">
       <div class="flex items-center gap-3 mb-2">
@@ -610,9 +584,7 @@
   </div>
 
   <!-- Toast -->
-  <div
-    *ngIf="toastMessage"
-    class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-red-600 text-white px-6 py-3 rounded-lg shadow-lg animate-fadeIn">
+  <div *ngIf="toastMessage" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-red-600 text-white px-6 py-3 rounded-lg shadow-lg animate-fadeIn">
     {{ toastMessage }}
   </div>
 </div>

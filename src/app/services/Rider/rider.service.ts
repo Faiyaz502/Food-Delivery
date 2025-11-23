@@ -12,7 +12,12 @@ interface PaginatedResponse<T> {
   size: number;
   number: number;
 }
-
+export interface DailyCollectionResponse {
+  message: string;
+  riderId: number;
+  timestamp: string; // ISO string like "2025-11-23T12:34:56.789Z"
+  status: string;
+}
 
 
 interface RiderStats {

@@ -287,7 +287,7 @@ export class PayrollComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error receiving daily collection:', error);
-          alert('Failed to receive daily collection. Please try again.');
+         
         }
       });
   }

@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, NgZone } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { catchError, forkJoin, of, Subject, Subscription, takeUntil } from 'rxjs';
@@ -22,90 +22,154 @@ import { WebSocketService } from 'src/app/services/web-Socket/web-socket.service
   styleUrls: ['./rider.component.scss']
 })
 export class RiderComponent {
-
-order: OrderResponseDTO | null = null;
-orderRestaurant:Restaurant | null = null ;
-incomingOrders:OrderResponseDTO[] |null = null ;
+  order: OrderResponseDTO | null = null;
+  orderRestaurant: Restaurant | null = null;
+  incomingOrders: OrderResponseDTO[] = []; // ✅ initialize as empty array
   currentPhase: 'pickup' | 'delivery' = 'pickup';
   deliveryOtp: string = '';
-  riderId:any; // Get from auth service
+  riderId: any;
   loading: boolean = false;
   error: string = '';
-    isOnline = false;
+  isOnline = false;
   isToggling = false;
-  shift:RiderShiftSummary | null = null ;
+  shift: RiderShiftSummary | null = null;
+  rider!:Rider;
 
   private destroy$ = new Subject<void>();
+
+  // Notifications
+  notifications: NotificationResponseDTO[] = [];
+  unreadCount = 0;
+  loadingN = false;
+  showNotificationsPanel = false;
+
+  // Location
+  showLocationPermissionBanner = false;
+  private locationWatchId: number | null = null;
+  private locationSendSubscription: Subscription | null = null;
+  toastMessage: string | null = null;
+  private toastTimeout: any = null;
 
   constructor(
     private orderService: OrderService,
     private route: ActivatedRoute,
     private router: Router,
-    private riderService:RiderService,
-    private restaurantService:RestaurantService,
-    private notificationService:NotificationService,
-    private webSocket:WebSocketService ,
-    private token : TokenService ,
-    private auth : AuthServiceService,
-    private toast : ToastrService ,
-    private shiftService:RiderShiftService
+    private riderService: RiderService,
+    private restaurantService: RestaurantService,
+    private notificationService: NotificationService,
+    private webSocket: WebSocketService,
+    private token: TokenService,
+    private auth: AuthServiceService,
+    private toast: ToastrService,
+    private shiftService: RiderShiftService,
+    private zone: NgZone // ✅ for safe UI updates
   ) {}
 
-  ngOnInit(
-  ): void {
-     this.riderId = Number(this.token.getId());
+  ngOnInit(): void {
+    this.riderId = Number(this.token.getId());
+    this.startLocationTracking();
+    this.loadRiderStatus();
+    this.loadNotifications();
+    this.loadUnreadCount();
+    this.loadRider();
+    this.fetchIncomingOrders(); // ✅ centralize order fetching
 
-      this.startLocationTracking();
-      this.loadRiderStatus();
-       this.loadNotifications();
+    this.ConncetWebSocket();
 
-      this.loadUnreadCount();
-
-
-forkJoin([
-    this.orderService.getOrdersByRiderAndStatus(this.riderId, "PREPARING"),
-    this.orderService.getOrdersByRiderAndStatus(this.riderId, "OUT_FOR_DELIVERY"),
-    this.orderService.getOrdersByRiderAndStatus(this.riderId, "READY_FOR_PICKUP")
-  ]).subscribe(([confirmed, outForDelivery, ready]) => {
-
-    // Merge in order
-    this.incomingOrders = [
-      ...confirmed,
-      ...outForDelivery,
-      ...ready
-    ];
-
-    console.log(this.incomingOrders);
-
-    if (this.incomingOrders.length > 0) {
-      this.order = this.incomingOrders[0];
-      this.loadOrder(this.order.id);
-    }
+    this.webSocket.notificationReceived
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(notification => {
+        // ✅ Handle new order assignment via WebSocket
+  if (notification.type === 'ORDER' && notification.orderId) {
+  this.zone.run(() => {
+    this.orderService.getOrderById(notification.orderId!)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (order) => {
+          this.selectOrder(order);
+          this.toast.success(`New order assigned: #${order.orderNumber}`, 'New Order', {
+            timeOut: 5000
+          });
+        },
+        error: (err) => {
+          console.error('Failed to load assigned order:', err);
+          this.toast.error('Failed to load new order. Please refresh.');
+        }
+      });
   });
+}
 
-   this.ConncetWebSocket();
-
-
-        this.webSocket.notificationReceived
-    .pipe(takeUntil(this.destroy$))
-    .subscribe(notification => {
-      const exists = this.notifications.some(n => n.id === notification.id);
-      if (!exists) {
-        this.notifications.unshift(notification);
-        this.unreadCount += 1;
-      }
-    });
-
+        // Add to notifications list
+        const exists = this.notifications.some(n => n.id === notification.id);
+        if (!exists) {
+          this.notifications.unshift(notification);
+          this.unreadCount += 1;
+        }
+      });
 
     this.getShift();
-
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    this.stopLocationTracking();
+  }
 
-     this.stopLocationTracking();
+  loadRider(){
+
+
+      this.riderService.getRiderById(this.riderId).subscribe((x)=>{
+
+
+        this.rider = x ;
+        console.log(x);
+        
+
+
+      })
+
+
+
+  }
+
+
+
+
+  // ✅ Centralized order fetching
+  fetchIncomingOrders(): void {
+    this.loading = true;
+    forkJoin([
+      this.orderService.getOrdersByRiderAndStatus(this.riderId, "PREPARING"),
+      this.orderService.getOrdersByRiderAndStatus(this.riderId, "OUT_FOR_DELIVERY"),
+      this.orderService.getOrdersByRiderAndStatus(this.riderId, "READY_FOR_PICKUP")
+    ]).subscribe({
+      next: ([confirmed, outForDelivery, ready]) => {
+        this.incomingOrders = [...confirmed, ...outForDelivery, ...ready];
+        this.loading = false;
+
+        // ✅ Auto-select first order if none active
+        if (this.incomingOrders.length > 0 && !this.order) {
+          this.selectOrder(this.incomingOrders[0]);
+        }
+      },
+      error: (err) => {
+        console.error('Failed to fetch orders:', err);
+        this.loading = false;
+        this.error = 'Failed to load orders';
+      }
+    });
+  }
+
+  // ✅ NEW: Select order and load detail
+  selectOrder(order: OrderResponseDTO): void {
+    this.order = order;
+    this.loadOrder(order.id);
+  }
+
+  // ✅ NEW: Manual refresh
+  refreshOrders(): void {
+    this.fetchIncomingOrders();
   }
 
   loadOrder(orderId: number): void {
@@ -114,9 +178,20 @@ forkJoin([
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (order) => {
-
+          this.order = order;
           this.determinePhase(order.orderStatus);
+
+          // Load restaurant info
+          if (order.restaurantId) {
+            this.restaurantService.getRestaurantById(order.restaurantId)
+              .pipe(takeUntil(this.destroy$))
+              .subscribe({
+                next: (res) => this.orderRestaurant = res,
+                error: (err) => console.error('Failed to load restaurant:', err)
+              });
+          }
           this.loading = false;
+          this.error = '';
         },
         error: (err) => {
           this.error = 'Failed to load order details';
@@ -127,17 +202,12 @@ forkJoin([
   }
 
   determinePhase(status: OrderStatus): void {
-    if (status === 'OUT_FOR_DELIVERY') {
-      this.currentPhase = 'delivery';
-    } else {
-      this.currentPhase = 'pickup';
-    }
+    this.currentPhase = status === 'OUT_FOR_DELIVERY' ? 'delivery' : 'pickup';
   }
 
   onArrivedAtRestaurant(): void {
     if (!this.order) return;
-    alert('✓ Arrived at restaurant location!');
-    // Optional: Update order status to indicate arrival
+    this.toast.success('✓ Arrived at restaurant location!', 'Arrival Confirmed');
   }
 
   onPickupComplete(): void {
@@ -151,45 +221,47 @@ forkJoin([
           this.order = updatedOrder;
           this.currentPhase = 'delivery';
           this.loading = false;
+          this.toast.success('Order picked up successfully!', 'Pickup Complete');
         },
         error: (err) => {
           this.error = 'Failed to update pickup status';
           this.loading = false;
+          this.toast.error('Pickup update failed. Please try again.');
           console.error('Error updating pickup:', err);
         }
       });
   }
 
- onDeliveryComplete(): void {
-  if (!this.order) return;
+  onDeliveryComplete(): void {
+    if (!this.order) return;
 
-  // Validate OTP
-  if (!this.deliveryOtp || this.deliveryOtp.length !== 4) {
-    alert('Please enter a valid 4-digit OTP');
-    return;
+    if (!this.deliveryOtp || this.deliveryOtp.length !== 4) {
+      this.toast.warning('Please enter a valid 4-digit OTP', 'Invalid OTP');
+      return;
+    }
+
+    this.loading = true;
+    this.orderService.confirmDelivery(this.order.id, this.deliveryOtp)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (responseMessage) => {
+          this.loading = false;
+          this.toast.success(`✅ Delivery confirmed!\n${responseMessage}`, 'Success');
+          // Clear order and return to list
+          this.order = null;
+          this.deliveryOtp = '';
+          this.fetchIncomingOrders(); // refresh list
+        },
+        error: (err) => {
+          this.loading = false;
+          const msg = err.error?.message || 'Invalid OTP or request failed';
+          this.toast.error(`❌ ${msg}`, 'Delivery Failed');
+          console.error('OTP Verification Error:', err);
+        }
+      });
   }
 
-  this.loading = true;
-
-  this.orderService.confirmDelivery(this.order.id, this.deliveryOtp)
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: (responseMessage) => {
-        this.loading = false;
-        alert('✅ Delivery confirmed successfully!\n\n' + responseMessage);
-
-        // Navigate back to dashboard or refresh
-           window.location.reload();
-      },
-      error: (err) => {
-        this.loading = false;
-        alert('❌ ' + (err.error?.message || 'Invalid OTP or request failed'));
-        console.error('OTP Verification Error:', err);
-      }
-    });
-}
   callRestaurant(): void {
-    // Implement call functionality - you'll need restaurant phone from backend
     alert('Calling restaurant...');
   }
 
@@ -197,122 +269,89 @@ forkJoin([
     if (this.order?.customerPhone) {
       window.location.href = `tel:${this.order.customerPhone}`;
     } else {
-      alert('Customer phone number not available');
+      this.toast.warning('Customer phone number not available');
     }
   }
 
-getShift() {
-  this.shiftService.getRiderShift()
-    .pipe(
-      catchError((error) => {
-        console.error('Error fetching shift:', error);
-        // Optionally show an alert or toast
-        alert('Failed to fetch shift. Please try again.');
-        // Return a default/fallback value so the stream continues
-        return of(null);
-      })
-    )
-    .subscribe((x) => {
-      console.log(x);
-      this.shift = x; // will be null in case of error
-    });
-}
+  getShift() {
+    this.shiftService.getRiderShift()
+      .pipe(
+        catchError((error) => {
+          console.error('Error fetching shift:', error);
+          this.toast.error('Failed to fetch shift');
+          return of(null);
+        })
+      )
+      .subscribe((x) => {
+        this.shift = x;
+      });
+  }
 
+  private showToast(message: string): void {
+    if (this.toastTimeout) clearTimeout(this.toastTimeout);
+    this.toastMessage = message;
+    this.toastTimeout = setTimeout(() => {
+      this.toastMessage = null;
+    }, 4000);
+  }
 
-toastMessage: string | null = null;
-private toastTimeout: any = null;
+  openNavigation(): void {
+    let destinationLat: number | undefined = undefined;
+    let destinationLng: number | undefined = undefined;
+    let destinationName = '';
 
-private showToast(message: string): void {
-  // Clear previous toast
-  if (this.toastTimeout) clearTimeout(this.toastTimeout);
+    if (this.order?.orderStatus === 'OUT_FOR_DELIVERY') {
+      destinationLat = this.order.deliveryLatitude;
+      destinationLng = this.order.deliveryLongitude;
+      destinationName = 'Customer';
+    } else {
+      const restaurant = this.orderRestaurant;
+      if (restaurant?.latitude != null && restaurant?.longitude != null) {
+        destinationLat = restaurant.latitude;
+        destinationLng = restaurant.longitude;
+        destinationName = restaurant.name || 'Restaurant';
+      }
+    }
 
-  this.toastMessage = message;
+    if (
+      destinationLat == null ||
+      destinationLng == null ||
+      isNaN(destinationLat) ||
+      isNaN(destinationLng)
+    ) {
+      this.showToast(`Location not available for ${destinationName.toLowerCase()}.`);
+      return;
+    }
 
-  // Auto-hide after 4 seconds
-  this.toastTimeout = setTimeout(() => {
-    this.toastMessage = null;
-  }, 4000);
-}
-
-openNavigation(): void {
-  let destinationLat: number | undefined = undefined;
-  let destinationLng: number | undefined = undefined;
-  let destinationName = '';
-
-  if (this.order?.orderStatus === 'OUT_FOR_DELIVERY') {
-    destinationLat = this.order.deliveryLatitude;
-    destinationLng = this.order.deliveryLongitude;
-    destinationName = 'Customer';
-  } else {
-    const restaurant = this.orderRestaurant
-    if (restaurant?.latitude != null && restaurant?.longitude != null) {
-      destinationLat = restaurant.latitude;
-      destinationLng = restaurant.longitude;
-      destinationName = restaurant.name || 'Restaurant';
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${destinationLat},${destinationLng}&travelmode=driving`;
+    const newWindow = window.open(url, '_blank');
+    if (!newWindow) {
+      this.showToast('Popup blocked. Please allow popups.');
     }
   }
-
-  // 🔥 CRITICAL: Check that both are REAL NUMBERS
-  if (
-    destinationLat == null ||
-    destinationLng == null ||
-    isNaN(destinationLat) ||
-    isNaN(destinationLng)
-  ) {
-    this.showToast(`Location not available for ${destinationName.toLowerCase()}.`);
-    return;
-  }
-
-  // ✅ Now safe to use in URL
-  const url = `https://www.google.com/maps/dir/?api=1&destination=${destinationLat},${destinationLng}&travelmode=driving`;
-
-  const newWindow = window.open(url, '_blank');
-  if (!newWindow) {
-    this.showToast('Popup blocked. Please allow popups to open navigation.');
-  }
-}
 
   getTotalItems(): number {
-    if (!this.order?.orderItems) return 0;
-    return this.order.orderItems.reduce((sum, item) => sum + item.quantity, 0);
+    return this.order?.orderItems?.reduce((sum, item) => sum + item.quantity, 0) || 0;
   }
 
   getEstimatedTime(): string {
     return this.order?.estimatedDeliveryTime || '15-20 min';
   }
 
-
-  //Rider location Track
-
-   showLocationPermissionBanner = false;
-  private locationWatchId: number | null = null;
-  private locationSendSubscription: Subscription | null = null;
-
-  // ================================
-  // LOCATION TRACKING LOGIC
-  // ================================
-
+  // === Location Tracking ===
   private startLocationTracking(): void {
     if (!navigator.geolocation) {
-      console.error('Geolocation is not supported by this browser.');
+      console.error('Geolocation not supported');
       return;
     }
 
-    // First, get current position to verify permission
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        // ✅ Permission granted — send initial location and start watching
         this.sendLocationToServer(position.coords.latitude, position.coords.longitude);
         this.startWatchingLocation();
       },
-      (error) => {
-        this.handleGeolocationError(error);
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 30000
-      }
+      (error) => this.handleGeolocationError(error),
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 }
     );
   }
 
@@ -323,39 +362,28 @@ openNavigation(): void {
       (position) => {
         this.sendLocationToServer(position.coords.latitude, position.coords.longitude);
       },
-      (error) => {
-        console.warn('Location watch error:', error);
-        // Optional: retry or show banner
-      },
-      {
-        enableHighAccuracy: true,   // Use GPS if available
-        timeout: 10000,             // Wait max 10s for position
-        maximumAge: 5000            // Accept cached position up to 5s old
-        // Note: Browser controls actual frequency (typically every 5-30s)
-      }
+      (error) => console.warn('Location watch error:', error),
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 5000 }
     );
   }
 
-private sendLocationToServer(lat: number, lng: number): void {
-  if (!this.riderId) return;
+  private sendLocationToServer(lat: number, lng: number): void {
+    if (!this.riderId) return;
 
-  const locationUpdate: LocationUpdate = { latitude: lat, longitude: lng };
-
-  this.riderService.updateRiderLocation(this.riderId, locationUpdate).pipe(
-    catchError(error => {
-      console.warn('Location send failed (safe to ignore):', error.status, error.message);
-
-      return of(null); // 👈 Silent failure — no UX disruption
-    })
-  ).subscribe();
-}
+    const locationUpdate: LocationUpdate = { latitude: lat, longitude: lng };
+    this.riderService.updateRiderLocation(this.riderId, locationUpdate).pipe(
+      catchError(error => {
+        console.warn('Location send failed (safe to ignore):', error);
+        return of(null);
+      })
+    ).subscribe();
+  }
 
   private stopLocationTracking(): void {
-    if (this.locationWatchId !== null) {
+    if (this.locationWatchId) {
       navigator.geolocation.clearWatch(this.locationWatchId);
       this.locationWatchId = null;
     }
-
     if (this.locationSendSubscription) {
       this.locationSendSubscription.unsubscribe();
       this.locationSendSubscription = null;
@@ -363,46 +391,28 @@ private sendLocationToServer(lat: number, lng: number): void {
   }
 
   private handleGeolocationError(error: GeolocationPositionError): void {
-    console.error('Geolocation error:', error);
-
     switch (error.code) {
       case error.PERMISSION_DENIED:
         this.showLocationPermissionBanner = true;
         break;
       case error.POSITION_UNAVAILABLE:
-        console.warn('Location information is unavailable.');
+        console.warn('Location unavailable');
         break;
       case error.TIMEOUT:
-        console.warn('The request to get user location timed out.');
-        break;
-      default:
-        console.warn('An unknown error occurred.');
+        console.warn('Location request timed out');
         break;
     }
   }
 
-
-  //toggle offline/online
-
-    private loadRiderStatus(): void {
-
-      this.riderService.getRiderById(this.riderId).subscribe((res)=>{
-
-         const status = res.availabilityStatus;
-
-         if(status == "AVAILABLE"){this.isOnline = true}
-         if(status == "OFFLINE"){this.isOnline = false}
-
-
-
-      })
-
-   // or false — adjust based on your logic
+  // === Online/Offline ===
+  private loadRiderStatus(): void {
+    this.riderService.getRiderById(this.riderId).subscribe((res) => {
+      this.isOnline = res.availabilityStatus === "AVAILABLE";
+    });
   }
 
   toggleStatus(): void {
-    if (this.isToggling) return; // prevent double-click
-
+    if (this.isToggling) return;
     this.isToggling = true;
 
     const toggle$ = this.isOnline
@@ -411,182 +421,145 @@ private sendLocationToServer(lat: number, lng: number): void {
 
     toggle$.subscribe({
       next: (updatedRider: Rider) => {
-        this.isOnline = !this.isOnline;
+        this.isOnline = updatedRider.availabilityStatus === "AVAILABLE";
         this.isToggling = false;
-        // Optional: show success toast
-        // this.showToast(`You are now ${this.isOnline ? 'online' : 'offline'}`);
+        this.toast.success(`You are now ${this.isOnline ? 'online' : 'offline'}`);
       },
       error: (err) => {
-        console.error('Failed to update status:', err);
+        console.error('Status update failed:', err);
         this.isToggling = false;
-        // Show error toast
-        // this.showToast('Failed to update status. Please try again.');
+        this.toast.error('Failed to update status');
       }
     });
   }
 
+  // === Notifications ===
+  loadNotifications(): void {
+    this.loadingN = true;
+    this.notificationService.getUserNotifications(this.riderId).subscribe({
+      next: (res) => {
+        this.notifications = res.content || res;
+        this.loadingN = false;
+      },
+      error: (err) => {
+        console.error('Failed to fetch notifications:', err);
+        this.loadingN = false;
+      }
+    });
+  }
 
-  //Notifications
-
-
-  notifications: NotificationResponseDTO[] = [];
-  unreadCount = 0;
-  loadingN = false;
-    showNotificationsPanel = false;
-
-    loadNotifications(): void {
-      this.loadingN = true;
-      this.notificationService.getUserNotifications(this.riderId).subscribe({
-        next: (res) => {
-          this.notifications = res.content || res;
-          this.loadingN = false;
-        },
-        error: (err) => {
-          console.error('Failed to fetch notifications:', err);
-          this.loadingN = false;
-        }
-      });
-    }
-
-
-  // ✅ No manual count updates!
   markAsRead(notificationId: number): void {
-    this.notificationService.markAsRead(notificationId).subscribe();
+    this.notificationService.markAsRead(notificationId).subscribe(() => {
+      const notif = this.notifications.find(n => n.id === notificationId);
+      if (notif) notif.isRead = true;
+    });
   }
 
   markAllAsRead(): void {
-    this.notificationService.markAllAsRead(this.riderId).subscribe();
+    this.notificationService.markAllAsRead(this.riderId).subscribe(() => {
+      this.notifications.forEach(n => n.isRead = true);
+      this.unreadCount = 0;
+    });
   }
 
-    loadUnreadCount(): void {
-      this.notificationService.getUnreadCount(this.riderId).subscribe({
-        next: (count) => (this.unreadCount = count),
-        error: (err) => console.error('Failed to load unread count:', err)
-      });
-    }
-
-
-
+  loadUnreadCount(): void {
+    this.notificationService.getUnreadCount(this.riderId).subscribe({
+      next: (count) => this.unreadCount = count,
+      error: (err) => console.error('Unread count load failed:', err)
+    });
+  }
 
   formatTimeAgo(isoDate: string): string {
-      const date = new Date(isoDate);
-      const now = new Date();
-      const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+    const date = new Date(isoDate);
+    const now = new Date();
+    const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
-      let interval = seconds / 31536000;
-      if (interval > 1) return Math.floor(interval) + 'y';
+    let interval = seconds / 31536000;
+    if (interval > 1) return Math.floor(interval) + 'y';
 
-      interval = seconds / 2592000;
-      if (interval > 1) return Math.floor(interval) + 'mo';
+    interval = seconds / 2592000;
+    if (interval > 1) return Math.floor(interval) + 'mo';
 
-      interval = seconds / 86400;
-      if (interval > 1) return Math.floor(interval) + 'd';
+    interval = seconds / 86400;
+    if (interval > 1) return Math.floor(interval) + 'd';
 
-      interval = seconds / 3600;
-      if (interval > 1) return Math.floor(interval) + 'h';
+    interval = seconds / 3600;
+    if (interval > 1) return Math.floor(interval) + 'h';
 
-      interval = seconds / 60;
-      if (interval > 1) return Math.floor(interval) + 'm';
+    interval = seconds / 60;
+    if (interval > 1) return Math.floor(interval) + 'm';
 
-      return Math.floor(seconds) + 's';
-    }
-
-
-
-    // ✅ Fix: Separate click handler with stopPropagation
-    toggleNotifications(event: MouseEvent): void {
-      event.stopPropagation();
-      this.showNotificationsPanel = !this.showNotificationsPanel;
-
-      if (this.showNotificationsPanel) {
-        this.markAllAsRead();
-        this.unreadCount=0;
-          this.loadNotifications();
-      }
-    }
-
-     @HostListener('document:click', ['$event'])
-      onDocumentClick(event: Event): void {
-        const target = event.target as HTMLElement;
-
-
-
-        // Close Notification Panel
-        const bell = document.querySelector('.notification-bell');
-        const panel = document.querySelector('.notification-panel');
-
-        if (
-          this.showNotificationsPanel &&
-          bell &&
-          panel &&
-          !bell.contains(target) &&
-          !panel.contains(target)
-        ) {
-          this.showNotificationsPanel = false;
-        }
-      }
-
-      //webSocket
-
-      async ConncetWebSocket() {
- await this.webSocket.connect(this.riderId);
-
-
-}
-
-
-Logout() {
-this.auth.logout();
-  this.router.navigate(['/vendor']).then(() => {
-      this.toast.success("Succesfully Logout from the Account")
-  });
-}
-
-//Shift
-shiftEnd(){
-
-  this.shiftService.endShift(this.riderId).subscribe({
-  next: (data) => {
-    this.toast.success("Shift Ended ")
-    console.log("Shift ended:", data);
-  },
-  error: (err) => {
-    console.error("Error ending shift:", err);
+    return Math.floor(seconds) + 's';
   }
-});
 
+  toggleNotifications(event: MouseEvent): void {
+    event.stopPropagation();
+    this.showNotificationsPanel = !this.showNotificationsPanel;
 
+    if (this.showNotificationsPanel) {
+      this.markAllAsRead();
+      this.loadNotifications();
+    }
+  }
 
-}
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event): void {
+    const target = event.target as HTMLElement;
+    const bell = document.querySelector('.notification-bell');
+    const panel = document.querySelector('.notification-panel');
 
-triggerSOS() {
-  if (confirm('🚨 Emergency SOS!\n\nSend alert with your live location to support team?')) {
-    // TODO: Call API: this.sosService.trigger(this.shift?.riderId);
-    this.showToast('SOS signal sent. Help is on the way.');
+    if (
+      this.showNotificationsPanel &&
+      bell &&
+      panel &&
+      !bell.contains(target) &&
+      !panel.contains(target)
+    ) {
+      this.showNotificationsPanel = false;
+    }
+  }
+
+  async ConncetWebSocket() {
+    await this.webSocket.connect(this.riderId);
+  }
+
+  Logout() {
+    this.auth.logout();
+    this.router.navigate(['/vendor']).then(() => {
+      this.toast.success("Successfully logged out");
+    });
+  }
+
+  shiftEnd() {
+    this.shiftService.endShift(this.riderId).subscribe({
+      next: (data) => {
+        this.toast.success("Shift ended");
+        this.shift = { ...this.shift!, status: 'COMPLETED', shiftEnd: new Date().toISOString() };
+      },
+      error: (err) => {
+        console.error("Error ending shift:", err);
+        this.toast.error("Failed to end shift");
+      }
+    });
+  }
+
+  triggerSOS() {
+    if (confirm('🚨 Emergency SOS!\n\nSend alert with your live location to support team?')) {
+      // TODO: Implement SOS API call
+      this.toast.warning('SOS signal sent. Help is on the way.', 'Emergency', {
+        timeOut: 6000
+      });
+    }
+  }
+
+  openSupportChat() {
+    alert('Support chat opened (placeholder)');
+  }
+
+  formatDuration(hours: number): string {
+    if (hours == null) return '—';
+    const h = Math.floor(hours);
+    const m = Math.round((hours - h) * 60);
+    return `${h}h ${m}m`;
   }
 }
-
-openSupportChat() {
-  // TODO: Open in-app chat or redirect
-  alert('Support chat opened (placeholder)');
-}
-
-// Convert totalWorkHours (e.g., 3.75) → "3h 45m"
-formatDuration(hours: number): string {
-  if (hours == null) return '—';
-  const h = Math.floor(hours);
-  const m = Math.round((hours - h) * 60);
-  return `${h}h ${m}m`;
-}
-
-
-
-
-}
-
-
-
-
-
-
-
