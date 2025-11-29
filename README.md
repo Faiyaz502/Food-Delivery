@@ -133,3 +133,5 @@ flowchart LR
     K -->|Generate PDF<br/>Receipts & Statements| C
     G -->|Geospatial Data| C
     J -->|Session / Cache| C
+
+图表渲染失败
