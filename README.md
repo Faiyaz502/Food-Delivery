@@ -23,6 +23,7 @@ Unlike commercial SaaS solutions, this system is **self-hostable**, **map-cost-f
 ✅ **Automated Monthly Payroll & Commission Handling**  
 ✅ **Real-Time Updates** via WebSockets  
 ✅ **Geospatial Analytics** with PostGIS  
+✅ **Professional PDF Reporting** via JasperReports  
 
 ---
 
@@ -30,19 +31,21 @@ Unlike commercial SaaS solutions, this system is **self-hostable**, **map-cost-f
 
 | Layer             | Technologies                                                                 |
 |-------------------|------------------------------------------------------------------------------|
-| **Frontend**      | Angular 15+, TypeScript, Tailwind CSS, **Leaflet.js**, `ngx-leaflet`, `leaflet-routing-machine`, `leaflet.markercluster` |
-| **Map Layer**     | **OpenStreetMap** (free tiles) + **Nominatim** (geocoding) + **OSRM** (optional self-hosted routing) |
-| **Backend**       | Spring Boot 3, Java 17, Spring Security, Spring Data JPA, Spring WebSocket (STOMP), Spring Scheduler |
+| **Frontend**      | Angular 16+, TypeScript, Tailwind CSS, **Leaflet.js** (42 KB, mobile-friendly, no dependencies) |
+| **Map Layer**     | **OpenStreetMap** (free tiles) + **Nominatim** (geocoding) + optional **OSRM** routing |
+| **Backend**       | Spring Boot 3, Java 17+, Spring Security, Spring Data JPA, Spring WebSocket (STOMP), Spring Scheduler |
+| **Reporting**     | **JasperReports** — for dynamic, printable **PDF receipts, payroll statements & financial reports** |
 | **Security**      | JWT (stateless auth), BCrypt, RBAC, CSRF/CORS protection                   |
-| **Database**      | PostgreSQL 15+ with **PostGIS** extension (geospatial queries & indexing)  |
+| **Database**      | **PostgreSQL 18.1** (latest stable, Nov 2025) with **PostGIS** extension    |
 | **Realtime**      | WebSockets (STOMP over SockJS) for live order/rider status sync            |
 | **DevOps**        | Docker, GitHub Actions, PostgreSQL + PostGIS Docker image                  |
 
-> 🌍 **Why Leaflet + OSM?**  
-> ✅ $0 map licensing — no usage limits or surprise bills  
-> ✅ Lightweight (~42KB gzipped), mobile-friendly, highly extensible  
-> ✅ Full control over data & privacy  
-> ✅ Works offline with tile caching strategies  
+> 🌍 **Why Leaflet?**  
+> _“Leaflet is the leading open-source JavaScript library for mobile-friendly interactive maps. Weighing just ~42 KB of JS, it has all the mapping features most developers ever need.”_ — [leafletjs.com](https://leafletjs.com)  
+> ✅ Lightweight · ✅ No external deps · ✅ Smooth on mobile · ✅ Highly extensible
+
+> 🐘 **PostgreSQL 18.1** (Released 2025-11-13)  
+> Latest stable release with security fixes & performance improvements. Fully compatible with PostGIS for geospatial operations.
 
 ---
 
@@ -73,38 +76,27 @@ Unlike commercial SaaS solutions, this system is **self-hostable**, **map-cost-f
 - Geospatial analytics: heatmaps, delivery zones, top items
 - **Automated financial engine**:
   - Record rider COD collections
-  - Settle restaurant payouts (after 15% commission)
+  - Settle restaurant payouts (after configurable commission %)
   - Generate **monthly payroll** (scheduled via Spring `@Scheduled`)
   - Configurable pay rules (hourly rate, bonus, penalties)
-  - Dual-signed **PDF receipts** (vendor + company)
+  - **Dual-signed PDF receipts** (vendor + company)
+
+### 📄 Reporting (via JasperReports)
+- 🧾 Payment receipts with digital signatures
+- 📊 Rider payroll statements (daily/monthly)
+- 📑 Restaurant settlement summaries
+- 📈 Admin financial & order analytics reports  
+- Templates built in **Jaspersoft Studio** (`.jrxml`), compiled & rendered at runtime
 
 ### 🔌 System-Wide
 - 🔔 WebSocket-powered real-time notifications  
 - 🔐 JWT-based authentication with role guards  
-- 🌐 Responsive UI (Tailwind + Angular Flex Layout)  
-- 📊 PostGIS-powered location analytics (e.g., `ST_Distance`, `ST_Contains`)
+- 🌐 Fully responsive UI (Tailwind + Angular Flex Layout)  
+- 📊 PostGIS-powered location analytics (`ST_Distance`, `ST_Contains`, etc.)
 
 ---
 
 ## 🗺️ Architecture
-
-
-Qwen3-Max
-10:19 AM
-Here is your complete, ready-to-use README.md file — copy the entire content below and save it as README.md in the root of your GitHub repository.
-
-markdown
-123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990
-### 🔌 System-Wide
-- 🔔 WebSocket-powered real-time notifications  
-- 🔐 JWT-based authentication with role guards  
-- 🌐 Responsive UI (Tailwind + Angular Flex Layout)  
-- 📊 PostGIS-powered location analytics (e.g., `ST_Distance`, `ST_Contains`)
-
----
-
-## 🗺️ Architecture
-
 
 ```mermaid
 flowchart LR
@@ -115,27 +107,29 @@ flowchart LR
 
     subgraph Backend
         C[Spring Boot REST API]
-        D[Spring WebSocket (STOMP)]
+        D[Spring WebSocket<br/>(STOMP)]
         E[Spring Security + JWT]
         F[Spring Scheduler]
+        K[JasperReports<br/>(PDF Generation)]
     end
 
     subgraph Database
-        G[(PostgreSQL + PostGIS)]
+        G[(PostgreSQL 18.1<br/>+ PostGIS)]
     end
 
     subgraph External
-        H[OpenStreetMap\nTiles & Nominatim]
-        I[OSRM Routing\n(Optional Self-Hosted)]
-        J[Redis\n(Optional Caching)]
+        H[OpenStreetMap<br/>Tiles & Nominatim]
+        I[OSRM Routing<br/>(Optional)]
+        J[Redis<br/>(Optional Cache)]
     end
 
     A -->|HTTP/HTTPS| C
-    B -->|Geolocation / Map Tiles| H
+    B -->|Map Tiles / Geocoding| H
     B -->|Routing Requests| I
     C -->|JPA / Spatial Queries| G
     D -->|Realtime Updates| A
-    E -->|AuthZ/AuthN| C
-    F -->|Monthly Payroll| C
+    E -->|AuthZ / AuthN| C
+    F -->|Monthly Payroll Trigger| C
+    K -->|Generate PDF<br/>Receipts & Statements| C
     G -->|Geospatial Data| C
     J -->|Session / Cache| C
