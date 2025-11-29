@@ -107,10 +107,10 @@ flowchart LR
 
     subgraph Backend
         C[Spring Boot REST API]
-        D[Spring WebSocket (STOMP)]
-        E[Spring Security + JWT]
+        D[Spring WebSocket STOMP]
+        E[Spring Security JWT]
         F[Spring Scheduler]
-        K[JasperReports (PDF Generation)]
+        K[JasperReports PDF Generation]
     end
 
     subgraph Database
@@ -119,8 +119,8 @@ flowchart LR
 
     subgraph External
         H[OpenStreetMap Tiles & Nominatim]
-        I[OSRM Routing (Optional)]
-        J[Redis (Optional Cache)]
+        I[OSRM Routing Optional]
+        J[Redis Optional Cache]
     end
 
     A -->|HTTP/HTTPS| C
@@ -133,4 +133,5 @@ flowchart LR
     K -->|Generate PDF Receipts & Statements| C
     G -->|Geospatial Data| C
     J -->|Session / Cache| C
+
 
