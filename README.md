@@ -107,20 +107,20 @@ flowchart LR
 
     subgraph Backend
         C[Spring Boot REST API]
-        D[Spring WebSocket<br/>(STOMP)]
+        D[Spring WebSocket (STOMP)]
         E[Spring Security + JWT]
         F[Spring Scheduler]
-        K[JasperReports<br/>(PDF Generation)]
+        K[JasperReports (PDF Generation)]
     end
 
     subgraph Database
-        G[(PostgreSQL 18.1<br/>+ PostGIS)]
+        G[(PostgreSQL 18.1 + PostGIS)]
     end
 
     subgraph External
-        H[OpenStreetMap<br/>Tiles & Nominatim]
-        I[OSRM Routing<br/>(Optional)]
-        J[Redis<br/>(Optional Cache)]
+        H[OpenStreetMap Tiles & Nominatim]
+        I[OSRM Routing (Optional)]
+        J[Redis (Optional Cache)]
     end
 
     A -->|HTTP/HTTPS| C
@@ -130,8 +130,7 @@ flowchart LR
     D -->|Realtime Updates| A
     E -->|AuthZ / AuthN| C
     F -->|Monthly Payroll Trigger| C
-    K -->|Generate PDF<br/>Receipts & Statements| C
+    K -->|Generate PDF Receipts & Statements| C
     G -->|Geospatial Data| C
     J -->|Session / Cache| C
 
-图表渲染失败
