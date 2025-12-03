@@ -15,6 +15,7 @@ import { MenuItemService } from 'src/app/services/menu-item.service';
 import { MenuCategoryDto, MenuCategoryService } from 'src/app/services/restaurant/menu-category.service';
 import { TokenService } from 'src/app/services/authService/token.service';
 import { AuthServiceService } from 'src/app/services/authService/auth-service.service';
+import { RestaurantOwnerProfile } from 'src/app/Models/Users/profile.model';
 
 
 @Component({
@@ -39,6 +40,7 @@ export class RestaurantComponent {
   showEditModal = false;
   showMenuModal = false;
    showOrders: boolean = false;
+   owner!:RestaurantOwnerProfile;
 
 
   ownerId: any ; // Get from auth service
@@ -68,6 +70,7 @@ export class RestaurantComponent {
 
   ngOnInit(): void {
      this.ownerId = Number(this.token.getId());
+
     this.loadRestaurants();
     this.startOrderPolling();
 
@@ -84,6 +87,10 @@ export class RestaurantComponent {
         this.unreadCount += 1;
       }
     });
+
+   this.getRestaurantOwner(this.ownerId);
+
+
   }
 
   ngOnDestroy(): void {
@@ -133,6 +140,7 @@ export class RestaurantComponent {
         error: (err) => console.error('Error loading new orders:', err)
       });
 
+
     this.orderService.getOrdersByRestaurantAndStatus(restaurantId, 'PREPARING')
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -166,12 +174,24 @@ export class RestaurantComponent {
 
   }
 
-  loadStats(restaurantId: number): void {
-    // You'll need to add these endpoints to your backend
-    // For now using mock data
-    this.todayOrders = 24;
-    this.todayRevenue = 2450;
+  getRestaurantOwner(ownerId:number){
+
+    this.restaurantOwnerService.getRestaurantOwnerById(ownerId).subscribe((s)=>{
+
+          this.owner = s ;
+
+    })
   }
+
+ loadStats(restaurantId: number): void {
+  this.orderService.getTodayStats(restaurantId)
+    .subscribe({
+      next: (data) => {
+        this.todayOrders = data.todayOrders;
+        this.todayRevenue = data.todayRevenue;
+      }
+    });
+}
 
   startOrderPolling(): void {
     // Poll for new orders every 30 seconds

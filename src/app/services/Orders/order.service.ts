@@ -138,6 +138,10 @@ confirmDelivery(orderId: number, otp: string): Observable<string> {
     return this.http.get<OrderResponseDTO[]>(`${this.apiUrl}/${restaurantId}/status/${status}`);
   }
 
+  getTodayStats(restaurantId: number) {
+  return this.http.get<any>(`${this.apiUrl}/restaurant/${restaurantId}/today-stats`);
+}
+
 
 
   getOrdersByStatus(status: OrderStatus, page: number = 0, size: number = 10): Observable<OrderResponseDTO[]> {
