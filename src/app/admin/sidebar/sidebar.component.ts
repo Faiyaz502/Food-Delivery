@@ -19,7 +19,7 @@ export class SidebarComponent implements OnInit {
     { path: 'customer', label: 'Customer', icon: '<i class="fas fa-users"></i>' },
     { path: 'restaurant', label: 'Restaurants', icon: '<i class="fas fa-store"></i>' },
     { path: 'orders', label: 'Orders', icon: '<i class="fas fa-box"></i>' },
-    { path: 'review', label: 'Reviews', icon: '<i class="fa-solid fa-star"></i>' },
+    { path: 'review', label: 'Reviews & Coupon', icon: '<i class="fa-solid fa-star"></i>' },
     { path: 'notification', label: 'Notification', icon: '<i class="fa-solid fa-bell"></i>' },
     { path: 'chat', label: 'Chat', icon: '<i class="fa-solid fa-comments"></i>' },
     { path: 'profile', label: 'Profile', icon: '<i class="fa-solid fa-user"></i>' },

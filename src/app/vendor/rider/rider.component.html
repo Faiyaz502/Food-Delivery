@@ -21,6 +21,14 @@
             }}
           </p>
         </div>
+          <!-- Wallet Balance (Medium size) -->
+  <div class="flex items-center gap-2 bg-white/20 px-8 py-2 rounded-full backdrop-blur-sm border border-white/30">
+
+    <i class="fas fa-wallet text-yellow-300 text-xl"></i>
+     <span class="text-indigo-200 text-lg">Wallet :</span>
+    <span class="text-white font-semibold text-xl">৳{{ rider?.wallet | number }}</span>
+
+  </div>
 
         <!-- Action Buttons -->
         <div class="flex gap-3">
@@ -160,7 +168,7 @@
   </div>
 
   <!-- Online/Offline Toggle -->
-  <div *ngIf="rider.availabilityStatus != 'BUSY'" class="absolute w-full max-w-4xl left-1/2 -translate-x-1/2 -bottom-48 px-6 z-20">
+  <div *ngIf="rider.availabilityStatus != 'BUSY' && !shift?.shiftEnd" class="absolute w-full max-w-4xl left-1/2 -translate-x-1/2 -bottom-48 px-6 z-20">
     <div class="flex items-center gap-4 p-4 bg-white rounded-xl shadow-xl border border-gray-200">
       <div class="p-3 bg-green-500/10 rounded-lg">
         <i
@@ -432,7 +440,7 @@
               <div>
                 <p class="text-xs text-gray-500 font-semibold uppercase">Est. Time</p>
                 <p class="font-bold text-gray-900 text-2xl">
-                  {{ getEstimatedTime() }}
+                  {{ getEstimatedTime() | date: 'h:mm a' }}
                 </p>
               </div>
             </div>
@@ -444,7 +452,7 @@
             <i class="fas fa-shopping-bag text-indigo-600"></i>
             Order Details
             <span class="text-sm font-medium text-gray-500">
-              ({{ getTotalItems() }} items)
+              ({{ getTotalItems() | date }} items)
             </span>
           </h4>
           <div class="space-y-3">

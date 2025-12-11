@@ -124,7 +124,7 @@ export class RiderComponent {
 
         this.rider = x ;
         console.log(x);
-        
+
 
 
       })
@@ -535,6 +535,7 @@ export class RiderComponent {
       next: (data) => {
         this.toast.success("Shift ended");
         this.shift = { ...this.shift!, status: 'COMPLETED', shiftEnd: new Date().toISOString() };
+        
       },
       error: (err) => {
         console.error("Error ending shift:", err);
