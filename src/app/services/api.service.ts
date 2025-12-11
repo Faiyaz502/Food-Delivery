@@ -12,11 +12,12 @@ import { CustomerLocation } from '../Models/customer-location.model';
 import { Review } from '../Models/review.model';
 import { Sales } from '../Models/sales.model';
 import { User } from '../Models/Users/user.models';
+import { environment } from '../Envirment/environment';
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
-  private baseUrl = 'http://localhost:8080/api/';
+  private baseUrl = `${environment.apiUrl}/api`;
 
   constructor(private http: HttpClient) { }
 
@@ -43,23 +44,23 @@ export class ApiService {
 
   // Restaurants
   getRestaurants(): Observable<Restaurant[]> {
-    return this.http.get<Restaurant[]>(`http://localhost:8080/api/restaurants`);
+    return this.http.get<Restaurant[]>(`${this.baseUrl}/api/restaurants`);
   }
 
   getRestaurantById(id: number): Observable<Restaurant> {
-    return this.http.get<Restaurant>(`http://localhost:8080/api/restaurants/${id}`);
+    return this.http.get<Restaurant>(`${this.baseUrl}/api/restaurants/${id}`);
   }
 
   createRestaurant(restaurant: Omit<Restaurant, 'id'>): Observable<Restaurant> {
-    return this.http.post<Restaurant>(`http://localhost:8080/api/restaurants`, restaurant);
+    return this.http.post<Restaurant>(`${this.baseUrl}/api/restaurants`, restaurant);
   }
 
   updateRestaurant(id: number, restaurant: Partial<Restaurant>): Observable<Restaurant> {
-    return this.http.put<Restaurant>(`http://localhost:8080/api/restaurants/${id}`, restaurant);
+    return this.http.put<Restaurant>(`${this.baseUrl}/api/restaurants/${id}`, restaurant);
   }
 
   deleteRestaurant(id: number): Observable<void> {
-    return this.http.delete<void>(`http://localhost:8080/api/restaurants/${id}`);
+    return this.http.delete<void>(`${this.baseUrl}/api/restaurants/${id}`);
   }
 
 uploadRestaurantImages(restaurantId: number, formData: FormData): Observable<Restaurant> {
@@ -67,7 +68,7 @@ uploadRestaurantImages(restaurantId: number, formData: FormData): Observable<Res
 }
 
   verifyRestaurant(id: number, status: string): Observable<Restaurant> {
-    const url = `${this.baseUrl}restaurants/${id}/verify?status=${status}`;
+    const url = `${this.baseUrl}/restaurants/${id}/verify?status=${status}`;
     return this.http.put<Restaurant>(url, {}); // body empty since only status changes
   }
 
