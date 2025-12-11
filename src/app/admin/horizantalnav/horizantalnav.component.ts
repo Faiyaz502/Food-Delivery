@@ -13,7 +13,7 @@ import { WebSocketService } from 'src/app/services/web-Socket/web-socket.service
 
 @Component({
   selector: 'app-horizantalnav',
-  templateUrl: './horizantalnav.component.html',
+  templateUrl:'./horizantalnav.component.html',
   styleUrls: ['./horizantalnav.component.scss']
 })
 export class HorizantalnavComponent implements OnInit {

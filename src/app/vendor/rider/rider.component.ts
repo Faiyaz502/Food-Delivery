@@ -18,7 +18,7 @@ import { WebSocketService } from 'src/app/services/web-Socket/web-socket.service
 
 @Component({
   selector: 'app-rider',
-  templateUrl: './rider.component.html',
+  templateUrl:'./rider.component.html',
   styleUrls: ['./rider.component.scss']
 })
 export class RiderComponent {

@@ -19,7 +19,7 @@ import { AuthServiceService } from 'src/app/services/authService/auth-service.se
 
 @Component({
   selector: 'app-restaurant',
-  templateUrl: './restaurant.component.html',
+  templateUrl:'./restaurant.component.html',
   styleUrls: ['./restaurant.component.scss']
 })
 export class RestaurantComponent {

@@ -10,7 +10,7 @@ import { MenuCategoryDto, MenuCategoryService } from 'src/app/services/restauran
 
 @Component({
   selector: 'app-restaurants',
-  templateUrl: './restaurants.component.html',
+  templateUrl:'./restaurants.component.html',
   styleUrls: ['./restaurants.component.scss']
 })
 export class RestaurantsComponent {
