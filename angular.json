@@ -45,9 +45,14 @@
               "apexcharts"
             ]
           },
-
           "configurations": {
             "production": {
+              "fileReplacements": [
+                {
+                  "replace": "src/app/Envirment/environment.ts",
+                  "with": "src/app/Envirment/environment.prod.ts"
+                }
+              ],
               "budgets": [
                 {
                   "type": "initial",
@@ -60,9 +65,14 @@
                   "maximumError": "40kb"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "optimization": true,
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true
             },
-
             "development": {
               "buildOptimizer": false,
               "optimization": false,
@@ -72,10 +82,8 @@
               "namedChunks": true
             }
           },
-
           "defaultConfiguration": "production"
         },
-
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
@@ -88,14 +96,12 @@
           },
           "defaultConfiguration": "development"
         },
-
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
             "browserTarget": "DummyFood:build"
           }
         },
-
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
