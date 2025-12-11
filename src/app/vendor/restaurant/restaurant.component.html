@@ -50,7 +50,7 @@
 
         <div class="text-xl md:text-xl font-bold text-white ">
            Welcome,
-          <span class="bg-white/10 px-3 py-1 rounded-lg">{{ owner?.ownerName || 'Owner' }}</span>
+          <span class="bg-white/10 px-3 py-1 rounded-lg">{{ owner.ownerName || 'Owner' }}</span>
         </div>
 
         <!-- Metadata — Still prominent, but secondary -->
@@ -59,7 +59,7 @@
             <i class="fas fa-id-card text-amber-300 text-lg"></i>
             <span class="font-semibold">License:</span>
             <span class="font-mono font-bold text-amber-200 text-lg">
-              {{ owner?.businessLicenseNumber || '—' }}
+              {{ owner.businessLicenseNumber || '—' }}
             </span>
           </div>
 
@@ -67,7 +67,7 @@
             <i class="fas fa-coins text-green-300 text-lg"></i>
             <span class="font-semibold">Pending Payout:</span>
             <span class="font-bold text-green-300 text-xl">
-              {{ owner?.pendingPayout ? (owner.pendingPayout | currency:'BDT') : '৳0.00' }}
+              {{ owner.pendingPayout ? (owner.pendingPayout | currency:'BDT') : '৳0.00' }}
             </span>
           </div>
         </div>
