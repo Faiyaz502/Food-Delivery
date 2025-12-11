@@ -3,17 +3,20 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { MenuItem } from '../Models/MenuItem.model';
+import { environment } from '../Envirment/environment';
 
 
 @Injectable({ providedIn: 'root' })
 export class MenuItemService {
+
+   private apiUrl = `${environment.apiUrl}/api/menu-items`; // adjust as needed
 
 
    getMenuItemsByRestaurant(restaurantId: number): Observable<MenuItem[]> {
     return this.http.get<MenuItem[]>(`${this.apiUrl}/restaurant/${restaurantId}`);
   }
 
-  private apiUrl = 'http://localhost:8080/api/menu-items'; // adjust as needed
+ 
 
   constructor(private http: HttpClient) {}
 
@@ -24,7 +27,7 @@ export class MenuItemService {
  // ✅ Upload menu item image
   uploadMenuItemImage(menuItemId: number, formData: FormData): Observable<MenuItem> {
     return this.http.post<MenuItem>(
-      `http://localhost:8080/api/menu-items/${menuItemId}/image`,
+      `${this.apiUrl}/${menuItemId}/image`,
       formData
     );
   }
