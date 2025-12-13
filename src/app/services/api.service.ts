@@ -44,27 +44,27 @@ export class ApiService {
 
   // Restaurants
   getRestaurants(): Observable<Restaurant[]> {
-    return this.http.get<Restaurant[]>(`${this.baseUrl}/api/restaurants`);
+    return this.http.get<Restaurant[]>(`${this.baseUrl}/restaurants`);
   }
 
   getRestaurantById(id: number): Observable<Restaurant> {
-    return this.http.get<Restaurant>(`${this.baseUrl}/api/restaurants/${id}`);
+    return this.http.get<Restaurant>(`${this.baseUrl}/restaurants/${id}`);
   }
 
   createRestaurant(restaurant: Omit<Restaurant, 'id'>): Observable<Restaurant> {
-    return this.http.post<Restaurant>(`${this.baseUrl}/api/restaurants`, restaurant);
+    return this.http.post<Restaurant>(`${this.baseUrl}/restaurants`, restaurant);
   }
 
   updateRestaurant(id: number, restaurant: Partial<Restaurant>): Observable<Restaurant> {
-    return this.http.put<Restaurant>(`${this.baseUrl}/api/restaurants/${id}`, restaurant);
+    return this.http.put<Restaurant>(`${this.baseUrl}/restaurants/${id}`, restaurant);
   }
 
   deleteRestaurant(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/api/restaurants/${id}`);
+    return this.http.delete<void>(`${this.baseUrl}/restaurants/${id}`);
   }
 
 uploadRestaurantImages(restaurantId: number, formData: FormData): Observable<Restaurant> {
-  return this.http.post<Restaurant>(`${this.baseUrl}restaurants/${restaurantId}/images`, formData);
+  return this.http.post<Restaurant>(`${this.baseUrl}/restaurants/${restaurantId}/images`, formData);
 }
 
   verifyRestaurant(id: number, status: string): Observable<Restaurant> {
