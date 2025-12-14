@@ -5,13 +5,18 @@ import * as SockJS from 'sockjs-client';
 import { Client, Message } from '@stomp/stompjs';
 import { PersonalChatResponseDTO } from 'src/app/Models/Chat/chat.models';
 import { NotificationResponseDTO } from '../notificationAndcoupon/notification.service';
+import { environment } from 'src/app/Envirment/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WebSocketService {
   private client: Client | null = null;
-  private userId: string | null = null; // Changed to string to match Spring
+  private userId: string | null = null; 
+  
+  // Changed to string to match Spring
+
+   baseApi:string  = `${environment.wsUrl}`;
 
     notificationReceived = new EventEmitter<NotificationResponseDTO>();
 
@@ -27,7 +32,7 @@ export class WebSocketService {
       return;
     }
 
-    const socket = new SockJS('http://localhost:8080/ws-chat');
+    const socket = new SockJS(this.baseApi);
 
     this.client = new Client({
       webSocketFactory: () => socket as any,

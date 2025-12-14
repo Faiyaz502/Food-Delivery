@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { environment } from 'src/app/Envirment/environment';
 import { AddCartItemDTO, CartResponseDTO, CartSummaryDTO, CheckoutDTO } from 'src/app/Models/cart/cart.models';
 import { OrderResponseDTO } from 'src/app/Models/Order/order.models';
 
@@ -8,7 +9,7 @@ import { OrderResponseDTO } from 'src/app/Models/Order/order.models';
   providedIn: 'root'
 })
 export class CartService {
- private apiUrl = 'http://localhost:8080/api/carts'; // Change to your API URL
+ private apiUrl = `${environment.apiUrl}/api/carts`; // Change to your API URL
 
   // State management
   private cartsSubject = new BehaviorSubject<CartResponseDTO[]>([]);

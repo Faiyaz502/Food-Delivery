@@ -76,21 +76,32 @@ currentRestaurant: any = {
     this.previewRestaurantImageUrls.splice(index, 1);
   }
 
-  private async uploadRestaurantImages(restaurantId: number): Promise<void> {
-    if (this.selectedRestaurantImageFiles.length === 0) return;
-
-    const formData = new FormData();
-    this.selectedRestaurantImageFiles.forEach(file => {
-      formData.append('files', file);
-    });
-
-    try {
-      await this.apiService.uploadRestaurantImages(restaurantId, formData).toPromise();
-    } catch (error) {
-      console.error('Restaurant image upload failed', error);
-      alert('Failed to upload restaurant images');
-    }
+private uploadRestaurantImages(restaurantId: number): void {
+  if (!this.selectedRestaurantImageFiles || this.selectedRestaurantImageFiles.length === 0) {
+    return;
   }
+
+  const formData = new FormData();
+
+  // Make sure the key 'files' matches Spring Boot @RequestParam
+  this.selectedRestaurantImageFiles.forEach(file => {
+    formData.append('files', file, file.name);
+  });
+
+  this.apiService.uploadRestaurantImages(restaurantId, formData)
+    .subscribe({
+      next: (response) => {
+        console.log('Restaurant images uploaded successfully', response);
+        alert('Images uploaded successfully!');
+        // Optionally, refresh restaurant data or reset selected files
+        this.selectedRestaurantImageFiles = [];
+      },
+      error: (err) => {
+        console.error('Restaurant image upload failed', err);
+        alert('Failed to upload restaurant images. Please check your server or CORS settings.');
+      }
+    });
+}
 
   // === MENU ITEM IMAGE HANDLERS ===
 
