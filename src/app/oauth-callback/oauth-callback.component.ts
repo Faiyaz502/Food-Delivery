@@ -30,13 +30,13 @@ constructor(
     const userId = userIdStr ? +userIdStr : undefined;
 
     try {
-      // ✅ Use your existing handler — saves token, userId, username, etc.
+      //  Use your existing handler — saves token, userId, username, etc.
       this.auth.handleAuthResponse({ jwt: token, userId });
 
-      // 🧹 Clean URL (remove token from history)
+      //  Clean URL (remove token from history)
       window.history.replaceState({}, document.title, '/oauth-callback');
 
-      // 🔒 Check roles (same as in login())
+      //  Check roles (same as in login())
       const roles = this.auth.getUserRoles();
       const allowedRoles = ['ROLE_CUSTOMER'];
       const hasAllowedRole = roles.some(role => allowedRoles.includes(role));

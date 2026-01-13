@@ -112,6 +112,20 @@
           </a>
         </div>
 
+         <div class="flex gap-4" *ngIf="userType == 'rider'">
+
+        <p> <strong>EMAIL</strong> :  www.romzan@gmail.com</p>
+        <p> <strong>PASSWORD</strong> : 1234</p>
+
+      </div>
+         <div class="flex gap-4" *ngIf="userType == 'restaurant'">
+
+        <p> <strong>EMAIL</strong> :  www.rakib@gmail.com</p>
+        <p> <strong>PASSWORD</strong> : 1234</p>
+
+      </div>
+
+
         <!-- Submit Button -->
         <button
           type="submit"

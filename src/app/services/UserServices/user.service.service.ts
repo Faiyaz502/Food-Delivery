@@ -57,6 +57,7 @@ export class UserServiceService {
     return this.http.put<User>(`${this.apiUrl}/${id}`, user);
   }
 
+
   changePassword(id: number, passwords: PasswordChangeDTO): Observable<void> {
     return this.http.put<void>(`${this.apiUrl}/${id}/password`, passwords);
   }
