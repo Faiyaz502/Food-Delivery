@@ -8,7 +8,7 @@ import { NotificationResponseDTO, NotificationService} from '../services/notific
 
 
 import { WebSocketService } from '../services/web-Socket/web-socket.service';
-import { TokenService } from '../services/authService/token.service';
+import { parseJwt, TokenService } from '../services/authService/token.service';
 import { AuthServiceService } from '../services/authService/auth-service.service';
 
 export interface Page<T> {
@@ -49,6 +49,7 @@ isCartOpen = false;
   isProfileOpen = false;
   isLogin = false;
 
+
    private destroy$ = new Subject<void>();
 
   toggleCart() {
@@ -69,9 +70,9 @@ isCartOpen = false;
 
     cart: CartResponseDTO | null = null;
 
-    userId: any = null; 
-  
-    
+    userId: any = null;
+
+
 
 
     constructor(private cartService: CartService,private router: Router,
@@ -83,10 +84,28 @@ isCartOpen = false;
 
     ngOnInit(): void {
 
+
+
       if(this.auth.isLoggedIn()){
 
-        this.isLogin = true ;
+          this.isLogin = true ;
 
+     const token = this.token.getToken()  ;
+
+      if(token != null){
+        const payload =  decodeJwtPayload(token);
+
+        console.log(payload.roles[0]);
+
+          if(payload.roles[0] != "ROLE_CUSTOMER"){
+
+            this.token.removeToken();
+
+            this.isLogin = false ;
+
+
+          }
+      }
       }
 
      this.userId = Number(this.token.getId());
@@ -143,7 +162,7 @@ isCartOpen = false;
 
   closeJoinDropdown() {
     this.isJoinDropdownOpen = false;
-   
+
   }
 
 
@@ -277,6 +296,15 @@ async ConncetWebSocket() {
 
 
 }
-
-
+function decodeJwtPayload(token: string): any {
+  const parts = token.split('.');
+  if (parts.length !== 3) throw new Error('Invalid JWT');
+  const payload = parts[1];
+  // pad base64
+  const b64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+  const pad = b64.length % 4;
+  const padded = b64 + (pad ? '='.repeat(4 - pad) : '');
+  const json = atob(padded);
+  return JSON.parse(json);
+}
 
