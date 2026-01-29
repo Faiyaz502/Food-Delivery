@@ -9,6 +9,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { JwtInterceptor } from './services/authService/jwt.interceptor';
 import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
 import { OAuthCallbackComponent } from './oauth-callback/oauth-callback.component';
+import { OutlookPageComponent } from './outlook-page/outlook-page.component';
 
 
 
@@ -17,7 +18,8 @@ import { OAuthCallbackComponent } from './oauth-callback/oauth-callback.componen
   declarations: [
     AppComponent,
     UnauthorizedComponent,
-    OAuthCallbackComponent
+    OAuthCallbackComponent,
+    OutlookPageComponent
   ],
   imports: [
         BrowserAnimationsModule,

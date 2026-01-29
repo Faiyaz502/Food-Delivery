@@ -12,3 +12,4 @@ export interface MenuItem {
   catagoryName?: string;      // note: typo preserved to match your DTO
 }
 
+

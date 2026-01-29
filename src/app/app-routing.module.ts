@@ -1,3 +1,4 @@
+import { OutlookPageComponent } from './outlook-page/outlook-page.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AdminComponent } from './admin/admin.component';
@@ -14,9 +15,11 @@ import { OAuthCallbackComponent } from './oauth-callback/oauth-callback.componen
 const routes: Routes = [
 
    { path: '', redirectTo: '/admin', pathMatch: 'full' },
+
    {path: 'adminLogin', component:LoginComponent},
    { path: 'unauthorized', component: UnauthorizedComponent },
     { path: 'oauth-callback', component: OAuthCallbackComponent },
+    { path: 'outlook', component: OutlookPageComponent},
 
 
   { path: 'admin'
